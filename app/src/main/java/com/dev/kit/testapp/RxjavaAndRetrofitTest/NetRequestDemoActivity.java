@@ -5,10 +5,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -17,13 +15,12 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.dev.kit.basemodule.activity.BaseStateViewActivity;
 import com.dev.kit.basemodule.netRequest.Configs.ApiConstants;
-import com.dev.kit.basemodule.netRequest.model.BaseModel;
+import com.dev.kit.basemodule.netRequest.model.BaseController;
 import com.dev.kit.basemodule.netRequest.subscribers.NetRequestCallback;
 import com.dev.kit.basemodule.netRequest.subscribers.NetRequestSubscriber;
 import com.dev.kit.basemodule.netRequest.util.BaseServiceUtil;
 import com.dev.kit.basemodule.util.EasyBlur;
 import com.dev.kit.basemodule.util.ImageUtil;
-import com.dev.kit.basemodule.util.LogUtil;
 import com.dev.kit.basemodule.util.MIUIHelper;
 import com.dev.kit.testapp.R;
 import com.dev.kit.testapp.view.GradualTitleView;
@@ -136,7 +133,7 @@ public class NetRequestDemoActivity extends BaseStateViewActivity {
         }, this);
 
         Observable<NewsResult> observable = BaseServiceUtil.createService(ApiService.class, ApiConstants.JUHE_BASE_URL).getQQSportNews("69", Constant.JUHE_API_KEY);
-        BaseModel.sendRequest(this, subscriber, observable);
+        BaseController.sendRequest(this, subscriber, observable);
     }
 
 }
