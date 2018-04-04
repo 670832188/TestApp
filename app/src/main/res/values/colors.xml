@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#ff8400</color>
+    <color name="colorPrimaryDark">#FFB11F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="color_orange">#ffa800</color>
+
+    <color name="color_white">#FFFFFF</color>
+    <color name="color_black">#434343</color>
+    <color name="color_common_text">#666666</color>
+    <color name="color_common_gray">#b5b5b5</color>
+    <color name="color_red">#ff0000</color>
+    <color name="color_light_red">#80FF0000</color>
+    <color name="color_divider">#eeeeee</color>
+    <color name="color_canary">#fff6e0</color>
+    <color name="color_light_grey">#d9d9d9</color>
+    <color name="color_transparency">#00000000</color>
+    <color name="color_translucence">#80000000</color>
+    <color name="color_light_silver_gray">#F7F7F7</color>
+    <color name="avatar_border_color">#d9d9d9</color>
+
+    <color name="bg_breakfast_normal">#1affa15f</color>
+    <color name="bg_breakfast_selected">#ffa15f</color>
+    <color name="color_breakfast_normal">#E6ffa15f</color>
+    <color name="color_breakfast_tip_normal">#80ffa15f</color>
+    <color name="color_breakfast_tip_selected">#99ffffff</color>
+
+    <color name="bg_lunch_normal">#1afb7f7f</color>
+    <color name="bg_lunch_selected">#fb7f7f</color>
+    <color name="color_lunch_normal">#E6fb7f7f</color>
+    <color name="color_lunch_tip_normal">#80fb7f7f</color>
+    <color name="color_lunch_tip_selected">#99ffffff</color>
+
+    <color name="bg_supper_normal">#1a4fc6be</color>
+    <color name="bg_supper_selected">#4fc6be</color>
+    <color name="color_supper_normal">#E64fc6be</color>
+    <color name="color_supper_tip_normal">#804fc6be</color>
+    <color name="color_supper_tip_selected">#99ffffff</color>
+</resources>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="44dp"
+    android:background="@color/color_common_white">
+
+    <TextView
+        android:textSize="18sp"
+        android:id="@+id/tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:maxLines="1" />
+
+    <ImageView
+        android:id="@+id/iv_left"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:padding="10dp"
+        android:scaleType="centerInside"
+        android:src="@mipmap/ic_back" />
+
+    <ImageView
+        android:id="@+id/iv_right"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:padding="10dp"
+        android:scaleType="centerInside"
+        android:src="@mipmap/ic_back"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/tv_right"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:paddingEnd="10dp"
+        android:paddingStart="10dp"
+        android:visibility="gone" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_alignParentBottom="true"
+        android:background="#eeeeee"
+        android:elevation="0.5dp" />
+</RelativeLayout>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+
+    <declare-styleable name="SessionReplyListView">
+        <attr name="replierAndTargetTextColor" format="color" />
+    </declare-styleable>
+    
+    <declare-styleable name="ExpandTextView">
+        <attr name="defaultShownLines" format="integer"/>
+        <attr name="foldableTriggerTextColor" format="color"/>
+        <attr name="foldStateTriggerText" format="string"/>
+        <attr name="unfoldStateTriggerText" format="string"/>
+    </declare-styleable>
+
+    <declare-styleable name="ChatView">
+        <attr name="msgColor" format="color" />
+        <!--<attr name="send"-->
+        <attr name="textSize" format="dimension" />
+        <attr name="mode">
+            <enum name="comment" value="0" />
+            <enum name="chat" value="1" />
+        </attr>
+        <attr name="sendBtnBg" format="reference" />
+        <attr name="sendBtnTextColor" format="color" />
+    </declare-styleable>
+
+</resources>

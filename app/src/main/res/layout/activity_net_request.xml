@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/app_bar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+        <android.support.design.widget.CollapsingToolbarLayout
+            android:id="@+id/collapsing_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:contentScrim="@color/color_transparency"
+            app:expandedTitleMarginEnd="64dp"
+            app:expandedTitleMarginStart="48dp"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+
+            <ImageView
+                android:id="@+id/iv_banner"
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                android:layout_gravity="center"
+                android:scaleType="centerCrop"
+                android:src="@mipmap/ic_default_banner"
+                app:layout_collapseParallaxMultiplier="0.5" />
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                app:contentInsetLeft="0dp"
+                app:contentInsetStart="0dp"
+                app:layout_collapseMode="pin"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+
+                <com.dev.kit.testapp.view.GradualTitleView
+                    android:id="@+id/gradual_title_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingTop="20dp"
+                    app:gt_endLeftImgSrc="@mipmap/ic_back_black"
+                    app:gt_endRightImgSrc="@mipmap/ic_personal_center"
+                    app:gt_endTextColor="@color/color_common_text"
+                    app:gt_startAlpha="0"
+                    app:gt_startLeftImgScr="@mipmap/ic_back_white"
+                    app:gt_startRightImgScr="@mipmap/ic_personal_center"
+                    app:gt_startTextColor="@color/color_white"
+                    app:gt_targetBgColor="@color/color_white" />
+
+            </android.support.v7.widget.Toolbar>
+
+        </android.support.design.widget.CollapsingToolbarLayout>
+
+    </android.support.design.widget.AppBarLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_news"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+</android.support.design.widget.CoordinatorLayout>

@@ -1,0 +1,13 @@
+<resources>
+    <string name="error_net_request_failed">网络请求失败</string>
+    <string name="no_response_data">无响应数据</string>
+    <string name="data_empty">暂无数据</string>
+    <string name="data_error">数据错误</string>
+
+    <!-- for session -->
+    <string name="reply">回复</string>
+    <string name="colon_separator">:&#160;</string>
+    <string name="action_fold">收起</string>
+    <string name="action_unfold">全文</string>
+
+</resources>

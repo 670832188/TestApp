@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="GradualTextView">
+        <attr name="startTextColor" format="color" />
+        <attr name="endTextColor" format="color" />
+    </declare-styleable>
+
+    <declare-styleable name="GradualImageView">
+        <attr name="startImgScr" format="reference" />
+        <attr name="endImgSrc" format="reference" />
+    </declare-styleable>
+
+    <declare-styleable name="GradualTitleView">
+        <attr name="gt_targetBgColor" format="color" />
+        <attr name="gt_startAlpha" format="integer" />
+        <attr name="gt_startTextColor" format="color" />
+        <attr name="gt_endTextColor" format="color" />
+        <attr name="gt_startLeftImgScr" format="reference" />
+        <attr name="gt_endLeftImgSrc" format="reference" />
+        <attr name="gt_startRightImgScr" format="reference" />
+        <attr name="gt_endRightImgSrc" format="reference" />
+    </declare-styleable>
+</resources>

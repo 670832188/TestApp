@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/slide_line_height"
+    android:background="@color/color_white"
+    android:gravity="center_vertical"
+    android:orientation="vertical"
+    android:paddingEnd="@dimen/margin_large"
+    android:paddingStart="@dimen/margin_large">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingBottom="@dimen/margin_normal"
+        android:paddingTop="@dimen/margin_normal">
+
+        <ImageView
+            android:id="@+id/iv_title"
+            android:layout_width="100dp"
+            android:layout_height="75dp"
+            android:scaleType="center" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/margin_normal">
+
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:textColor="@color/color_common_text"
+                android:textSize="@dimen/text_size_14" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true">
+
+                <TextView
+                    android:id="@+id/tv_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:textColor="@color/color_light_grey"
+                    android:textSize="@dimen/text_size_12" />
+
+                <TextView
+                    android:id="@+id/tv_view_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:gravity="end"
+                    android:textColor="@color/color_light_grey"
+                    android:textSize="@dimen/text_size_12" />
+            </RelativeLayout>
+        </RelativeLayout>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/slide_line_height"
+        android:background="@color/color_light_grey" />
+
+</LinearLayout>
