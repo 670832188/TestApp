@@ -4,6 +4,8 @@ import android.support.annotation.NonNull;
 
 import com.dev.kit.basemodule.util.LogUtil;
 
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -84,7 +86,7 @@ public class CommonInterceptor implements Interceptor {
         InputStream inputStream = buffer.inputStream();
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         byte[] bufferWrite = new byte[4096];
-        int n = 0;
+        int n;
         while (-1 != (n = inputStream.read(bufferWrite))) {
             output.write(bufferWrite, 0, n);
         }
@@ -92,19 +94,75 @@ public class CommonInterceptor implements Interceptor {
     }
 
     private Request rebuildRequest(Request request) throws IOException {
-        Request.Builder requestBuilder;
+        Request newRequest;
         if ("POST".equals(request.method())) {
-            RequestBody requestBody = rebuildBody(request);
-            requestBuilder = request.newBuilder().method(request.method(), requestBody);
+            newRequest = rebuildPostRequest(request);
+        } else if ("GET".equals(request.method())) {
+            newRequest = rebuildGetRequest(request);
         } else {
-            requestBuilder = request.newBuilder().method(request.method(), request.body());
+            newRequest = request;
         }
-        return requestBuilder.build();
+        LogUtil.e("requestUrl: " + newRequest.url().toString());
+        return newRequest;
     }
 
+    /**
+     * 对post请求添加统一参数
+     */
+    private Request rebuildPostRequest(Request request) {
+        if (commonParams == null || commonParams.size() == 0) {
+            return request;
+        }
+        RequestBody originalRequestBody = request.body();
+        assert originalRequestBody != null;
+        RequestBody newRequestBody;
+        if (originalRequestBody instanceof FormBody) { // 传统表单
+            FormBody.Builder builder = new FormBody.Builder();
+            FormBody requestBody = (FormBody) request.body();
+            int fieldSize = requestBody == null ? 0 : requestBody.size();
+            for (int i = 0; i < fieldSize; i++) {
+                builder.add(requestBody.name(i), requestBody.value(i));
+            }
+            for (String paramKey : commonParams.keySet()) {
+                builder.add(paramKey, commonParams.get(paramKey));
+            }
+            newRequestBody = builder.build();
+        } else if (originalRequestBody instanceof MultipartBody) { // 文件
+            MultipartBody requestBody = (MultipartBody) request.body();
+            MultipartBody.Builder multipartBodybuilder = new MultipartBody.Builder();
+            if (requestBody != null) {
+                for (int i = 0; i < requestBody.size(); i++) {
+                    multipartBodybuilder.addPart(requestBody.part(i));
+                }
+            }
+            for (String paramKey : commonParams.keySet()) {
+                multipartBodybuilder.addFormDataPart(paramKey, commonParams.get(paramKey));
+            }
+            newRequestBody = multipartBodybuilder.build();
+        } else {
+            try {
+                JSONObject jsonObject;
+                if (originalRequestBody.contentLength() == 0) {
+                    jsonObject = new JSONObject();
+                } else {
+                    jsonObject = new JSONObject(getParamContent(originalRequestBody));
+                }
+                for (String commonParamKey : commonParams.keySet()) {
+                    jsonObject.put(commonParamKey, commonParams.get(commonParamKey));
+                }
+                newRequestBody = RequestBody.create(originalRequestBody.contentType(), jsonObject.toString());
+                LogUtil.e(getParamContent(newRequestBody));
+
+            } catch (Exception e) {
+                newRequestBody = originalRequestBody;
+                e.printStackTrace();
+            }
+        }
+        return request.newBuilder().method(request.method(), newRequestBody).build();
+    }
 
     /**
-     * 获取请求参数
+     * 获取常规post请求参数
      */
     private String getParamContent(RequestBody body) throws IOException {
         Buffer buffer = new Buffer();
@@ -112,38 +170,23 @@ public class CommonInterceptor implements Interceptor {
         return buffer.readUtf8();
     }
 
-
     /**
-     * 请求统一添加小米人app的参数
+     * 对get请求做统一参数处理
      */
-    private RequestBody rebuildBody(Request request) {
-        RequestBody originalRequestBody = request.body();
-        if (originalRequestBody instanceof FormBody) {
-            FormBody.Builder builder = new FormBody.Builder();
-            FormBody requestBody = (FormBody) request.body();
-            int fieldSize = requestBody == null ? 0 : requestBody.size();
-            for (int i = 0; i < fieldSize; i++) {
-                builder.add(requestBody.name(i), requestBody.value(i));
-            }
-            if (commonParams != null && commonParams.size() > 0) {
-                for (String paramKey : commonParams.keySet()) {
-                    builder.add(paramKey, commonParams.get(paramKey));
-                }
-            }
-            return builder.build();
-        } else if (originalRequestBody instanceof MultipartBody) {
-            MultipartBody requestBody = (MultipartBody) request.body();
-            if (requestBody == null) {
-                return null;
-            }
-            MultipartBody.Builder multipartBodybuilder = new MultipartBody.Builder();
-            for (int i = 0; i < requestBody.size(); i++) {
-                multipartBodybuilder.addPart(requestBody.part(i));
-            }
-            return multipartBodybuilder.build();
-        } else {
-            return originalRequestBody;
+    private Request rebuildGetRequest(Request request) {
+        if (commonParams == null || commonParams.size() == 0) {
+            return request;
         }
+        String url = request.url().toString();
+        int separatorIndex = url.lastIndexOf("?");
+        StringBuilder sb = new StringBuilder(url);
+        if (separatorIndex == -1) {
+            sb.append("?");
+        }
+        for (String commonParamKey : commonParams.keySet()) {
+            sb.append("&").append(commonParamKey).append("=").append(commonParams.get(commonParamKey));
+        }
+        Request.Builder requestBuilder = request.newBuilder();
+        return requestBuilder.url(sb.toString()).build();
     }
-
 }

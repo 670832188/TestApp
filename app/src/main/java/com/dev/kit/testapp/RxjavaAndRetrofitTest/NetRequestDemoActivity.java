@@ -19,6 +19,7 @@ import com.dev.kit.basemodule.netRequest.model.BaseController;
 import com.dev.kit.basemodule.netRequest.subscribers.NetRequestCallback;
 import com.dev.kit.basemodule.netRequest.subscribers.NetRequestSubscriber;
 import com.dev.kit.basemodule.netRequest.util.BaseServiceUtil;
+import com.dev.kit.basemodule.netRequest.util.CommonInterceptor;
 import com.dev.kit.basemodule.util.EasyBlur;
 import com.dev.kit.basemodule.util.ImageUtil;
 import com.dev.kit.basemodule.util.MIUIHelper;
@@ -81,6 +82,8 @@ public class NetRequestDemoActivity extends BaseStateViewActivity {
         RecyclerView rvNews = findViewById(R.id.rv_news);
         rvNews.setLayoutManager(new LinearLayoutManager(this));
         rvNews.setAdapter(newsAdapter);
+        CommonInterceptor.updateOrInsertCommonParam("test1", "123");
+        CommonInterceptor.updateOrInsertCommonParam("test2", "456");
         getNews();
     }
 
