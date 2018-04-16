@@ -5,12 +5,12 @@
     <declare-styleable name="SessionReplyListView">
         <attr name="replierAndTargetTextColor" format="color" />
     </declare-styleable>
-    
+
     <declare-styleable name="ExpandTextView">
-        <attr name="defaultShownLines" format="integer"/>
-        <attr name="foldableTriggerTextColor" format="color"/>
-        <attr name="foldStateTriggerText" format="string"/>
-        <attr name="unfoldStateTriggerText" format="string"/>
+        <attr name="defaultShownLines" format="integer" />
+        <attr name="foldableTriggerTextColor" format="color" />
+        <attr name="foldStateTriggerText" format="string" />
+        <attr name="unfoldStateTriggerText" format="string" />
     </declare-styleable>
 
     <declare-styleable name="ChatView">
@@ -23,6 +23,30 @@
         </attr>
         <attr name="sendBtnBg" format="reference" />
         <attr name="sendBtnTextColor" format="color" />
+    </declare-styleable>
+
+
+    <declare-styleable name="RatingView">
+        <attr name="starsNum" format="integer" />
+        <attr name="starWidth" format="dimension" />
+        <attr name="starHeight" format="dimension" />
+        <attr name="starDistance" format="dimension" />
+        <attr name="starBackground" format="reference" />
+        <attr name="starDrawBackground" format="reference" />
+        <attr name="isIndicator" format="boolean" />
+        <!--默认星星数(可为小数)，取值范围[0-starNum]-->
+        <attr name="defaultStarNum" format="float" />
+        <!--每颗星星代表的分值-->
+        <attr name="valuePerStar" format="integer" />
+    </declare-styleable>
+
+    <declare-styleable name="CustomRadioGroup">
+        <attr name="orientation">
+            <enum name="Horizontal" value="0" />
+            <enum name="Vertical" value="1" />
+        </attr>
+        <attr name="checkedButton" format="integer" />
+
     </declare-styleable>
 
 </resources>

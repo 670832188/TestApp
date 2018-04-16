@@ -1,11 +1,17 @@
 <resources>
 
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+    <style name="BaseTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:typeface">serif</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
+    <style name="BaseTheme.AppTheme">
+        <item name="android:windowSoftInputMode">adjustResize</item>
+    </style>
+
+    <style name="BaseTheme.TranslucentStatusTheme">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowTranslucentStatus">true</item>
     </style>
 
     <style name="BaseDialogTheme" parent="@android:style/Theme.Dialog">
@@ -15,5 +21,46 @@
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:backgroundDimEnabled">false</item>
+    </style>
+
+    <!--字体style-->
+    <style name="text_style_smaller">
+        <item name="android:textSize">@dimen/text_size_smaller</item>
+        <item name="android:textColor">@color/color_common_text</item>
+    </style>
+
+    <style name="text_style_smaller_white">
+        <item name="android:textSize">@dimen/text_size_smaller</item>
+        <item name="android:textColor">@color/color_common_white</item>
+    </style>
+
+    <style name="text_style_small">
+        <item name="android:textSize">@dimen/text_size_small</item>
+        <item name="android:textColor">@color/color_common_text</item>
+    </style>
+
+    <style name="text_style_small_white">
+        <item name="android:textSize">@dimen/text_size_small</item>
+        <item name="android:textColor">@color/color_common_white</item>
+    </style>
+
+    <style name="text_style_normal">
+        <item name="android:textSize">@dimen/text_size_normal</item>
+        <item name="android:textColor">@color/color_common_text</item>
+    </style>
+
+    <style name="text_style_normal_white">
+        <item name="android:textSize">@dimen/text_size_normal</item>
+        <item name="android:textColor">@color/color_common_white</item>
+    </style>
+
+    <style name="text_style_large">
+        <item name="android:textSize">@dimen/text_size_large</item>
+        <item name="android:textColor">@color/color_common_text</item>
+    </style>
+
+    <style name="text_style_large_white">
+        <item name="android:textSize">@dimen/text_size_large</item>
+        <item name="android:textColor">@color/color_common_white</item>
     </style>
 </resources>

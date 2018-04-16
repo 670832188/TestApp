@@ -9,8 +9,8 @@
     <color name="color_common_text">#CC202332</color>
     <color name="color_common_text_grey">#80202332</color>
     <color name="color_common_text_light_grey">#4D202332</color>
-    <color name="common_line_color">#77BDBDBD</color>
+    <color name="common_line_color">#E1E1E1</color>
     <color name="common_divider_color">#F9F9F9</color>
-    <color name="color_blue">#CC578EFE</color>
+    <color name="color_blue">#506EE0</color>
 
 </resources>
