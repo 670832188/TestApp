@@ -2,8 +2,11 @@ package com.dev.kit.basemodule.surpport;
 
 import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
+import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
+
+import java.util.List;
 
 /**
  * CommonPagerAdapter
@@ -11,14 +14,15 @@ import android.view.ViewGroup;
  * Created by cy on 2018/4/10.
  */
 
-public class CommonPagerAdapter<T> extends PagerAdapter {
+public abstract class CommonPagerAdapter<T> extends PagerAdapter {
 
-    private CommonPagerAdapterFactory<T> pagerAdapterFactory;
+    private SparseArray<View> viewCache = new SparseArray<>();
+    private List<T> dataList;
     private OnItemClickListener onItemClickListener;
     private OnItemLongClickListener onItemLongClickListener;
 
-    public CommonPagerAdapter(@NonNull CommonPagerAdapterFactory<T> pagerAdapterFactory) {
-        this.pagerAdapterFactory = pagerAdapterFactory;
+    public CommonPagerAdapter(List<T> dataList) {
+        this.dataList = dataList;
     }
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
@@ -31,7 +35,7 @@ public class CommonPagerAdapter<T> extends PagerAdapter {
 
     @Override
     public int getCount() {
-        return pagerAdapterFactory.getPageCont();
+        return dataList == null ? 0 : dataList.size();
     }
 
     @Override
@@ -41,9 +45,8 @@ public class CommonPagerAdapter<T> extends PagerAdapter {
 
     @NonNull
     @Override
-    public Object instantiateItem(@NonNull ViewGroup container, final int position) {
-        View itemView = pagerAdapterFactory.getPageItemView(container, position);
-        container.addView(itemView);
+    public View instantiateItem(@NonNull ViewGroup container, final int position) {
+        View itemView = getItemView(container, position);
         if (onItemClickListener != null) {
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -63,6 +66,33 @@ public class CommonPagerAdapter<T> extends PagerAdapter {
         return itemView;
     }
 
+    /**
+     * 获取ViewPager itemView
+     * 若缓存中存在itemView则取之，不存在新生成
+     */
+    private View getItemView(@NonNull ViewGroup container, int position) {
+        View itemView = viewCache.get(position);
+        if (itemView == null) {
+            itemView = getPageItemView(container, position);
+            viewCache.put(position, itemView);
+        }
+        renderItemView(itemView, position);
+        container.addView(itemView);
+        return itemView;
+    }
+
+    /**
+     * 渲染itemView
+     */
+    public abstract void renderItemView(@NonNull View itemView, int position);
+
+    /**
+     * 获取itemView
+     * @see #getItemView(ViewGroup, int)
+     */
+    @NonNull
+    public abstract View getPageItemView(@NonNull ViewGroup container, final int position);
+
     @Override
     public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
         View view = (View) object;
@@ -70,7 +100,10 @@ public class CommonPagerAdapter<T> extends PagerAdapter {
     }
 
     public T getBindItemData(int position) {
-       return pagerAdapterFactory.getBindItemData(position);
+        if (dataList != null && dataList.size() > position && position >= 0) {
+            return dataList.get(position);
+        }
+        return null;
     }
 
     public interface OnItemClickListener {
