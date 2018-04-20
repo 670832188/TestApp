@@ -82,8 +82,6 @@ public class NetRequestDemoActivity extends BaseStateViewActivity {
         RecyclerView rvNews = findViewById(R.id.rv_news);
         rvNews.setLayoutManager(new LinearLayoutManager(this));
         rvNews.setAdapter(newsAdapter);
-        CommonInterceptor.updateOrInsertCommonParam("test1", "123");
-        CommonInterceptor.updateOrInsertCommonParam("test2", "456");
         getNews();
     }
 

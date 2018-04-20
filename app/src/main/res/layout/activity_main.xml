@@ -18,6 +18,16 @@
         android:text="网络请求组件测试" />
 
     <TextView
+        android:id="@+id/tv_upload_file"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_large"
+        android:background="@color/color_light_grey"
+        android:gravity="center"
+        android:padding="@dimen/margin_normal"
+        android:text="文件上传示例" />
+
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_large"
