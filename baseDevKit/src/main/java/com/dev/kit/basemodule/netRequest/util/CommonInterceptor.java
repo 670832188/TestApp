@@ -251,6 +251,12 @@ public class CommonInterceptor implements Interceptor {
                 e.printStackTrace();
             }
         }
+//        可根据需求添加或修改header,此处制作示意
+//       return request.newBuilder()
+//                .addHeader("header1", "header1")
+//                .addHeader("header2", "header2")
+//                .method(request.method(), newRequestBody)
+//                .build();
         return request.newBuilder().method(request.method(), newRequestBody).build();
     }
 
