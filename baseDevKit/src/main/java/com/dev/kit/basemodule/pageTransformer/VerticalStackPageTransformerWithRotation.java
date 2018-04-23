@@ -7,13 +7,13 @@ import android.view.View;
 
 import com.dev.kit.basemodule.util.DisplayUtil;
 
-public class VerticalStackPageTransformer implements ViewPager.PageTransformer {
+public class VerticalStackPageTransformerWithRotation implements ViewPager.PageTransformer {
 
     private static final float CENTER_PAGE_SCALE = 0.8f;
     private int offscreenPageLimit;
     private ViewPager boundViewPager;
 
-    public VerticalStackPageTransformer(ViewPager boundViewPager) {
+    public VerticalStackPageTransformerWithRotation(ViewPager boundViewPager) {
         this.boundViewPager = boundViewPager;
         offscreenPageLimit = boundViewPager.getOffscreenPageLimit();
     }
