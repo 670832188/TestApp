@@ -10,7 +10,8 @@ import android.widget.TextView;
 
 import com.dev.kit.basemodule.activity.BaseActivity;
 import com.dev.kit.basemodule.pageTransformer.HorizontalStackTransformerWithRotation;
-import com.dev.kit.basemodule.pageTransformer.VerticalStackPageTransformer;
+import com.dev.kit.basemodule.pageTransformer.StackPageTransformer;
+import com.dev.kit.basemodule.pageTransformer.VerticalStackPageTransformerWithRotation;
 import com.dev.kit.basemodule.surpport.CommonPagerAdapter;
 import com.dev.kit.testapp.R;
 
@@ -50,7 +51,8 @@ public class PagerTestActivity extends BaseActivity {
                 showToast("当前点击第" + (position + 1) + "项");
             }
         });
-        vpTest.setPageTransformer(false,  new VerticalStackPageTransformer(vpTest));
+
+        vpTest.setPageTransformer(false,  new VerticalStackPageTransformerWithRotation(vpTest));
         vpTest.setAdapter(adapter);
     }
 }

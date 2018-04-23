@@ -1,6 +1,7 @@
 package com.dev.kit.basemodule.pageTransformer;
 
 import android.support.annotation.NonNull;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.CardView;
 import android.view.View;
@@ -36,6 +37,7 @@ public class StackPageTransformer implements ViewPager.PageTransformer {
             view.setScaleX(CENTER_PAGE_SCALE - position * 0.1f);
             view.setScaleY(CENTER_PAGE_SCALE - position * 0.1f);
         }
-        ((CardView) view).setCardElevation((offscreenPageLimit - position) * 3);
+        ViewCompat.setElevation(view, (offscreenPageLimit - position) * 3);
+//        ((CardView) view).setCardElevation((offscreenPageLimit - position) * 3);
     }
 }

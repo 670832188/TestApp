@@ -37,6 +37,8 @@ public class VerticalStackPageTransformerWithRotation implements ViewPager.PageT
             float rotation = position * 30;
             view.setRotation(rotation);
             view.setAlpha((position * position * position + 1));
+        } else if (position > offscreenPageLimit - 1) {
+            view.setAlpha((float) (1 - position + Math.floor(position)));
         } else {
             view.setRotation(0);
             view.setAlpha(1);
@@ -45,8 +47,9 @@ public class VerticalStackPageTransformerWithRotation implements ViewPager.PageT
             view.setScaleX(CENTER_PAGE_SCALE);
             view.setScaleY(CENTER_PAGE_SCALE);
         } else {
-            view.setScaleX(CENTER_PAGE_SCALE - position * 0.1f);
-            view.setScaleY(CENTER_PAGE_SCALE - position * 0.1f);
+            float scaleFactor = Math.min(CENTER_PAGE_SCALE - position * 0.1f, CENTER_PAGE_SCALE);
+            view.setScaleX(scaleFactor);
+            view.setScaleY(scaleFactor);
         }
         ViewCompat.setElevation(view, (offscreenPageLimit - position) * 5);
 //        ((CardView) view).setCardElevation((offscreenPageLimit - position) * 3);
