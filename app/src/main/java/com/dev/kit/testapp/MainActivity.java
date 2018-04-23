@@ -20,6 +20,7 @@ import com.dev.kit.basemodule.util.FileUtil;
 import com.dev.kit.basemodule.util.LogUtil;
 import com.dev.kit.testapp.RxjavaAndRetrofitTest.ApiService;
 import com.dev.kit.testapp.RxjavaAndRetrofitTest.NetRequestDemoActivity;
+import com.dev.kit.testapp.pagerTest.PagerTestActivity;
 
 import java.io.File;
 import java.util.Random;
@@ -41,6 +42,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private void init() {
         setOnClickListener(R.id.tv_net_test, this);
         setOnClickListener(R.id.tv_upload_file, this);
+        setOnClickListener(R.id.tv_vp_test, this);
     }
 
 
@@ -87,6 +89,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 } else {
                     requestPermission();
                 }
+                break;
+            }
+            case R.id.tv_vp_test: {
+                startActivity(new Intent(MainActivity.this, PagerTestActivity.class));
                 break;
             }
         }
