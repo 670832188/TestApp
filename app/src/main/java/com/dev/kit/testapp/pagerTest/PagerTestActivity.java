@@ -40,6 +40,11 @@ public class PagerTestActivity extends BaseActivity {
                 ((TextView) itemView).setText("第" + (position + 1) + "页面");
                 int color = getResources().getColor(getBindItemData(position));
                 GradientDrawable drawable = (GradientDrawable) itemView.getBackground();
+                if (drawable == null) {
+                    drawable = new GradientDrawable();
+                    itemView.setBackground(drawable);
+                }
+                drawable.setCornerRadius(DisplayUtil.dp2px(5));
                 drawable.setStroke(DisplayUtil.dp2px(5), getResources().getColor(R.color.color_light_grey));
                 drawable.setColor(color);
             }
