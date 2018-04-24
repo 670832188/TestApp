@@ -59,7 +59,7 @@ public class HorizontalStackTransformerWithRotation implements ViewPager.PageTra
 
         // test code: view初始化时，设置了tag
         String tag = (String) view.getTag();
-        LogUtil.e("viewTag" + tag, "viewTag: " + (String) view.getTag() + " --- transformerPosition: " + position);
+        LogUtil.e("viewTag" + tag, "viewTag: " + (String) view.getTag() + " --- transformerPosition: " + position + " --- floor: " + Math.floor(position));
         ViewCompat.setElevation(view, (offscreenPageLimit - position) * 5);
     }
 }
