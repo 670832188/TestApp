@@ -7,5 +7,5 @@
     <android.support.v4.view.ViewPager
         android:id="@+id/vp_test"
         android:layout_width="match_parent"
-        android:layout_height="360dp" />
+        android:layout_height="280dp" />
 </LinearLayout>
