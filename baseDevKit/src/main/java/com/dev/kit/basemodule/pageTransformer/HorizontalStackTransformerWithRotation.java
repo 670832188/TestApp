@@ -6,7 +6,6 @@ import android.support.v4.view.ViewPager;
 import android.view.View;
 
 import com.dev.kit.basemodule.util.DisplayUtil;
-import com.dev.kit.basemodule.util.LogUtil;
 
 /**
  * 层叠式ViewPager PageTransformer
@@ -59,7 +58,7 @@ public class HorizontalStackTransformerWithRotation implements ViewPager.PageTra
 
         // test code: view初始化时，设置了tag
         String tag = (String) view.getTag();
-        LogUtil.e("viewTag" + tag, "viewTag: " + (String) view.getTag() + " --- transformerPosition: " + position + " --- floor: " + Math.floor(position));
+//        LogUtil.e("viewTag" + tag, "viewTag: " + (String) view.getTag() + " --- transformerPosition: " + position + " --- floor: " + Math.floor(position) + " --- childCount: "+ boundViewPager.getChildCount());
         ViewCompat.setElevation(view, (offscreenPageLimit - position) * 5);
     }
 }
