@@ -49,8 +49,7 @@ public class NetRequestSubscriber<T> implements Observer<T> {
             progressDialog = NetProgressDialog.getInstance(context, progressTip, new OnNetProgressCancelListener() {
                 @Override
                 public void onCancelRequest() {
-                    dismissProgress();
-                    netRequestCallback.onFinish();
+                    cancelRequest();
                 }
             });
         }
