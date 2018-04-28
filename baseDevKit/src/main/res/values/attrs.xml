@@ -49,4 +49,11 @@
 
     </declare-styleable>
 
+    <declare-styleable name="CircleCountDownView">
+        <!--控件中间图片资源-->
+        <attr name="centerImgSrc" format="reference" />
+        <attr name="circleBgColor" format="color" />
+        <attr name="circleBorderWidth" format="dimension" />
+    </declare-styleable>
+
 </resources>

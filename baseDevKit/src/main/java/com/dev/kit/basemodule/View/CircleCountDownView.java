@@ -1,34 +1,49 @@
-package com.dev.kit.testapp.view;
+package com.dev.kit.basemodule.View;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.BitmapShader;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Shader;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
 
+import com.dev.kit.basemodule.R;
 import com.dev.kit.basemodule.util.DisplayUtil;
-import com.dev.kit.testapp.R;
+import com.dev.kit.basemodule.util.ImageUtil;
 
+/**
+ * 圆形倒计时控件，圆形及背景图片将绘制在控件中央
+ * 默认背景图片绘制区域大小与圆形大小之间的比例为90%
+ * Created by cuiyan on 2018/4/28.
+ */
 public class CircleCountDownView extends View {
     private OnCountDownFinishListener onCountDownFinishListener;
-    private int circleRadius;
+
+    // 中间图片大小与控件大小之间的比例
     private int width;
     private int height;
+    private int borderWidth;
     // 相邻时间节点倒计时的执行进度(取值0到1)
     private float timeProgress;
     private int initialCountDownValue;
     private int currentCountDownValue;
-    private Paint paint;
-    private Matrix matrix;
-    private Bitmap circleBitmap;
+
+    private Paint circleBgPaint;
+    private Paint circleImgPaint;
+    private Matrix circleImgMatrix;
+    private Bitmap circleImgBitmap;
+    private int circleImgRadius;
+    private BitmapShader circleImgBitmapShader;
     private Paint textPaint;
     private float textSize = DisplayUtil.dp2px(12);
 
@@ -44,18 +59,25 @@ public class CircleCountDownView extends View {
 
     public CircleCountDownView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init();
+        init(attrs);
     }
 
-    private void init() {
-        paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paint.setStyle(Paint.Style.FILL);
-        matrix = new Matrix();
-        circleBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_praise);
+    private void init(AttributeSet attrs) {
+        circleBgPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        circleBgPaint.setStyle(Paint.Style.FILL);
+        circleImgPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        circleImgPaint.setStyle(Paint.Style.FILL);
+        circleImgMatrix = new Matrix();
         textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         textPaint.setColor(Color.WHITE);
         countDownAnimator = ValueAnimator.ofFloat(0, 1).setDuration(1000);
-        Paint.FontMetrics fontMetrics = textPaint.getFontMetrics();
+
+        TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.CircleCountDownView);
+        int centerImgSrc = typedArray.getResourceId(R.styleable.CircleCountDownView_centerImgSrc, R.mipmap.ic_radar);
+        circleImgBitmap = ImageUtil.cropSquareBitmap(BitmapFactory.decodeResource(getResources(), centerImgSrc));
+        circleBgPaint.setColor(typedArray.getColor(R.styleable.CircleCountDownView_circleBgColor, Color.WHITE));
+        borderWidth = typedArray.getDimensionPixelSize(R.styleable.CircleCountDownView_circleBorderWidth, 0);
+        typedArray.recycle();
     }
 
     public void setStartCountValue(int initialCountDownValue) {
@@ -118,24 +140,23 @@ public class CircleCountDownView extends View {
         height = getMeasuredHeight();
 //
         if (width > 0 && height > 0) {
-            matrix.reset();
-            int circleDesiredDrawingWH = Math.min(circleBitmap.getWidth(), circleBitmap.getHeight());
-            if (circleDesiredDrawingWH > Math.min(width, height)) {
-                float circleDrawingScale = (float) Math.min(width, height) / circleDesiredDrawingWH;
-                matrix.setScale(circleDrawingScale, circleDrawingScale);
-            } else {
-                int translationX = (width - circleDesiredDrawingWH) / 2;
-                int translationY = (height - circleDesiredDrawingWH) / 2;
-                matrix.setTranslate(translationX, translationY);
-            }
-//            int circleDrawingWH = Math.min(Math.min(width, height), circleDesiredDrawingWH);
-//            float circleDrawingScale = (float) Math.min(width, height) / circleDrawingWH;
-//            int translationX = (width - circleDrawingWH) / 2;
-//            int translationY = (height - circleDrawingWH) / 2;
-//            matrix.reset();
-//            matrix.setScale(circleDrawingScale, circleDrawingScale);
-//            matrix.preTranslate(translationX > 0 ? translationX : 0, translationY > 0 ? translationY : 0);
+            resizeCircleImg();
         }
+    }
+
+    private void resizeCircleImg() {
+        circleImgMatrix.reset();
+        circleImgRadius = (Math.min(width, height) - borderWidth) / 2;
+        int circleDesiredDrawingWH = Math.min(width, height) - 2 * borderWidth;
+        int actualCircleImgBitmapWH = circleImgBitmap.getWidth();
+        float circleDrawingScale = (float) (Math.min(width, height) - 2 * borderWidth) / actualCircleImgBitmapWH;
+        Matrix matrix = new Matrix();
+        matrix.setScale(circleDrawingScale, circleDrawingScale, actualCircleImgBitmapWH / 2, actualCircleImgBitmapWH / 2);
+        circleImgBitmap = Bitmap.createBitmap(circleImgBitmap, 0, 0, (int) circleImgBitmap.getWidth(), (int) circleImgBitmap.getHeight(), matrix, true);
+        circleImgBitmapShader = new BitmapShader(circleImgBitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
+        int translationX = (width - circleDesiredDrawingWH) / 2;
+        int translationY = (height - circleDesiredDrawingWH) / 2;
+        circleImgMatrix.setTranslate(translationX, translationY);
     }
 
     private float lastTimeProcess;
@@ -147,10 +168,15 @@ public class CircleCountDownView extends View {
         }
         int centerX = width / 2;
         int centerY = height / 2;
-        canvas.drawCircle(centerX, centerY, Math.min(width, height) / 2, paint);
-        matrix.postRotate((timeProgress - lastTimeProcess) * 360, centerX, centerY);
+        circleImgMatrix.postRotate((timeProgress - lastTimeProcess) * 360, centerX, centerY);
+        circleImgBitmapShader.setLocalMatrix(circleImgMatrix);
+        circleImgPaint.setShader(circleImgBitmapShader);
+        if (borderWidth > 0) {
+            canvas.drawCircle(centerX, centerY, Math.min(width, height) / 2, circleBgPaint);
+        }
+        canvas.drawCircle(centerX, centerY, circleImgRadius, circleImgPaint);
         lastTimeProcess = timeProgress;
-        canvas.drawBitmap(circleBitmap, matrix, paint);
+
 
         // 绘制倒计时时间
         // current

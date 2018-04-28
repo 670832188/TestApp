@@ -10,6 +10,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 
+import com.dev.kit.basemodule.View.CircleCountDownView;
 import com.dev.kit.basemodule.activity.BaseActivity;
 import com.dev.kit.basemodule.netRequest.model.BaseController;
 import com.dev.kit.basemodule.netRequest.subscribers.NetRequestCallback;
@@ -21,7 +22,6 @@ import com.dev.kit.basemodule.util.LogUtil;
 import com.dev.kit.testapp.RxjavaAndRetrofitTest.ApiService;
 import com.dev.kit.testapp.RxjavaAndRetrofitTest.NetRequestDemoActivity;
 import com.dev.kit.testapp.pagerTest.PagerTestActivity;
-import com.dev.kit.testapp.view.CircleCountDownView;
 
 import java.io.File;
 import java.util.Random;
