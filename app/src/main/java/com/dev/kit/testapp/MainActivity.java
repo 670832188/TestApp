@@ -21,6 +21,7 @@ import com.dev.kit.basemodule.util.LogUtil;
 import com.dev.kit.testapp.RxjavaAndRetrofitTest.ApiService;
 import com.dev.kit.testapp.RxjavaAndRetrofitTest.NetRequestDemoActivity;
 import com.dev.kit.testapp.pagerTest.PagerTestActivity;
+import com.dev.kit.testapp.view.CircleCountDownView;
 
 import java.io.File;
 import java.util.Random;
@@ -31,6 +32,7 @@ import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 
 public class MainActivity extends BaseActivity implements View.OnClickListener {
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +45,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         setOnClickListener(R.id.tv_net_test, this);
         setOnClickListener(R.id.tv_upload_file, this);
         setOnClickListener(R.id.tv_vp_test, this);
+        CircleCountDownView countDownView = findViewById(R.id.view_count);
+        countDownView.setStartCountValue(10);
+        countDownView.setOnCountDownFinishListener(new CircleCountDownView.OnCountDownFinishListener() {
+            @Override
+            public void onCountDownFinish() {
+
+            }
+        });
+        countDownView.startCountDown();
     }
 
 

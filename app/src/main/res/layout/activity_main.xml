@@ -37,4 +37,11 @@
         android:padding="@dimen/margin_normal"
         android:text="test viewPager!" />
 
+    <com.dev.kit.testapp.view.CircleCountDownView
+        android:id="@+id/view_count"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp" />
+
 </LinearLayout>
