@@ -45,7 +45,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         setOnClickListener(R.id.tv_net_test, this);
         setOnClickListener(R.id.tv_upload_file, this);
         setOnClickListener(R.id.tv_vp_test, this);
-        
         CircleCountDownView countDownView = findViewById(R.id.view_count);
         countDownView.setStartCountValue(10);
         countDownView.setOnCountDownFinishListener(new CircleCountDownView.OnCountDownFinishListener() {
