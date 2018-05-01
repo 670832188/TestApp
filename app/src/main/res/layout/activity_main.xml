@@ -38,8 +38,9 @@
         android:text="test viewPager!" />
 
     <com.dev.kit.basemodule.View.CircleCountDownView
-        app:circleBorderWidth="5dp"
-        app:circleBgColor="@color/color_blue"
+        android:background="@color/color_blue"
+        app:circleBorderWidth="@dimen/margin_normal"
+        app:circleBorderColor="@color/color_orange"
         android:id="@+id/view_count"
         android:layout_width="240dp"
         android:layout_height="240dp"
