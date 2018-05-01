@@ -51,12 +51,17 @@
 
     <declare-styleable name="CircleCountDownView">
         <!--控件中间图片资源-->
-        <attr name="centerImgSrc" format="reference" />
+        <attr name="circleImgSrc" format="reference" />
         <attr name="circleBorderColor" format="color" />
         <attr name="circleBorderWidth" format="dimension" />
         <attr name="valueTextSize" format="dimension" />
-        <attr name="valueTextColor" format="color"/>
-        <attr name="padding" format="dimension"/>
+        <attr name="valueTextColor" format="color" />
+        <attr name="padding" format="dimension" />
+        <attr name="showProgress" format="boolean" />
+        <attr name="processColorStart" format="color" />
+        <attr name="processColorMiddle" format="color" />
+        <attr name="processColorEnd" format="color" />
+        <attr name="processBlurMaskRadius" format="dimension" />
     </declare-styleable>
 
 </resources>

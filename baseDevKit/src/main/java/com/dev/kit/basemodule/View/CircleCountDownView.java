@@ -27,6 +27,8 @@ import com.dev.kit.basemodule.util.ImageUtil;
 
 /**
  * 圆形倒计时控件，圆形及背景图片将绘制在控件中央
+ * 可设置border及是否显示整体进度
+ * 若设置显示整体进度，则需要在xml中同步设置circleBorderWidth
  * Created by cuiyan on 2018/4/28.
  */
 public class CircleCountDownView extends View {
@@ -36,9 +38,14 @@ public class CircleCountDownView extends View {
     private int height;
     private int padding;
     private int borderWidth;
-    // 相邻时间节点倒计时的执行进度(取值0到1)
-    private float timeProgress;
+    // 当前时间节点到下一时间节点的执行进度(取值0到1)
+    private float currentTimePointProgress;
+    private boolean showProgress;
     private float totalTimeProgress;
+    private int processColorStart;
+    private int processColorEnd;
+    private int processBlurMaskRadius;
+
     private int initialCountDownValue;
     private int currentCountDownValue;
 
@@ -70,10 +77,6 @@ public class CircleCountDownView extends View {
     }
 
     private void init(AttributeSet attrs) {
-        circleBorderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        circleBorderPaint.setStyle(Paint.Style.STROKE);
-        circleProcessPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        circleProcessPaint.setStyle(Paint.Style.STROKE);
         circleImgPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         circleImgPaint.setStyle(Paint.Style.FILL);
         circleImgMatrix = new Matrix();
@@ -84,12 +87,26 @@ public class CircleCountDownView extends View {
 
         padding = typedArray.getDimensionPixelSize(R.styleable.CircleCountDownView_padding, DisplayUtil.dp2px(5));
         borderWidth = typedArray.getDimensionPixelSize(R.styleable.CircleCountDownView_circleBorderWidth, 0);
-        circleBorderPaint.setStrokeWidth(borderWidth);
-        circleBorderPaint.setColor(typedArray.getColor(R.styleable.CircleCountDownView_circleBorderColor, Color.WHITE));
-        circleProcessPaint.setStrokeWidth(borderWidth);
+        if (borderWidth > 0) {
+            circleBorderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            circleBorderPaint.setStyle(Paint.Style.STROKE);
+            circleBorderPaint.setStrokeWidth(borderWidth);
+            circleBorderPaint.setColor(typedArray.getColor(R.styleable.CircleCountDownView_circleBorderColor, Color.WHITE));
 
-        int centerImgSrc = typedArray.getResourceId(R.styleable.CircleCountDownView_centerImgSrc, R.mipmap.ic_radar);
-        circleImgBitmap = ImageUtil.cropSquareBitmap(BitmapFactory.decodeResource(getResources(), centerImgSrc));
+            showProgress = typedArray.getBoolean(R.styleable.CircleCountDownView_showProgress, false);
+            if (showProgress) {
+                circleProcessPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+                circleProcessPaint.setStyle(Paint.Style.STROKE);
+                circleProcessPaint.setStrokeWidth(borderWidth);
+                processColorStart = typedArray.getColor(R.styleable.CircleCountDownView_processColorStart, Color.parseColor("#00ffff"));
+                processColorEnd = typedArray.getColor(R.styleable.CircleCountDownView_processColorEnd, Color.parseColor("#35adc6"));
+                processBlurMaskRadius = typedArray.getDimensionPixelSize(R.styleable.CircleCountDownView_processBlurMaskRadius, DisplayUtil.dp2px(5));
+            }
+        }
+
+
+        int circleImgSrc = typedArray.getResourceId(R.styleable.CircleCountDownView_circleImgSrc, R.mipmap.ic_radar);
+        circleImgBitmap = ImageUtil.cropSquareBitmap(BitmapFactory.decodeResource(getResources(), circleImgSrc));
 
         valueTextPaint.setColor(typedArray.getColor(R.styleable.CircleCountDownView_valueTextColor, Color.WHITE));
         valueTextPaint.setTextSize(typedArray.getDimensionPixelSize(R.styleable.CircleCountDownView_valueTextSize, DisplayUtil.dp2px(13)));
@@ -117,7 +134,6 @@ public class CircleCountDownView extends View {
         this.onCountDownFinishListener = onCountDownFinishListener;
     }
 
-    float lastInput;
 
     public void startCountDown() {
         if (countDownAnimator.isPaused()) {
@@ -131,7 +147,8 @@ public class CircleCountDownView extends View {
                 @Override
                 public void onAnimationUpdate(ValueAnimator animation) {
                     totalTimeProgress = (initialCountDownValue - currentCountDownValue + (float) animation.getAnimatedValue()) / initialCountDownValue;
-                    timeProgress = (float) animation.getAnimatedValue();
+                    currentTimePointProgress = (float) animation.getAnimatedValue();
+                    currentTimePointProgress *= currentTimePointProgress;
                     invalidate();
                 }
             });
@@ -185,8 +202,10 @@ public class CircleCountDownView extends View {
             float right = left + circleProgressWH;
             float bottom = top + circleProgressWH;
             circleProgressRectF = new RectF(left, top, right, bottom);
-            circleProcessPaint.setShader(new LinearGradient(left, top, left + circleImgRadius * 2, top + circleImgRadius * 2, Color.BLUE, Color.GREEN, Shader.TileMode.MIRROR));
-            circleProcessPaint.setMaskFilter(new BlurMaskFilter(15, BlurMaskFilter.Blur.SOLID));//设置发光
+            if (showProgress) {
+                circleProcessPaint.setShader(new LinearGradient(left, top, left + circleImgRadius * 2, top + circleImgRadius * 2, processColorStart, processColorEnd, Shader.TileMode.MIRROR));
+                circleProcessPaint.setMaskFilter(new BlurMaskFilter(processBlurMaskRadius, BlurMaskFilter.Blur.SOLID)); // 设置进度条阴影效果
+            }
         }
     }
 
@@ -199,16 +218,18 @@ public class CircleCountDownView extends View {
         }
         int centerX = width / 2;
         int centerY = height / 2;
-        circleImgMatrix.postRotate((timeProgress - lastTimeProcess) * 360, centerX, centerY);
+        circleImgMatrix.postRotate((currentTimePointProgress - lastTimeProcess) * 360, centerX, centerY);
         circleImgBitmapShader.setLocalMatrix(circleImgMatrix);
         circleImgPaint.setShader(circleImgBitmapShader);
         if (borderWidth > 0) {
             canvas.drawCircle(centerX, centerY, Math.min(width, height) / 2 - borderWidth / 2 - padding, circleBorderPaint);
-            canvas.drawArc(circleProgressRectF, 0, 360 * totalTimeProgress, true, circleProcessPaint);
+            if (showProgress) {
+                canvas.drawArc(circleProgressRectF, 0, 360 * totalTimeProgress, false, circleProcessPaint);
+            }
 
         }
         canvas.drawCircle(centerX, centerY, circleImgRadius, circleImgPaint);
-        lastTimeProcess = timeProgress;
+        lastTimeProcess = currentTimePointProgress;
 
 
         // 绘制倒计时时间
@@ -218,8 +239,8 @@ public class CircleCountDownView extends View {
         float x = centerX - textWidth / 2;
         Paint.FontMetrics fontMetrics = valueTextPaint.getFontMetrics();
         float verticalBaseline = (height - fontMetrics.bottom - fontMetrics.top) / 2;
-        float y = verticalBaseline - timeProgress * (centerY);
-        valueTextPaint.setAlpha((int) (255 - timeProgress * 255));
+        float y = verticalBaseline - currentTimePointProgress * (centerY);
+        valueTextPaint.setAlpha((int) (255 - currentTimePointProgress * 255));
         canvas.drawText(currentTimePoint, x, y, valueTextPaint);
 
         // next
@@ -227,7 +248,7 @@ public class CircleCountDownView extends View {
         textWidth = valueTextPaint.measureText(nextTimePoint);
         x = centerX - textWidth / 2;
         y = y + height / 2;
-        valueTextPaint.setAlpha((int) (timeProgress * 255));
+        valueTextPaint.setAlpha((int) (currentTimePointProgress * 255));
         canvas.drawText(nextTimePoint, x, y, valueTextPaint);
     }
 
