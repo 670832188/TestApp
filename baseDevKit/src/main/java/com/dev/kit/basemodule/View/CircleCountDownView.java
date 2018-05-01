@@ -2,7 +2,6 @@ package com.dev.kit.basemodule.View;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -131,7 +130,7 @@ public class CircleCountDownView extends View {
             countDownAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 @Override
                 public void onAnimationUpdate(ValueAnimator animation) {
-                    totalTimeProgress = (initialCountDownValue - currentCountDownValue + animation.getAnimatedFraction()) / initialCountDownValue;
+                    totalTimeProgress = (initialCountDownValue - currentCountDownValue + (float) animation.getAnimatedValue()) / initialCountDownValue;
                     timeProgress = (float) animation.getAnimatedValue();
                     invalidate();
                 }
