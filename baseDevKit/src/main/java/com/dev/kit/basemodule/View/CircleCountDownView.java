@@ -2,6 +2,7 @@ package com.dev.kit.basemodule.View;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -19,6 +20,7 @@ import android.graphics.Shader;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.animation.LinearInterpolator;
 
 import com.dev.kit.basemodule.R;
 import com.dev.kit.basemodule.util.DisplayUtil;
@@ -37,6 +39,7 @@ public class CircleCountDownView extends View {
     private int borderWidth;
     // 相邻时间节点倒计时的执行进度(取值0到1)
     private float timeProgress;
+    private float totalTimeProgress;
     private int initialCountDownValue;
     private int currentCountDownValue;
 
@@ -115,16 +118,20 @@ public class CircleCountDownView extends View {
         this.onCountDownFinishListener = onCountDownFinishListener;
     }
 
+    float lastInput;
+
     public void startCountDown() {
         if (countDownAnimator.isPaused()) {
             countDownAnimator.resume();
             return;
         }
         if (currentCountDownValue > 0) {
+            countDownAnimator.setInterpolator(new LinearInterpolator());
             countDownAnimator.setRepeatCount(currentCountDownValue - 1);
             countDownAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 @Override
                 public void onAnimationUpdate(ValueAnimator animation) {
+                    totalTimeProgress = (initialCountDownValue - currentCountDownValue + animation.getAnimatedFraction()) / initialCountDownValue;
                     timeProgress = (float) animation.getAnimatedValue();
                     invalidate();
                 }
@@ -198,7 +205,7 @@ public class CircleCountDownView extends View {
         circleImgPaint.setShader(circleImgBitmapShader);
         if (borderWidth > 0) {
             canvas.drawCircle(centerX, centerY, Math.min(width, height) / 2 - borderWidth / 2 - padding, circleBorderPaint);
-            canvas.drawArc(circleProgressRectF, 0, 360, false, circleProcessPaint);
+            canvas.drawArc(circleProgressRectF, 0, 360 * totalTimeProgress, true, circleProcessPaint);
 
         }
         canvas.drawCircle(centerX, centerY, circleImgRadius, circleImgPaint);
