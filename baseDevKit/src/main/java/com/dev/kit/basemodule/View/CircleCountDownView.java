@@ -120,8 +120,8 @@ public class CircleCountDownView extends View {
         countDownAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
-                long restTime = (long) ((currentCountDownValue - animation.getAnimatedFraction()) * 1000);
                 if (countDownListener != null) {
+                    long restTime = (long) ((currentCountDownValue - animation.getAnimatedFraction()) * 1000);
                     countDownListener.restTime(restTime);
                 }
                 totalTimeProgress = (initialCountDownValue - currentCountDownValue + animation.getAnimatedFraction()) / initialCountDownValue;
