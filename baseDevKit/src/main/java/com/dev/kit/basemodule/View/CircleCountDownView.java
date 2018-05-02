@@ -58,6 +58,8 @@ public class CircleCountDownView extends View {
     private Bitmap circleImgBitmap;
     private int circleImgRadius;
     private BitmapShader circleImgBitmapShader;
+    private float circleImgTranslationX;
+    private float circleImgTranslationY;
     private Paint valueTextPaint;
 
     private ValueAnimator countDownAnimator;
@@ -153,7 +155,14 @@ public class CircleCountDownView extends View {
         totalTimeProgress = 0;
         currentTimePointProgress = 0;
         currentCountDownValue = initialCountDownValue;
+        circleImgMatrix.setTranslate(circleImgTranslationX, circleImgTranslationY);
+        circleImgMatrix.postRotate(0, width / 2, height / 2);
         invalidate();
+    }
+
+    public void restart() {
+        reset();
+        startCountDown();
     }
 
     public void pause() {
@@ -194,11 +203,11 @@ public class CircleCountDownView extends View {
         float circleDrawingScale = circleImgRadius * 2 / actualCircleImgBitmapWH;
         Matrix matrix = new Matrix();
         matrix.setScale(circleDrawingScale, circleDrawingScale, actualCircleImgBitmapWH / 2, actualCircleImgBitmapWH / 2);
-        circleImgBitmap = Bitmap.createBitmap(circleImgBitmap, 0, 0, (int) circleImgBitmap.getWidth(), (int) circleImgBitmap.getHeight(), matrix, true);
+        circleImgBitmap = Bitmap.createBitmap(circleImgBitmap, 0, 0, circleImgBitmap.getWidth(), circleImgBitmap.getHeight(), matrix, true);
         circleImgBitmapShader = new BitmapShader(circleImgBitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
-        float translationX = (width - circleImgRadius * 2) / 2;
-        float translationY = (height - circleImgRadius * 2) / 2;
-        circleImgMatrix.setTranslate(translationX, translationY);
+        circleImgTranslationX = (width - circleImgRadius * 2) / 2;
+        circleImgTranslationY = (height - circleImgRadius * 2) / 2;
+        circleImgMatrix.setTranslate(circleImgTranslationX, circleImgTranslationX);
 
         if (borderWidth > 0) {
             // 外层进度条宽度（注意：需要减掉画笔宽度）

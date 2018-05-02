@@ -109,8 +109,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 break;
             }
             case R.id.tv_restart: {
-                countDownView.reset();
-                countDownView.startCountDown();
+                countDownView.restart();
             }
         }
     }
