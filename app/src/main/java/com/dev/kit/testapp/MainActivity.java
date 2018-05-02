@@ -33,6 +33,7 @@ import okhttp3.RequestBody;
 
 public class MainActivity extends BaseActivity implements View.OnClickListener {
 
+    private CircleCountDownView countDownView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +46,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         setOnClickListener(R.id.tv_net_test, this);
         setOnClickListener(R.id.tv_upload_file, this);
         setOnClickListener(R.id.tv_vp_test, this);
-        CircleCountDownView countDownView = findViewById(R.id.view_count);
+        setOnClickListener(R.id.tv_restart, this);
+        countDownView = findViewById(R.id.view_count);
         countDownView.setStartCountValue(10);
         countDownView.setOnCountDownFinishListener(new CircleCountDownView.OnCountDownFinishListener() {
             @Override
@@ -105,6 +107,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             case R.id.tv_vp_test: {
                 startActivity(new Intent(MainActivity.this, PagerTestActivity.class));
                 break;
+            }
+            case R.id.tv_restart: {
+                countDownView.reset();
+                countDownView.startCountDown();
             }
         }
     }

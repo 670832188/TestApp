@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     tools:context="com.dev.kit.testapp.MainActivity">
 
@@ -37,14 +37,31 @@
         android:padding="@dimen/margin_normal"
         android:text="test viewPager!" />
 
-    <com.dev.kit.basemodule.View.CircleCountDownView
-        android:background="@color/color_blue"
-        app:circleBorderWidth="@dimen/margin_normal"
-        app:circleBorderColor="@color/color_orange"
-        android:id="@+id/view_count"
-        android:layout_width="240dp"
-        android:layout_height="240dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="20dp" />
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp">
+
+        <com.dev.kit.basemodule.View.CircleCountDownView
+            android:id="@+id/view_count"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginStart="@dimen/margin_large"
+            app:circleBorderColor="@color/color_light_grey"
+            app:circleBorderWidth="@dimen/margin_small"
+            app:showProgress="true" />
+
+        <TextView
+            android:id="@+id/tv_restart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="@dimen/margin_large"
+            android:padding="@dimen/margin_normal"
+            android:text="重置"
+            android:textSize="16sp" />
+    </RelativeLayout>
+
 
 </LinearLayout>

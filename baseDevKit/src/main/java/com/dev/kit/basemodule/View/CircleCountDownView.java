@@ -112,16 +112,46 @@ public class CircleCountDownView extends View {
         valueTextPaint.setTextSize(typedArray.getDimensionPixelSize(R.styleable.CircleCountDownView_valueTextSize, DisplayUtil.dp2px(13)));
 
         typedArray.recycle();
+
+        // 初始化属性动画
+        countDownAnimator.setInterpolator(new LinearInterpolator());
+        countDownAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                totalTimeProgress = (initialCountDownValue - currentCountDownValue + (float) animation.getAnimatedValue()) / initialCountDownValue;
+                currentTimePointProgress = (float) animation.getAnimatedValue();
+                currentTimePointProgress *= currentTimePointProgress;
+                invalidate();
+            }
+        });
+        countDownAnimator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+                currentCountDownValue--;
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                if (onCountDownFinishListener != null) {
+                    onCountDownFinishListener.onCountDownFinish();
+                }
+            }
+        });
     }
 
     public void setStartCountValue(int initialCountDownValue) {
         this.initialCountDownValue = initialCountDownValue;
         this.currentCountDownValue = initialCountDownValue;
+        countDownAnimator.setRepeatCount(currentCountDownValue - 1);
         invalidate();
     }
 
+    // 重置
     public void reset() {
         countDownAnimator.cancel();
+        lastTimeProcess = 0;
+        totalTimeProgress = 0;
+        currentTimePointProgress = 0;
         currentCountDownValue = initialCountDownValue;
         invalidate();
     }
@@ -134,37 +164,13 @@ public class CircleCountDownView extends View {
         this.onCountDownFinishListener = onCountDownFinishListener;
     }
 
-
+    //  启动倒计时
     public void startCountDown() {
         if (countDownAnimator.isPaused()) {
             countDownAnimator.resume();
             return;
         }
         if (currentCountDownValue > 0) {
-            countDownAnimator.setInterpolator(new LinearInterpolator());
-            countDownAnimator.setRepeatCount(currentCountDownValue - 1);
-            countDownAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                @Override
-                public void onAnimationUpdate(ValueAnimator animation) {
-                    totalTimeProgress = (initialCountDownValue - currentCountDownValue + (float) animation.getAnimatedValue()) / initialCountDownValue;
-                    currentTimePointProgress = (float) animation.getAnimatedValue();
-                    currentTimePointProgress *= currentTimePointProgress;
-                    invalidate();
-                }
-            });
-            countDownAnimator.addListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationRepeat(Animator animation) {
-                    currentCountDownValue--;
-                }
-
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    if (onCountDownFinishListener != null) {
-                        onCountDownFinishListener.onCountDownFinish();
-                    }
-                }
-            });
             countDownAnimator.start();
         } else if (onCountDownFinishListener != null) {
             onCountDownFinishListener.onCountDownFinish();
@@ -255,5 +261,4 @@ public class CircleCountDownView extends View {
     public interface OnCountDownFinishListener {
         void onCountDownFinish();
     }
-
 }
