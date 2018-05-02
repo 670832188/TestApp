@@ -57,6 +57,7 @@ public class CircleCountDownView extends View {
     private Matrix circleImgMatrix;
     private Bitmap circleImgBitmap;
     private int circleImgRadius;
+    private RotateImgInterpolator rotateImgInterpolator;
     private BitmapShader circleImgBitmapShader;
     private float circleImgTranslationX;
     private float circleImgTranslationY;
@@ -83,10 +84,8 @@ public class CircleCountDownView extends View {
         circleImgPaint.setStyle(Paint.Style.FILL);
         circleImgMatrix = new Matrix();
         valueTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        countDownAnimator = ValueAnimator.ofFloat(0, 1).setDuration(1000);
 
         TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.CircleCountDownView);
-
         padding = typedArray.getDimensionPixelSize(R.styleable.CircleCountDownView_padding, DisplayUtil.dp2px(5));
         borderWidth = typedArray.getDimensionPixelSize(R.styleable.CircleCountDownView_circleBorderWidth, 0);
         if (borderWidth > 0) {
@@ -116,13 +115,18 @@ public class CircleCountDownView extends View {
         typedArray.recycle();
 
         // 初始化属性动画
+        countDownAnimator = ValueAnimator.ofFloat(0, 1).setDuration(1000);
         countDownAnimator.setInterpolator(new LinearInterpolator());
         countDownAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
-                totalTimeProgress = (initialCountDownValue - currentCountDownValue + (float) animation.getAnimatedValue()) / initialCountDownValue;
-                currentTimePointProgress = (float) animation.getAnimatedValue();
-                currentTimePointProgress *= currentTimePointProgress;
+                totalTimeProgress = (initialCountDownValue - currentCountDownValue + animation.getAnimatedFraction()) / initialCountDownValue;
+                if (rotateImgInterpolator != null) {
+                    currentTimePointProgress = rotateImgInterpolator.getInterpolation(animation.getAnimatedFraction());
+                } else {
+                    currentTimePointProgress = animation.getAnimatedFraction();
+                    currentTimePointProgress *= currentTimePointProgress;
+                }
                 invalidate();
             }
         });
@@ -146,6 +150,12 @@ public class CircleCountDownView extends View {
         this.currentCountDownValue = initialCountDownValue;
         countDownAnimator.setRepeatCount(currentCountDownValue - 1);
         invalidate();
+    }
+
+    public void setRotateImgInterpolator(RotateImgInterpolator rotateImgInterpolator) {
+        if (!countDownAnimator.isRunning()) {
+            this.rotateImgInterpolator = rotateImgInterpolator;
+        }
     }
 
     // 重置
@@ -269,5 +279,12 @@ public class CircleCountDownView extends View {
 
     public interface OnCountDownFinishListener {
         void onCountDownFinish();
+    }
+
+    public interface RotateImgInterpolator {
+        /**
+         * @param inputFraction 动画执行时间因子，取值范围0到1
+         */
+        float getInterpolation(float inputFraction);
     }
 }
