@@ -217,7 +217,7 @@ public class CircleCountDownView extends View {
         circleImgBitmapShader = new BitmapShader(circleImgBitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
         circleImgTranslationX = (width - circleImgRadius * 2) / 2;
         circleImgTranslationY = (height - circleImgRadius * 2) / 2;
-        circleImgMatrix.setTranslate(circleImgTranslationX, circleImgTranslationX);
+        circleImgMatrix.setTranslate(circleImgTranslationX, circleImgTranslationY);
 
         if (borderWidth > 0) {
             // 外层进度条宽度（注意：需要减掉画笔宽度）
@@ -264,7 +264,7 @@ public class CircleCountDownView extends View {
         float x = centerX - textWidth / 2;
         Paint.FontMetrics fontMetrics = valueTextPaint.getFontMetrics();
         float verticalBaseline = (height - fontMetrics.bottom - fontMetrics.top) / 2;
-        float y = verticalBaseline - currentAnimationInterpolation * (centerY);
+        float y = verticalBaseline - currentAnimationInterpolation * (Math.min(width, height) / 2);
         valueTextPaint.setAlpha((int) (255 - currentAnimationInterpolation * 255));
         canvas.drawText(currentTimePoint, x, y, valueTextPaint);
 
@@ -272,7 +272,7 @@ public class CircleCountDownView extends View {
         String nextTimePoint = (currentCountDownValue - 1) + "s";
         textWidth = valueTextPaint.measureText(nextTimePoint);
         x = centerX - textWidth / 2;
-        y = y + height / 2;
+        y = y + (Math.min(width, height)) / 2;
         valueTextPaint.setAlpha((int) (currentAnimationInterpolation * 255));
         canvas.drawText(nextTimePoint, x, y, valueTextPaint);
     }
