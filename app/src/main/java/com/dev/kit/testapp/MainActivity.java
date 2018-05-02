@@ -49,10 +49,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         setOnClickListener(R.id.tv_restart, this);
         countDownView = findViewById(R.id.view_count);
         countDownView.setStartCountValue(10);
-        countDownView.setOnCountDownFinishListener(new CircleCountDownView.OnCountDownFinishListener() {
+        countDownView.setCountDownListener(new CircleCountDownView.CountDownListener() {
             @Override
             public void onCountDownFinish() {
 
+            }
+
+            @Override
+            public void restTime(long restTime) {
+                LogUtil.e("restTime: " + restTime);
             }
         });
         countDownView.setAnimationInterpolator(new CircleCountDownView.AnimationInterpolator() {

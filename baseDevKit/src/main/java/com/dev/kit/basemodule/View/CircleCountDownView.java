@@ -32,7 +32,7 @@ import com.dev.kit.basemodule.util.ImageUtil;
  * Created by cuiyan on 2018/4/28.
  */
 public class CircleCountDownView extends View {
-    private OnCountDownFinishListener onCountDownFinishListener;
+    private CountDownListener countDownListener;
 
     private int width;
     private int height;
@@ -120,6 +120,10 @@ public class CircleCountDownView extends View {
         countDownAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
+                long restTime = (long) ((currentCountDownValue - animation.getAnimatedFraction()) * 1000);
+                if (countDownListener != null) {
+                    countDownListener.restTime(restTime);
+                }
                 totalTimeProgress = (initialCountDownValue - currentCountDownValue + animation.getAnimatedFraction()) / initialCountDownValue;
                 if (animationInterpolator != null) {
                     currentAnimationInterpolation = animationInterpolator.getInterpolation(animation.getAnimatedFraction());
@@ -138,8 +142,8 @@ public class CircleCountDownView extends View {
 
             @Override
             public void onAnimationEnd(Animator animation) {
-                if (onCountDownFinishListener != null) {
-                    onCountDownFinishListener.onCountDownFinish();
+                if (countDownListener != null) {
+                    countDownListener.onCountDownFinish();
                 }
             }
         });
@@ -179,8 +183,8 @@ public class CircleCountDownView extends View {
         countDownAnimator.pause();
     }
 
-    public void setOnCountDownFinishListener(OnCountDownFinishListener onCountDownFinishListener) {
-        this.onCountDownFinishListener = onCountDownFinishListener;
+    public void setCountDownListener(CountDownListener countDownListener) {
+        this.countDownListener = countDownListener;
     }
 
     //  启动倒计时
@@ -191,8 +195,8 @@ public class CircleCountDownView extends View {
         }
         if (currentCountDownValue > 0) {
             countDownAnimator.start();
-        } else if (onCountDownFinishListener != null) {
-            onCountDownFinishListener.onCountDownFinish();
+        } else if (countDownListener != null) {
+            countDownListener.onCountDownFinish();
         }
     }
 
@@ -277,8 +281,18 @@ public class CircleCountDownView extends View {
         canvas.drawText(nextTimePoint, x, y, valueTextPaint);
     }
 
-    public interface OnCountDownFinishListener {
+    public interface CountDownListener {
+        /**
+         * 倒计时结束
+         */
         void onCountDownFinish();
+
+        /**
+         * 倒计时剩余时间
+         *
+         * @param restTime 剩余时间，单位毫秒
+         */
+        void restTime(long restTime);
     }
 
     public interface AnimationInterpolator {
