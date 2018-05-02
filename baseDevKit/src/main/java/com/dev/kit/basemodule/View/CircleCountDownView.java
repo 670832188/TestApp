@@ -247,9 +247,6 @@ public class CircleCountDownView extends View {
         }
         int centerX = width / 2;
         int centerY = height / 2;
-        circleImgMatrix.postRotate((currentAnimationInterpolation - lastAnimationInterpolation) * 360, centerX, centerY);
-        circleImgBitmapShader.setLocalMatrix(circleImgMatrix);
-        circleImgPaint.setShader(circleImgBitmapShader);
         if (borderWidth > 0) {
             canvas.drawCircle(centerX, centerY, Math.min(width, height) / 2 - borderWidth / 2 - padding, circleBorderPaint);
             if (showProgress) {
@@ -257,6 +254,9 @@ public class CircleCountDownView extends View {
             }
 
         }
+        circleImgMatrix.postRotate((currentAnimationInterpolation - lastAnimationInterpolation) * 360, centerX, centerY);
+        circleImgBitmapShader.setLocalMatrix(circleImgMatrix);
+        circleImgPaint.setShader(circleImgBitmapShader);
         canvas.drawCircle(centerX, centerY, circleImgRadius, circleImgPaint);
         lastAnimationInterpolation = currentAnimationInterpolation;
 
