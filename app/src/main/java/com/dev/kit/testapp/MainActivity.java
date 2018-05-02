@@ -55,7 +55,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
             }
         });
-        countDownView.setRotateImgInterpolator(new CircleCountDownView.RotateImgInterpolator() {
+        countDownView.setAnimationInterpolator(new CircleCountDownView.AnimationInterpolator() {
             @Override
             public float getInterpolation(float inputFraction) {
                 return inputFraction * inputFraction;

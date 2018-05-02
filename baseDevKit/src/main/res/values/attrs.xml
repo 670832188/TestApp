@@ -59,7 +59,6 @@
         <attr name="padding" format="dimension" />
         <attr name="showProgress" format="boolean" />
         <attr name="processColorStart" format="color" />
-        <attr name="processColorMiddle" format="color" />
         <attr name="processColorEnd" format="color" />
         <attr name="processBlurMaskRadius" format="dimension" />
     </declare-styleable>

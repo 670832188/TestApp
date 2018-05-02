@@ -39,7 +39,7 @@ public class CircleCountDownView extends View {
     private int padding;
     private int borderWidth;
     // 当前时间节点到下一时间节点的执行进度(取值0到1)
-    private float currentTimePointProgress;
+    private float currentAnimationInterpolation;
     private boolean showProgress;
     private float totalTimeProgress;
     private int processColorStart;
@@ -57,7 +57,7 @@ public class CircleCountDownView extends View {
     private Matrix circleImgMatrix;
     private Bitmap circleImgBitmap;
     private int circleImgRadius;
-    private RotateImgInterpolator rotateImgInterpolator;
+    private AnimationInterpolator animationInterpolator;
     private BitmapShader circleImgBitmapShader;
     private float circleImgTranslationX;
     private float circleImgTranslationY;
@@ -121,11 +121,11 @@ public class CircleCountDownView extends View {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 totalTimeProgress = (initialCountDownValue - currentCountDownValue + animation.getAnimatedFraction()) / initialCountDownValue;
-                if (rotateImgInterpolator != null) {
-                    currentTimePointProgress = rotateImgInterpolator.getInterpolation(animation.getAnimatedFraction());
+                if (animationInterpolator != null) {
+                    currentAnimationInterpolation = animationInterpolator.getInterpolation(animation.getAnimatedFraction());
                 } else {
-                    currentTimePointProgress = animation.getAnimatedFraction();
-                    currentTimePointProgress *= currentTimePointProgress;
+                    currentAnimationInterpolation = animation.getAnimatedFraction();
+                    currentAnimationInterpolation *= currentAnimationInterpolation;
                 }
                 invalidate();
             }
@@ -152,18 +152,18 @@ public class CircleCountDownView extends View {
         invalidate();
     }
 
-    public void setRotateImgInterpolator(RotateImgInterpolator rotateImgInterpolator) {
+    public void setAnimationInterpolator(AnimationInterpolator animationInterpolator) {
         if (!countDownAnimator.isRunning()) {
-            this.rotateImgInterpolator = rotateImgInterpolator;
+            this.animationInterpolator = animationInterpolator;
         }
     }
 
     // 重置
     public void reset() {
         countDownAnimator.cancel();
-        lastTimeProcess = 0;
+        lastAnimationInterpolation = 0;
         totalTimeProgress = 0;
-        currentTimePointProgress = 0;
+        currentAnimationInterpolation = 0;
         currentCountDownValue = initialCountDownValue;
         circleImgMatrix.setTranslate(circleImgTranslationX, circleImgTranslationY);
         circleImgMatrix.postRotate(0, width / 2, height / 2);
@@ -234,7 +234,7 @@ public class CircleCountDownView extends View {
         }
     }
 
-    private float lastTimeProcess;
+    private float lastAnimationInterpolation;
 
     @Override
     protected void onDraw(Canvas canvas) {
@@ -243,7 +243,7 @@ public class CircleCountDownView extends View {
         }
         int centerX = width / 2;
         int centerY = height / 2;
-        circleImgMatrix.postRotate((currentTimePointProgress - lastTimeProcess) * 360, centerX, centerY);
+        circleImgMatrix.postRotate((currentAnimationInterpolation - lastAnimationInterpolation) * 360, centerX, centerY);
         circleImgBitmapShader.setLocalMatrix(circleImgMatrix);
         circleImgPaint.setShader(circleImgBitmapShader);
         if (borderWidth > 0) {
@@ -254,7 +254,7 @@ public class CircleCountDownView extends View {
 
         }
         canvas.drawCircle(centerX, centerY, circleImgRadius, circleImgPaint);
-        lastTimeProcess = currentTimePointProgress;
+        lastAnimationInterpolation = currentAnimationInterpolation;
 
 
         // 绘制倒计时时间
@@ -264,8 +264,8 @@ public class CircleCountDownView extends View {
         float x = centerX - textWidth / 2;
         Paint.FontMetrics fontMetrics = valueTextPaint.getFontMetrics();
         float verticalBaseline = (height - fontMetrics.bottom - fontMetrics.top) / 2;
-        float y = verticalBaseline - currentTimePointProgress * (centerY);
-        valueTextPaint.setAlpha((int) (255 - currentTimePointProgress * 255));
+        float y = verticalBaseline - currentAnimationInterpolation * (centerY);
+        valueTextPaint.setAlpha((int) (255 - currentAnimationInterpolation * 255));
         canvas.drawText(currentTimePoint, x, y, valueTextPaint);
 
         // next
@@ -273,7 +273,7 @@ public class CircleCountDownView extends View {
         textWidth = valueTextPaint.measureText(nextTimePoint);
         x = centerX - textWidth / 2;
         y = y + height / 2;
-        valueTextPaint.setAlpha((int) (currentTimePointProgress * 255));
+        valueTextPaint.setAlpha((int) (currentAnimationInterpolation * 255));
         canvas.drawText(nextTimePoint, x, y, valueTextPaint);
     }
 
@@ -281,7 +281,7 @@ public class CircleCountDownView extends View {
         void onCountDownFinish();
     }
 
-    public interface RotateImgInterpolator {
+    public interface AnimationInterpolator {
         /**
          * @param inputFraction 动画执行时间因子，取值范围0到1
          */
