@@ -38,7 +38,7 @@ public class CircleCountDownView extends View {
     private int height;
     private int padding;
     private int borderWidth;
-    // 当前时间节点到下一时间节点的执行进度(取值0到1)
+    // 根据动画执行进度计算出来的插值，用来控制动画效果，建议取值范围为0到1
     private float currentAnimationInterpolation;
     private boolean showProgress;
     private float totalTimeProgress;
