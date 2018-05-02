@@ -21,6 +21,7 @@ import com.dev.kit.basemodule.util.FileUtil;
 import com.dev.kit.basemodule.util.LogUtil;
 import com.dev.kit.testapp.RxjavaAndRetrofitTest.ApiService;
 import com.dev.kit.testapp.RxjavaAndRetrofitTest.NetRequestDemoActivity;
+import com.dev.kit.testapp.animation.BallsFallDownSimultaneously;
 import com.dev.kit.testapp.pagerTest.PagerTestActivity;
 
 import java.io.File;
@@ -47,6 +48,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         setOnClickListener(R.id.tv_upload_file, this);
         setOnClickListener(R.id.tv_vp_test, this);
         setOnClickListener(R.id.tv_restart, this);
+        setOnClickListener(R.id.tv_property_animation, this);
         countDownView = findViewById(R.id.view_count);
         countDownView.setStartCountValue(10);
         countDownView.setCountDownListener(new CircleCountDownView.CountDownListener() {
@@ -121,6 +123,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             }
             case R.id.tv_restart: {
                 countDownView.restart();
+                break;
+            }
+            case R.id.tv_property_animation: {
+                startActivity(new Intent(MainActivity.this, BallsFallDownSimultaneously.class));
+                break;
             }
         }
     }
