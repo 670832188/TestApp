@@ -1,6 +1,5 @@
 package com.dev.kit.testapp.pagerTest;
 
-import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -12,16 +11,24 @@ import android.widget.TextView;
 
 import com.dev.kit.basemodule.activity.BaseActivity;
 import com.dev.kit.basemodule.pageTransformer.HorizontalStackTransformerWithRotation;
+import com.dev.kit.basemodule.pageTransformer.VerticalStackPageTransformerWithRotation;
 import com.dev.kit.basemodule.surpport.CommonPagerAdapter;
 import com.dev.kit.basemodule.util.DisplayUtil;
+import com.dev.kit.basemodule.util.LogUtil;
 import com.dev.kit.testapp.R;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class PagerTestActivity extends BaseActivity {
-    ViewPager vpTest;
-    List<Integer> colorsRes = Arrays.asList(R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorPrimary, R.color.colorAccent, R.color.color_red, R.color.bg_lunch_selected, R.color.bg_supper_selected);
+    private ViewPager vpHorizontalStack;
+    private ViewPager vpVerticalStack;
+    private List<Integer> colorsRes = Arrays.asList(R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorPrimary, R.color.colorAccent, R.color.color_red, R.color.bg_lunch_selected, R.color.bg_supper_selected);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,12 +38,11 @@ public class PagerTestActivity extends BaseActivity {
     }
 
     private void init() {
-        vpTest = findViewById(R.id.vp_test);
-        vpTest.setOffscreenPageLimit(3);
-        CommonPagerAdapter<Integer> adapter = new CommonPagerAdapter<Integer>(colorsRes) {
+        vpHorizontalStack = findViewById(R.id.vp_horizontal_stack);
+        vpHorizontalStack.setOffscreenPageLimit(3);
+        CommonPagerAdapter<Integer> horizontalStackAdapter = new CommonPagerAdapter<Integer>(colorsRes) {
             @Override
             public void renderItemView(@NonNull View itemView, final int position) {
-//                itemView.setBackgroundResource(colorsRes.get(position));
                 ((TextView) itemView).setText("第" + (position + 1) + "页面");
                 int color = getResources().getColor(getBindItemData(position));
                 GradientDrawable drawable = (GradientDrawable) itemView.getBackground();
@@ -57,14 +63,65 @@ public class PagerTestActivity extends BaseActivity {
                 return view;
             }
         };
-        adapter.setOnItemClickListener(new CommonPagerAdapter.OnItemClickListener() {
+        horizontalStackAdapter.setOnItemClickListener(new CommonPagerAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
                 showToast("当前点击第" + (position + 1) + "页");
             }
         });
 
-        vpTest.setPageTransformer(false, new HorizontalStackTransformerWithRotation(vpTest));
-        vpTest.setAdapter(adapter);
+        vpHorizontalStack.setPageTransformer(false, new HorizontalStackTransformerWithRotation(vpHorizontalStack));
+        vpHorizontalStack.setAdapter(horizontalStackAdapter);
+
+        vpVerticalStack = findViewById(R.id.vp_vertical_stack);
+        vpVerticalStack.setOffscreenPageLimit(3);
+        CommonPagerAdapter<Integer> verticalStackAdapter = new CommonPagerAdapter<Integer>(deepCopyList(colorsRes)) {
+            @Override
+            public void renderItemView(@NonNull View itemView, final int position) {
+                ((TextView) itemView).setText("第" + (position + 1) + "页面");
+                int color = getResources().getColor(getBindItemData(position));
+                GradientDrawable drawable = (GradientDrawable) itemView.getBackground();
+                if (drawable == null) {
+                    drawable = new GradientDrawable();
+                    itemView.setBackground(drawable);
+                }
+                drawable.setCornerRadius(DisplayUtil.dp2px(5));
+                drawable.setStroke(DisplayUtil.dp2px(5), getResources().getColor(R.color.color_light_grey));
+                drawable.setColor(color);
+            }
+
+            @NonNull
+            @Override
+            public View getPageItemView(@NonNull ViewGroup container, int position) {
+                View view = LayoutInflater.from(PagerTestActivity.this).inflate(R.layout.item_vp_test, container, false);
+                view.setTag(String.valueOf(position));
+                return view;
+            }
+        };
+        verticalStackAdapter.setOnItemClickListener(new CommonPagerAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                showToast("当前点击第" + (position + 1) + "页");
+            }
+        });
+
+        vpVerticalStack.setPageTransformer(false, new VerticalStackPageTransformerWithRotation(vpVerticalStack));
+        vpVerticalStack.setAdapter(verticalStackAdapter);
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> List<T> deepCopyList(List<T> src) {
+        List<T> dest = new ArrayList<>();
+        try {
+            ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+            ObjectOutputStream out = new ObjectOutputStream(byteOut);
+            out.writeObject(src);
+            ByteArrayInputStream byteIn = new ByteArrayInputStream(byteOut.toByteArray());
+            ObjectInputStream in = new ObjectInputStream(byteIn);
+            dest = (List<T>) in.readObject();
+        } catch (Exception e) {
+            LogUtil.e(e.getMessage(), e);
+        }
+        return dest;
     }
 }

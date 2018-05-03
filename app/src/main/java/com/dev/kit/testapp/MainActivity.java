@@ -10,7 +10,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 
-import com.dev.kit.basemodule.View.CircleCountDownView;
 import com.dev.kit.basemodule.activity.BaseActivity;
 import com.dev.kit.basemodule.netRequest.model.BaseController;
 import com.dev.kit.basemodule.netRequest.subscribers.NetRequestCallback;
@@ -21,7 +20,7 @@ import com.dev.kit.basemodule.util.FileUtil;
 import com.dev.kit.basemodule.util.LogUtil;
 import com.dev.kit.testapp.RxjavaAndRetrofitTest.ApiService;
 import com.dev.kit.testapp.RxjavaAndRetrofitTest.NetRequestDemoActivity;
-import com.dev.kit.testapp.animation.BallsFallDownSimultaneously;
+import com.dev.kit.testapp.animation.PropertyAnimationEntryActivity;
 import com.dev.kit.testapp.pagerTest.PagerTestActivity;
 
 import java.io.File;
@@ -34,8 +33,6 @@ import okhttp3.RequestBody;
 
 public class MainActivity extends BaseActivity implements View.OnClickListener {
 
-    private CircleCountDownView countDownView;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,28 +44,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         setOnClickListener(R.id.tv_net_test, this);
         setOnClickListener(R.id.tv_upload_file, this);
         setOnClickListener(R.id.tv_vp_test, this);
-        setOnClickListener(R.id.tv_restart, this);
         setOnClickListener(R.id.tv_property_animation, this);
-        countDownView = findViewById(R.id.view_count);
-        countDownView.setStartCountValue(10);
-        countDownView.setCountDownListener(new CircleCountDownView.CountDownListener() {
-            @Override
-            public void onCountDownFinish() {
-
-            }
-
-            @Override
-            public void restTime(long restTime) {
-                LogUtil.e("restTime: " + restTime);
-            }
-        });
-        countDownView.setAnimationInterpolator(new CircleCountDownView.AnimationInterpolator() {
-            @Override
-            public float getInterpolation(float inputFraction) {
-                return inputFraction * inputFraction;
-            }
-        });
-        countDownView.startCountDown();
     }
 
 
@@ -121,12 +97,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 startActivity(new Intent(MainActivity.this, PagerTestActivity.class));
                 break;
             }
-            case R.id.tv_restart: {
-                countDownView.restart();
-                break;
-            }
             case R.id.tv_property_animation: {
-                startActivity(new Intent(MainActivity.this, BallsFallDownSimultaneously.class));
+                startActivity(new Intent(MainActivity.this, PropertyAnimationEntryActivity.class));
                 break;
             }
         }

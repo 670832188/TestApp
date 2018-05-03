@@ -25,7 +25,9 @@
             android:name=".RxjavaAndRetrofitTest.NetRequestDemoActivity"
             android:theme="@style/BaseTheme.TranslucentStatusTheme" />
         <activity android:name=".pagerTest.PagerTestActivity" />
-        <activity android:name=".animation.BallsFallDownSimultaneously"/>
+        <activity android:name=".animation.PropertyAnimationEntryActivity" />
+        <activity android:name=".animation.BallsFallDownSimultaneously" />
+        <activity android:name=".animation.CountDownActivity" />
     </application>
 
 </manifest>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.dev.kit.basemodule.View.CircleCountDownView
+        android:id="@+id/view_count"
+        android:layout_width="90dp"
+        android:layout_height="90dp"
+        android:layout_centerInParent="true"
+        app:circleBorderColor="@color/color_light_grey"
+        app:circleBorderWidth="3dp"
+        app:circleImgSrc="@mipmap/ic_radar"
+        app:padding="5dp"
+        app:processBlurMaskRadius="3dp"
+        app:processColorEnd="#35adc6"
+        app:processColorStart="#00ffff"
+        app:showProgress="true"
+        app:valueTextColor="@color/color_common_white"
+        app:valueTextSize="16sp" />
+
+    <TextView
+        android:id="@+id/tv_restart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_marginBottom="80dp"
+        android:padding="@dimen/margin_normal"
+        android:text="重置"
+        android:textSize="16sp" />
+</RelativeLayout>

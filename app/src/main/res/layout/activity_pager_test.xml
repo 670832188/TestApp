@@ -5,7 +5,13 @@
     android:orientation="vertical">
 
     <android.support.v4.view.ViewPager
-        android:id="@+id/vp_test"
+        android:id="@+id/vp_horizontal_stack"
         android:layout_width="match_parent"
         android:layout_height="280dp" />
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/vp_vertical_stack"
+        android:layout_width="match_parent"
+        android:layout_height="280dp"
+        android:layout_marginTop="@dimen/page_margin" />
 </LinearLayout>
