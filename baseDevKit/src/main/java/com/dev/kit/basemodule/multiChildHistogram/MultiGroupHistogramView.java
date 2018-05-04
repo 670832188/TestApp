@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.SparseArray;
+import android.view.MotionEvent;
 import android.view.View;
 
 import com.dev.kit.basemodule.R;
@@ -111,6 +112,42 @@ public class MultiGroupHistogramView extends View {
         } else {
             return getScrollX() > 0;
         }
+    }
+
+    private int getMaxCanScrollX(int direction) {
+        if (direction > 0) {
+            return histogramContentWidth - getScrollX() - width + histogramPaddingStart + histogramPaddingEnd > 0 ?
+                    histogramContentWidth - getScrollX() - width + histogramPaddingStart + histogramPaddingEnd : 0;
+        } else if (direction < 0) {
+            return getScrollX();
+        }
+        return 0;
+    }
+
+    private float lastX;
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN: {
+                lastX = event.getX();
+                return true;
+            }
+            case MotionEvent.ACTION_MOVE: {
+                int deltaX = (int) (event.getX() - lastX);
+                lastX = event.getX();
+                if (deltaX > 0 && canScrollHorizontally(-1)) {
+                    scrollBy(-Math.min(getMaxCanScrollX(-1), deltaX), 0);
+                } else if (deltaX < 0 && canScrollHorizontally(1)) {
+                    scrollBy(Math.min(getMaxCanScrollX(1), -deltaX), 0);
+                }
+                break;
+            }
+            case MotionEvent.ACTION_UP: {
+                break;
+            }
+        }
+        return super.onTouchEvent(event);
     }
 
     public void setDataList(@NonNull List<MultiGroupHistogramGroupData> dataList) {
