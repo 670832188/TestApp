@@ -31,17 +31,14 @@ public class MultiGroupHistogramView extends View {
     private int height;
     // 坐标轴线宽度
     private int coordinateAxisWidth;
-    // 坐标轴线颜色
-    private int coordinateAxisColor;
-    // 底部小组名称字体颜色
-    private int groupNameTextColor;
-    // 底部小组名称字体大小
+
+    // 组名称字体大小
     private int groupNameTextSize;
     // 小组之间间距
     private int groupInterval;
     // 组内子柱状图间距
     private int childInterval;
-    //
+    // 子柱状图数值文本颜色
     private int childValueTextColor;
     private int childValueTextSize;
     private int childHistogramWidth;
@@ -55,6 +52,7 @@ public class MultiGroupHistogramView extends View {
     // 柱状图最大高度
     private int maxHistogramHeight;
     private Paint coordinateAxisPaint;
+    private Paint groupNamePaint;
     private Rect childRect;
     private Paint childPaint;
     // 柱状图表视图总宽度
@@ -84,8 +82,10 @@ public class MultiGroupHistogramView extends View {
     private void init(AttributeSet attrs) {
         TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.MultiGroupHistogramView);
         coordinateAxisWidth = typedArray.getDimensionPixelSize(R.styleable.MultiGroupHistogramView_coordinateAxisWidth, DisplayUtil.dp2px(2));
-        coordinateAxisColor = typedArray.getColor(R.styleable.MultiGroupHistogramView_coordinateAxisColor, Color.parseColor("#434343"));
-        groupNameTextColor = typedArray.getColor(R.styleable.MultiGroupHistogramView_groupNameTextColor, Color.parseColor("#CC202332"));
+        // 坐标轴线颜色
+        int coordinateAxisColor = typedArray.getColor(R.styleable.MultiGroupHistogramView_coordinateAxisColor, Color.parseColor("#434343"));
+        // 底部小组名称字体颜色
+        int groupNameTextColor = typedArray.getColor(R.styleable.MultiGroupHistogramView_groupNameTextColor, Color.parseColor("#CC202332"));
         groupNameTextSize = typedArray.getDimensionPixelSize(R.styleable.MultiGroupHistogramView_groupNameTextSize, DisplayUtil.dp2px(15));
         groupInterval = typedArray.getDimensionPixelSize(R.styleable.MultiGroupHistogramView_groupInterval, DisplayUtil.dp2px(30));
         childInterval = typedArray.getDimensionPixelSize(R.styleable.MultiGroupHistogramView_childInterval, DisplayUtil.dp2px(10));
@@ -100,6 +100,10 @@ public class MultiGroupHistogramView extends View {
         coordinateAxisPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         coordinateAxisPaint.setStyle(Paint.Style.FILL);
         coordinateAxisPaint.setStrokeWidth(coordinateAxisWidth);
+        coordinateAxisPaint.setColor(coordinateAxisColor);
+        groupNamePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        groupNamePaint.setColor(groupNameTextColor);
+        groupNamePaint.setTextSize(groupNameTextSize);
         childRect = new Rect();
         childPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         scroller = new Scroller(getContext());
@@ -243,6 +247,7 @@ public class MultiGroupHistogramView extends View {
             for (MultiGroupHistogramGroupData groupData : dataList) {
                 List<MultiGroupHistogramChildData> childDataList = groupData.getChildDataList();
                 if (childDataList != null && childDataList.size() > 0) {
+                    int groupWidth = 0;
                     for (int i = 0; i < childDataList.size(); i++) {
                         MultiGroupHistogramChildData childData = childDataList.get(i);
                         childRect.left = xAxisOffset;
@@ -256,9 +261,17 @@ public class MultiGroupHistogramView extends View {
                         childRect.top = height - childHeight - coordinateAxisWidth - distanceFormGroupNameToAxis - groupNameTextSize;
                         childRect.bottom = childRect.top + childHeight;
                         canvas.drawRect(childRect, childPaint);
-                        xAxisOffset += childInterval + childHistogramWidth;
+
+                        int deltaX = i < childDataList.size() - 1 ? childHistogramWidth + childInterval : childHistogramWidth;
+                        groupWidth += deltaX;
+                        xAxisOffset += i == childDataList.size() - 1 ? deltaX + groupInterval : deltaX;
                     }
-                    xAxisOffset += groupInterval - childInterval;
+                    String groupName = groupData.getGroupName();
+                    float groupNameTextWidth = groupNamePaint.measureText(groupName);
+                    float groupNameTextX = xAxisOffset - groupWidth - groupInterval + (groupWidth - groupNameTextWidth) / 2;
+                    Paint.FontMetrics fontMetrics = groupNamePaint.getFontMetrics();
+                    float groupNameTextY = (height + (fontMetrics.descent + fontMetrics.ascent) / 2);
+                    canvas.drawText(groupName, groupNameTextX, groupNameTextY, groupNamePaint);
                 }
             }
         }
