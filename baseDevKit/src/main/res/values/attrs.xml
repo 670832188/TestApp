@@ -63,7 +63,7 @@
         <attr name="processBlurMaskRadius" format="dimension" />
     </declare-styleable>
 
-    <declare-styleable name="MultiChildHistogramView">
+    <declare-styleable name="MultiGroupHistogramView">
         <attr name="coordinateAxisWidth" format="dimension" />
         <attr name="coordinateAxisColor" format="color" />
         <attr name="groupNameTextColor" format="color" />

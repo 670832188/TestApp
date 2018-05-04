@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Created by cuiyan on 2018/5/3.
  */
-public class MultiChildHistogramGroupData {
+public class MultiGroupHistogramGroupData {
 
     private String tableName;
     private List<ChildData> childDataList;

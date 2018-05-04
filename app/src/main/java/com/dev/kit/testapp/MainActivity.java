@@ -11,7 +11,7 @@ import android.support.v4.content.ContextCompat;
 import android.view.View;
 
 import com.dev.kit.basemodule.activity.BaseActivity;
-import com.dev.kit.basemodule.multiChildHistogram.MultiChildHistogramView;
+import com.dev.kit.basemodule.multiChildHistogram.MultiGroupHistogramView;
 import com.dev.kit.basemodule.netRequest.model.BaseController;
 import com.dev.kit.basemodule.netRequest.subscribers.NetRequestCallback;
 import com.dev.kit.basemodule.netRequest.subscribers.NetRequestSubscriber;
@@ -34,7 +34,7 @@ import okhttp3.RequestBody;
 
 public class MainActivity extends BaseActivity implements View.OnClickListener {
 
-    private MultiChildHistogramView multiChildHistogramView;
+    private MultiGroupHistogramView multiGroupHistogramView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,7 +47,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         setOnClickListener(R.id.tv_upload_file, this);
         setOnClickListener(R.id.tv_vp_test, this);
         setOnClickListener(R.id.tv_property_animation, this);
-        multiChildHistogramView = findViewById(R.id.MultiChildHistogramView);
+        multiGroupHistogramView = findViewById(R.id.multiGroupHistogramView);
     }
 
 
@@ -101,7 +101,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 break;
             }
             case R.id.tv_property_animation: {
-//                multiChildHistogramView.scrollBy(10,0);
+//                multiGroupHistogramView.scrollBy(10,0);
                 startActivity(new Intent(MainActivity.this, PropertyAnimationEntryActivity.class));
                 break;
             }
