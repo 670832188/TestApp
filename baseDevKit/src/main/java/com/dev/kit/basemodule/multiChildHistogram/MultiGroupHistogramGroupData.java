@@ -7,44 +7,22 @@ import java.util.List;
  */
 public class MultiGroupHistogramGroupData {
 
-    private String tableName;
-    private List<ChildData> childDataList;
+    private String groupName;
+    private List<MultiGroupHistogramChildData> childDataList;
 
-    public String getTableName() {
-        return tableName;
+    public String getGroupName() {
+        return groupName;
     }
 
-    public List<ChildData> getChildDataList() {
+    public List<MultiGroupHistogramChildData> getChildDataList() {
         return childDataList;
     }
 
-    public void setTableName(String tableName) {
-        this.tableName = tableName;
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
     }
 
-    public void setChildDataList(List<ChildData> childDataList) {
+    public void setChildDataList(List<MultiGroupHistogramChildData> childDataList) {
         this.childDataList = childDataList;
-    }
-
-
-    public class ChildData {
-        private float value;
-        private String suffix;
-
-        public float getValue() {
-            return value;
-        }
-
-        public String getSuffix() {
-            return suffix;
-        }
-
-        public void setValue(float value) {
-            this.value = value;
-        }
-
-        public void setSuffix(String suffix) {
-            this.suffix = suffix;
-        }
     }
 }
