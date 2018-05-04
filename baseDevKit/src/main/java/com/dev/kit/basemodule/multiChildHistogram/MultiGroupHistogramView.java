@@ -54,6 +54,8 @@ public class MultiGroupHistogramView extends View {
     private Paint coordinateAxisPaint;
     private Rect childRect;
     private Paint childPaint;
+    // 柱状图表视图总宽度
+    private int histogramContentWidth;
 
     private List<MultiGroupHistogramGroupData> dataList;
     private SparseArray<Float> childMaxValueArray;
@@ -102,6 +104,15 @@ public class MultiGroupHistogramView extends View {
         maxHistogramHeight = height - groupNameTextSize - coordinateAxisWidth - distanceFormGroupNameToAxis - distanceFromValueToHistogram - childValueTextSize;
     }
 
+    @Override
+    public boolean canScrollHorizontally(int direction) {
+        if (direction > 0) {
+            return histogramContentWidth - getScrollX() - width + histogramPaddingStart + histogramPaddingEnd > 0;
+        } else {
+            return getScrollX() > 0;
+        }
+    }
+
     public void setDataList(@NonNull List<MultiGroupHistogramGroupData> dataList) {
         this.dataList = dataList;
         if (childMaxValueArray == null) {
@@ -109,21 +120,23 @@ public class MultiGroupHistogramView extends View {
         } else {
             childMaxValueArray.clear();
         }
+        histogramContentWidth = 0;
         for (MultiGroupHistogramGroupData groupData : dataList) {
             List<MultiGroupHistogramChildData> childDataList = groupData.getChildDataList();
             if (childDataList != null && childDataList.size() > 0) {
                 for (int i = 0; i < childDataList.size(); i++) {
+                    histogramContentWidth += childHistogramWidth + childInterval;
                     MultiGroupHistogramChildData childData = childDataList.get(i);
                     Float childMaxValue = childMaxValueArray.get(i);
                     if (childMaxValue == null || childMaxValue < childData.getValue()) {
                         childMaxValueArray.put(i, childData.getValue());
                     }
                 }
+                histogramContentWidth += groupInterval - childInterval;
             }
         }
-        for (int i = 0; i < childMaxValueArray.size(); i++) {
-            LogUtil.e("childMaxValue: " + childMaxValueArray.get(i));
-        }
+        histogramContentWidth += -groupInterval;
+        LogUtil.e("histogramContentWidth: " + histogramContentWidth);
     }
 
     @Override
@@ -155,7 +168,7 @@ public class MultiGroupHistogramView extends View {
                         canvas.drawRect(childRect, childPaint);
                         xAxisOffset += childInterval + childHistogramWidth;
                     }
-                    xAxisOffset += groupInterval;
+                    xAxisOffset += groupInterval - childInterval;
                 }
             }
         }
