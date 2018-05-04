@@ -46,4 +46,12 @@
         android:padding="@dimen/margin_normal"
         android:text="属性动画" />
 
+    <com.dev.kit.basemodule.multiChildHistogram.MultiChildHistogramView
+        android:id="@+id/MultiChildHistogramView"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_marginEnd="@dimen/margin_large"
+        android:layout_marginStart="@dimen/margin_large"
+        android:layout_marginTop="@dimen/page_margin" />
+
 </LinearLayout>

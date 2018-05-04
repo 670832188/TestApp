@@ -63,4 +63,20 @@
         <attr name="processBlurMaskRadius" format="dimension" />
     </declare-styleable>
 
+    <declare-styleable name="MultiChildHistogramView">
+        <attr name="coordinateAxisWidth" format="dimension" />
+        <attr name="coordinateAxisColor" format="color" />
+        <attr name="groupNameTextColor" format="color" />
+        <attr name="groupNameTextSize" format="dimension" />
+        <attr name="groupInterval" format="dimension" />
+        <attr name="childInterval" format="dimension" />
+        <attr name="childValueTextColor" format="color" />
+        <attr name="childValueTextSize" format="dimension" />
+        <attr name="childHistogramWidth" format="dimension" />
+        <attr name="histogramPaddingStart" format="dimension" />
+        <attr name="histogramPaddingEnd" format="dimension" />
+        <attr name="distanceFormGroupNameToAxis" format="dimension" />
+        <attr name="distanceFromValueToHistogram" format="dimension" />
+    </declare-styleable>
+
 </resources>
