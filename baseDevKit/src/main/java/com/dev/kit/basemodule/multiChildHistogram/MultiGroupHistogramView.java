@@ -10,8 +10,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.SparseArray;
-import android.view.GestureDetector;
 import android.view.MotionEvent;
+import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.widget.Scroller;
@@ -64,22 +64,9 @@ public class MultiGroupHistogramView extends View {
     private SparseArray<Float> childMaxValueArray;
 
     private Scroller scroller;
-    private GestureDetector gestureDetector;
     private int minimumVelocity;
     private int maximumVelocity;
-    private final GestureDetector.SimpleOnGestureListener simpleOnGestureListener = new GestureDetector.SimpleOnGestureListener() {
-        @Override
-        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-            if (Math.abs(velocityX) > minimumVelocity) {
-                velocityX *= 1.5;
-                if (Math.abs(velocityX) > maximumVelocity) {
-                    velocityX = maximumVelocity * velocityX / velocityX;
-                }
-                scroller.fling(getScrollX(), getScrollY(), -(int) velocityX, 0, 0, histogramContentWidth + histogramPaddingStart - width, 0, 0);
-            }
-            return true;
-        }
-    };
+    private VelocityTracker velocityTracker;
 
     public MultiGroupHistogramView(Context context) {
         this(context, null);
@@ -116,7 +103,6 @@ public class MultiGroupHistogramView extends View {
         childRect = new Rect();
         childPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         scroller = new Scroller(getContext());
-        gestureDetector = new GestureDetector(getContext(), simpleOnGestureListener);
         ViewConfiguration configuration = ViewConfiguration.get(getContext());
         minimumVelocity = configuration.getScaledMinimumFlingVelocity();
         maximumVelocity = configuration.getScaledMaximumFlingVelocity();
@@ -156,7 +142,8 @@ public class MultiGroupHistogramView extends View {
         if (!scroller.isFinished()) {
             scroller.abortAnimation();
         }
-        gestureDetector.onTouchEvent(event);
+        initVelocityTrackerIfNotExists();
+        velocityTracker.addMovement(event);
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN: {
                 lastX = event.getX();
@@ -173,10 +160,41 @@ public class MultiGroupHistogramView extends View {
                 break;
             }
             case MotionEvent.ACTION_UP: {
+                velocityTracker.computeCurrentVelocity(1000, maximumVelocity);
+                int velocityX = (int) velocityTracker.getXVelocity();
+                fling(velocityX);
+                recycleVelocityTracker();
+                break;
+            }
+            case MotionEvent.ACTION_CANCEL: {
+                recycleVelocityTracker();
                 break;
             }
         }
         return super.onTouchEvent(event);
+    }
+
+    private void initVelocityTrackerIfNotExists() {
+        if (velocityTracker == null) {
+            velocityTracker = VelocityTracker.obtain();
+        }
+    }
+
+    private void recycleVelocityTracker() {
+        if (velocityTracker != null) {
+            velocityTracker.recycle();
+            velocityTracker = null;
+        }
+    }
+
+    private void fling(int velocityX) {
+        if (Math.abs(velocityX) > minimumVelocity) {
+            velocityX *= 1.5;
+            if (Math.abs(velocityX) > maximumVelocity) {
+                velocityX = maximumVelocity * velocityX / velocityX;
+            }
+            scroller.fling(getScrollX(), getScrollY(), -(int) velocityX, 0, 0, histogramContentWidth + histogramPaddingStart - width, 0, 0);
+        }
     }
 
     @Override
