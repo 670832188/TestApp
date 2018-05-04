@@ -11,6 +11,8 @@ import android.support.v4.content.ContextCompat;
 import android.view.View;
 
 import com.dev.kit.basemodule.activity.BaseActivity;
+import com.dev.kit.basemodule.multiChildHistogram.MultiGroupHistogramChildData;
+import com.dev.kit.basemodule.multiChildHistogram.MultiGroupHistogramGroupData;
 import com.dev.kit.basemodule.multiChildHistogram.MultiGroupHistogramView;
 import com.dev.kit.basemodule.netRequest.model.BaseController;
 import com.dev.kit.basemodule.netRequest.subscribers.NetRequestCallback;
@@ -19,12 +21,15 @@ import com.dev.kit.basemodule.netRequest.util.BaseServiceUtil;
 import com.dev.kit.basemodule.netRequest.util.CommonInterceptor;
 import com.dev.kit.basemodule.util.FileUtil;
 import com.dev.kit.basemodule.util.LogUtil;
+import com.dev.kit.basemodule.util.MIUIHelper;
 import com.dev.kit.testapp.RxjavaAndRetrofitTest.ApiService;
 import com.dev.kit.testapp.RxjavaAndRetrofitTest.NetRequestDemoActivity;
 import com.dev.kit.testapp.animation.PropertyAnimationEntryActivity;
 import com.dev.kit.testapp.pagerTest.PagerTestActivity;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import io.reactivex.Observable;
@@ -35,8 +40,10 @@ import okhttp3.RequestBody;
 public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private MultiGroupHistogramView multiGroupHistogramView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        MIUIHelper.setStatusBarLightMode(this, false);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         init();
@@ -48,6 +55,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         setOnClickListener(R.id.tv_vp_test, this);
         setOnClickListener(R.id.tv_property_animation, this);
         multiGroupHistogramView = findViewById(R.id.multiGroupHistogramView);
+        initMultiGroupHistogramView();
     }
 
 
@@ -101,11 +109,30 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 break;
             }
             case R.id.tv_property_animation: {
-//                multiGroupHistogramView.scrollBy(10,0);
                 startActivity(new Intent(MainActivity.this, PropertyAnimationEntryActivity.class));
                 break;
             }
         }
+    }
+
+    private void initMultiGroupHistogramView() {
+        Random random = new Random();
+        int groupSize = random.nextInt(5) + 7;
+        List<MultiGroupHistogramGroupData> groupDataList = new ArrayList<>();
+        for (int i = 0; i < groupSize; i++) {
+            List<MultiGroupHistogramChildData> childDataList = new ArrayList<>();
+            MultiGroupHistogramGroupData groupData = new MultiGroupHistogramGroupData();
+            groupData.setGroupName("第" + (i + 1) + "组");
+            for (int j = 0; j < 2; j++) {
+                MultiGroupHistogramChildData childData = new MultiGroupHistogramChildData();
+                childData.setSuffix("%");
+                childData.setValue(random.nextInt(500) + 500);
+                childDataList.add(childData);
+            }
+            groupData.setChildDataList(childDataList);
+            groupDataList.add(groupData);
+        }
+        multiGroupHistogramView.setDataList(groupDataList);
     }
 
     @Override
