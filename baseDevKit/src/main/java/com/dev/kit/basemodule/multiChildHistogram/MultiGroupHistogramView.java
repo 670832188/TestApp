@@ -150,13 +150,13 @@ public class MultiGroupHistogramView extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (!scroller.isFinished()) {
-            scroller.abortAnimation();
-        }
         initVelocityTrackerIfNotExists();
         velocityTracker.addMovement(event);
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN: {
+                if (!scroller.isFinished()) {
+                    scroller.abortAnimation();
+                }
                 lastX = event.getX();
                 return true;
             }
@@ -199,10 +199,14 @@ public class MultiGroupHistogramView extends View {
     }
 
     private void fling(int velocityX) {
-        if (Math.abs(velocityX) > minimumVelocity) {
-            velocityX *= 1.5;
+        if (Math.abs(velocityX) > 0) {
             if (Math.abs(velocityX) > maximumVelocity) {
-                velocityX = maximumVelocity * velocityX / velocityX;
+                velocityX = maximumVelocity * velocityX / Math.abs(velocityX);
+            }
+
+            if (Math.abs(velocityX) < 1500) {
+                int extraVelocityX = (int) (Math.exp(-Math.abs(velocityX) / 1500) * 1000 * velocityX / Math.abs(velocityX));
+                velocityX += extraVelocityX;
             }
             scroller.fling(getScrollX(), getScrollY(), -velocityX, 0, 0, histogramContentWidth + histogramPaddingStart - width, 0, 0);
         }
@@ -212,6 +216,7 @@ public class MultiGroupHistogramView extends View {
     public void computeScroll() {
         if (scroller.computeScrollOffset()) {
             scrollTo(scroller.getCurrX(), 0);
+//            postInvalidate();
         }
     }
 
