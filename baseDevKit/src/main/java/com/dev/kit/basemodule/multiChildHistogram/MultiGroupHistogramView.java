@@ -41,6 +41,7 @@ public class MultiGroupHistogramView extends View {
     private int histogramInterval;
     private int histogramValueTextSize;
     private int histogramHistogramWidth;
+    private int chartPaddingTop;
     private int histogramPaddingStart;
     private int histogramPaddingEnd;
     // 各组名称到X轴的距离
@@ -101,6 +102,7 @@ public class MultiGroupHistogramView extends View {
         int histogramValueTextColor = typedArray.getColor(R.styleable.MultiGroupHistogramView_histogramValueTextColor, Color.parseColor("#CC202332"));
         histogramValueTextSize = typedArray.getDimensionPixelSize(R.styleable.MultiGroupHistogramView_histogramValueTextSize, DisplayUtil.dp2px(12));
         histogramHistogramWidth = typedArray.getDimensionPixelSize(R.styleable.MultiGroupHistogramView_histogramHistogramWidth, DisplayUtil.dp2px(20));
+        chartPaddingTop = typedArray.getDimensionPixelSize(R.styleable.MultiGroupHistogramView_chartPaddingTop, DisplayUtil.dp2px(10));
         histogramPaddingStart = typedArray.getDimensionPixelSize(R.styleable.MultiGroupHistogramView_histogramPaddingStart, DisplayUtil.dp2px(15));
         histogramPaddingEnd = typedArray.getDimensionPixelSize(R.styleable.MultiGroupHistogramView_histogramPaddingEnd, DisplayUtil.dp2px(15));
         distanceFormGroupNameToAxis = typedArray.getDimensionPixelSize(R.styleable.MultiGroupHistogramView_distanceFormGroupNameToAxis, DisplayUtil.dp2px(15));
@@ -135,7 +137,7 @@ public class MultiGroupHistogramView extends View {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         width = getMeasuredWidth();
         height = getMeasuredHeight();
-        maxHistogramHeight = height - groupNameTextSize - coordinateAxisWidth - distanceFormGroupNameToAxis - distanceFromValueToHistogram - histogramValueTextSize;
+        maxHistogramHeight = height - groupNameTextSize - coordinateAxisWidth - distanceFormGroupNameToAxis - distanceFromValueToHistogram - histogramValueTextSize - chartPaddingTop;
     }
 
     @Override

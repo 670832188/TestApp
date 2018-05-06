@@ -75,6 +75,7 @@
         <attr name="histogramHistogramWidth" format="dimension" />
         <attr name="histogramPaddingStart" format="dimension" />
         <attr name="histogramPaddingEnd" format="dimension" />
+        <attr name="chartPaddingTop" format="dimension"/>
         <attr name="distanceFormGroupNameToAxis" format="dimension" />
         <attr name="distanceFromValueToHistogram" format="dimension" />
     </declare-styleable>
