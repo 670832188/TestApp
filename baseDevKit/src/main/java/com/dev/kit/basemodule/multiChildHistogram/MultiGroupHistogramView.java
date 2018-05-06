@@ -50,10 +50,17 @@ public class MultiGroupHistogramView extends View {
 
     // 柱状图最大高度
     private int maxHistogramHeight;
+    // 轴线画笔
     private Paint coordinateAxisPaint;
+    // 组名画笔
     private Paint groupNamePaint;
+    private Paint.FontMetrics groupNameFontMetrics;
+    private Paint.FontMetrics histogramValueFontMetrics;
+    // 柱状图数值画笔
     private Paint childValuePaint;
+    // 柱状图画笔
     private Paint childPaint;
+    // 柱状图绘制区域
     private Rect childRect;
     // 柱状图表视图总宽度
     private int histogramContentWidth;
@@ -108,10 +115,12 @@ public class MultiGroupHistogramView extends View {
         groupNamePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         groupNamePaint.setTextSize(groupNameTextSize);
         groupNamePaint.setColor(groupNameTextColor);
+        groupNameFontMetrics = groupNamePaint.getFontMetrics();
 
         childValuePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         childValuePaint.setTextSize(childValueTextSize);
         childValuePaint.setColor(childValueTextColor);
+        histogramValueFontMetrics = childValuePaint.getFontMetrics();
 
         childRect = new Rect();
         childPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -285,7 +294,10 @@ public class MultiGroupHistogramView extends View {
                         canvas.drawRect(childRect, childPaint);
 
                         String childValue = childData.getValue() + childData.getSuffix();
-                        canvas.drawText(childValue, xAxisOffset, childRect.top - distanceFormGroupNameToAxis, childValuePaint);
+
+                        float valueTextX = xAxisOffset + (childHistogramWidth - childValuePaint.measureText(childValue)) / 2;
+                        float valueTextY = childRect.top - distanceFormGroupNameToAxis + (histogramValueFontMetrics.bottom) / 2;
+                        canvas.drawText(childValue, valueTextX, valueTextY, childValuePaint);
                         int deltaX = i < childDataList.size() - 1 ? childHistogramWidth + childInterval : childHistogramWidth;
                         groupWidth += deltaX;
                         xAxisOffset += i == childDataList.size() - 1 ? deltaX + groupInterval : deltaX;
@@ -293,8 +305,7 @@ public class MultiGroupHistogramView extends View {
                     String groupName = groupData.getGroupName();
                     float groupNameTextWidth = groupNamePaint.measureText(groupName);
                     float groupNameTextX = xAxisOffset - groupWidth - groupInterval + (groupWidth - groupNameTextWidth) / 2;
-                    Paint.FontMetrics fontMetrics = groupNamePaint.getFontMetrics();
-                    float groupNameTextY = (height + (fontMetrics.descent + fontMetrics.ascent) / 2);
+                    float groupNameTextY = (height - groupNameFontMetrics.bottom / 2);
                     canvas.drawText(groupName, groupNameTextX, groupNameTextY, groupNamePaint);
                 }
             }
