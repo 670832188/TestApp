@@ -69,10 +69,10 @@
         <attr name="groupNameTextColor" format="color" />
         <attr name="groupNameTextSize" format="dimension" />
         <attr name="groupInterval" format="dimension" />
-        <attr name="childInterval" format="dimension" />
-        <attr name="childValueTextColor" format="color" />
-        <attr name="childValueTextSize" format="dimension" />
-        <attr name="childHistogramWidth" format="dimension" />
+        <attr name="histogramInterval" format="dimension" />
+        <attr name="histogramValueTextColor" format="color" />
+        <attr name="histogramValueTextSize" format="dimension" />
+        <attr name="histogramHistogramWidth" format="dimension" />
         <attr name="histogramPaddingStart" format="dimension" />
         <attr name="histogramPaddingEnd" format="dimension" />
         <attr name="distanceFormGroupNameToAxis" format="dimension" />

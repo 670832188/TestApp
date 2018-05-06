@@ -23,7 +23,7 @@ import com.dev.kit.basemodule.util.DisplayUtil;
 import java.util.List;
 
 /**
- * 多组分柱状图表
+ * 多组分直方图表
  * 每组可包含多个子数据
  * Created by cuiyan on 2018/5/3.
  */
@@ -37,18 +37,18 @@ public class MultiGroupHistogramView extends View {
     private int groupNameTextSize;
     // 小组之间间距
     private int groupInterval;
-    // 组内子柱状图间距
-    private int childInterval;
-    private int childValueTextSize;
-    private int childHistogramWidth;
+    // 组内子直方图间距
+    private int histogramInterval;
+    private int histogramValueTextSize;
+    private int histogramHistogramWidth;
     private int histogramPaddingStart;
     private int histogramPaddingEnd;
     // 各组名称到X轴的距离
     private int distanceFormGroupNameToAxis;
-    // 柱状图上方数值到柱状图的距离
+    // 直方图上方数值到直方图的距离
     private int distanceFromValueToHistogram;
 
-    // 柱状图最大高度
+    // 直方图最大高度
     private int maxHistogramHeight;
     // 轴线画笔
     private Paint coordinateAxisPaint;
@@ -56,13 +56,13 @@ public class MultiGroupHistogramView extends View {
     private Paint groupNamePaint;
     private Paint.FontMetrics groupNameFontMetrics;
     private Paint.FontMetrics histogramValueFontMetrics;
-    // 柱状图数值画笔
-    private Paint childValuePaint;
-    // 柱状图画笔
-    private Paint childPaint;
-    // 柱状图绘制区域
-    private Rect childRect;
-    // 柱状图表视图总宽度
+    // 直方图数值画笔
+    private Paint histogramValuePaint;
+    // 直方图画笔
+    private Paint histogramPaint;
+    // 直方图绘制区域
+    private Rect histogramPaintRect;
+    // 直方图表视图总宽度
     private int histogramContentWidth;
 
     private List<MultiGroupHistogramGroupData> dataList;
@@ -96,11 +96,11 @@ public class MultiGroupHistogramView extends View {
         int groupNameTextColor = typedArray.getColor(R.styleable.MultiGroupHistogramView_groupNameTextColor, Color.parseColor("#CC202332"));
         groupNameTextSize = typedArray.getDimensionPixelSize(R.styleable.MultiGroupHistogramView_groupNameTextSize, DisplayUtil.dp2px(15));
         groupInterval = typedArray.getDimensionPixelSize(R.styleable.MultiGroupHistogramView_groupInterval, DisplayUtil.dp2px(30));
-        childInterval = typedArray.getDimensionPixelSize(R.styleable.MultiGroupHistogramView_childInterval, DisplayUtil.dp2px(10));
-        // 子柱状图数值文本颜色
-        int childValueTextColor = typedArray.getColor(R.styleable.MultiGroupHistogramView_childValueTextColor, Color.parseColor("#CC202332"));
-        childValueTextSize = typedArray.getDimensionPixelSize(R.styleable.MultiGroupHistogramView_childValueTextSize, DisplayUtil.dp2px(12));
-        childHistogramWidth = typedArray.getDimensionPixelSize(R.styleable.MultiGroupHistogramView_childHistogramWidth, DisplayUtil.dp2px(20));
+        histogramInterval = typedArray.getDimensionPixelSize(R.styleable.MultiGroupHistogramView_histogramInterval, DisplayUtil.dp2px(10));
+        // 直方图数值文本颜色
+        int histogramValueTextColor = typedArray.getColor(R.styleable.MultiGroupHistogramView_histogramValueTextColor, Color.parseColor("#CC202332"));
+        histogramValueTextSize = typedArray.getDimensionPixelSize(R.styleable.MultiGroupHistogramView_histogramValueTextSize, DisplayUtil.dp2px(12));
+        histogramHistogramWidth = typedArray.getDimensionPixelSize(R.styleable.MultiGroupHistogramView_histogramHistogramWidth, DisplayUtil.dp2px(20));
         histogramPaddingStart = typedArray.getDimensionPixelSize(R.styleable.MultiGroupHistogramView_histogramPaddingStart, DisplayUtil.dp2px(15));
         histogramPaddingEnd = typedArray.getDimensionPixelSize(R.styleable.MultiGroupHistogramView_histogramPaddingEnd, DisplayUtil.dp2px(15));
         distanceFormGroupNameToAxis = typedArray.getDimensionPixelSize(R.styleable.MultiGroupHistogramView_distanceFormGroupNameToAxis, DisplayUtil.dp2px(15));
@@ -117,13 +117,13 @@ public class MultiGroupHistogramView extends View {
         groupNamePaint.setColor(groupNameTextColor);
         groupNameFontMetrics = groupNamePaint.getFontMetrics();
 
-        childValuePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        childValuePaint.setTextSize(childValueTextSize);
-        childValuePaint.setColor(childValueTextColor);
-        histogramValueFontMetrics = childValuePaint.getFontMetrics();
+        histogramValuePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        histogramValuePaint.setTextSize(histogramValueTextSize);
+        histogramValuePaint.setColor(histogramValueTextColor);
+        histogramValueFontMetrics = histogramValuePaint.getFontMetrics();
 
-        childRect = new Rect();
-        childPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        histogramPaintRect = new Rect();
+        histogramPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         scroller = new Scroller(getContext(), new LinearInterpolator());
         ViewConfiguration configuration = ViewConfiguration.get(getContext());
         minimumVelocity = configuration.getScaledMinimumFlingVelocity();
@@ -135,7 +135,7 @@ public class MultiGroupHistogramView extends View {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         width = getMeasuredWidth();
         height = getMeasuredHeight();
-        maxHistogramHeight = height - groupNameTextSize - coordinateAxisWidth - distanceFormGroupNameToAxis - distanceFromValueToHistogram - childValueTextSize;
+        maxHistogramHeight = height - groupNameTextSize - coordinateAxisWidth - distanceFormGroupNameToAxis - distanceFromValueToHistogram - histogramValueTextSize;
     }
 
     @Override
@@ -251,14 +251,14 @@ public class MultiGroupHistogramView extends View {
             List<MultiGroupHistogramChildData> childDataList = groupData.getChildDataList();
             if (childDataList != null && childDataList.size() > 0) {
                 for (int i = 0; i < childDataList.size(); i++) {
-                    histogramContentWidth += childHistogramWidth + childInterval;
+                    histogramContentWidth += histogramHistogramWidth + histogramInterval;
                     MultiGroupHistogramChildData childData = childDataList.get(i);
                     Float childMaxValue = childMaxValueArray.get(i);
                     if (childMaxValue == null || childMaxValue < childData.getValue()) {
                         childMaxValueArray.put(i, childData.getValue());
                     }
                 }
-                histogramContentWidth += groupInterval - childInterval;
+                histogramContentWidth += groupInterval - histogramInterval;
             }
         }
         histogramContentWidth += -groupInterval;
@@ -281,24 +281,24 @@ public class MultiGroupHistogramView extends View {
                     int groupWidth = 0;
                     for (int i = 0; i < childDataList.size(); i++) {
                         MultiGroupHistogramChildData childData = childDataList.get(i);
-                        childRect.left = xAxisOffset;
-                        childRect.right = childRect.left + childHistogramWidth;
-                        int childHeight;
+                        histogramPaintRect.left = xAxisOffset;
+                        histogramPaintRect.right = histogramPaintRect.left + histogramHistogramWidth;
+                        int childHistogramHeight;
                         if (childData.getValue() <= 0 || childMaxValueArray.get(i) <= 0) {
-                            childHeight = 0;
+                            childHistogramHeight = 0;
                         } else {
-                            childHeight = (int) (childData.getValue() / childMaxValueArray.get(i) * maxHistogramHeight);
+                            childHistogramHeight = (int) (childData.getValue() / childMaxValueArray.get(i) * maxHistogramHeight);
                         }
-                        childRect.top = height - childHeight - coordinateAxisWidth - distanceFormGroupNameToAxis - groupNameTextSize;
-                        childRect.bottom = childRect.top + childHeight;
-                        canvas.drawRect(childRect, childPaint);
+                        histogramPaintRect.top = height - childHistogramHeight - coordinateAxisWidth - distanceFormGroupNameToAxis - groupNameTextSize;
+                        histogramPaintRect.bottom = histogramPaintRect.top + childHistogramHeight;
+                        canvas.drawRect(histogramPaintRect, histogramPaint);
 
-                        String childValue = childData.getValue() + childData.getSuffix();
+                        String childHistogramHeightValue = childData.getValue() + childData.getSuffix();
 
-                        float valueTextX = xAxisOffset + (childHistogramWidth - childValuePaint.measureText(childValue)) / 2;
-                        float valueTextY = childRect.top - distanceFormGroupNameToAxis + (histogramValueFontMetrics.bottom) / 2;
-                        canvas.drawText(childValue, valueTextX, valueTextY, childValuePaint);
-                        int deltaX = i < childDataList.size() - 1 ? childHistogramWidth + childInterval : childHistogramWidth;
+                        float valueTextX = xAxisOffset + (histogramHistogramWidth - histogramValuePaint.measureText(childHistogramHeightValue)) / 2;
+                        float valueTextY = histogramPaintRect.top - distanceFormGroupNameToAxis + (histogramValueFontMetrics.bottom) / 2;
+                        canvas.drawText(childHistogramHeightValue, valueTextX, valueTextY, histogramValuePaint);
+                        int deltaX = i < childDataList.size() - 1 ? histogramHistogramWidth + histogramInterval : histogramHistogramWidth;
                         groupWidth += deltaX;
                         xAxisOffset += i == childDataList.size() - 1 ? deltaX + groupInterval : deltaX;
                     }
