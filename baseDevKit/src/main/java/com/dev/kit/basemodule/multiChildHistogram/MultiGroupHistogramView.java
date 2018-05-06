@@ -14,6 +14,7 @@ import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.animation.LinearInterpolator;
 import android.widget.Scroller;
 
 import com.dev.kit.basemodule.R;
@@ -79,6 +80,7 @@ public class MultiGroupHistogramView extends View {
     }
 
     private void init(AttributeSet attrs) {
+        setLayerType(View.LAYER_TYPE_HARDWARE, null);
         TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.MultiGroupHistogramView);
         coordinateAxisWidth = typedArray.getDimensionPixelSize(R.styleable.MultiGroupHistogramView_coordinateAxisWidth, DisplayUtil.dp2px(2));
         // 坐标轴线颜色
@@ -113,7 +115,7 @@ public class MultiGroupHistogramView extends View {
 
         childRect = new Rect();
         childPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        scroller = new Scroller(getContext());
+        scroller = new Scroller(getContext(), new LinearInterpolator());
         ViewConfiguration configuration = ViewConfiguration.get(getContext());
         minimumVelocity = configuration.getScaledMinimumFlingVelocity();
         maximumVelocity = configuration.getScaledMaximumFlingVelocity();
@@ -199,16 +201,25 @@ public class MultiGroupHistogramView extends View {
     }
 
     private void fling(int velocityX) {
-        if (Math.abs(velocityX) > 0) {
+        if (Math.abs(velocityX) > minimumVelocity) {
             if (Math.abs(velocityX) > maximumVelocity) {
                 velocityX = maximumVelocity * velocityX / Math.abs(velocityX);
             }
 
-            if (Math.abs(velocityX) < 1500) {
-                int extraVelocityX = (int) (Math.exp(-Math.abs(velocityX) / 1500) * 1000 * velocityX / Math.abs(velocityX));
-                velocityX += extraVelocityX;
-            }
+//            velocityX += Math.abs(velocityX) / velocityX * getVelocityByDistance(DisplayUtil.dp2px(15));
             scroller.fling(getScrollX(), getScrollY(), -velocityX, 0, 0, histogramContentWidth + histogramPaddingStart - width, 0, 0);
+
+
+//            int dx = (int) getSplineFlingDistance(velocityX) + DisplayUtil.dp2px(15);
+//            int scrollX = getScrollX();
+//            if (velocityX < 0 && dx > histogramContentWidth + histogramPaddingStart - width - scrollX) {
+//                dx = histogramContentWidth + histogramPaddingStart - width - scrollX;
+//            } else if (velocityX > 0 && dx > scrollX) {
+//                dx = scrollX;
+//            }
+//            int duration = 1000 * dx / 200;
+//            dx = -dx * velocityX / Math.abs(velocityX);
+//            scroller.startScroll(scrollX, 0, dx, 0, duration);
         }
     }
 
@@ -216,7 +227,6 @@ public class MultiGroupHistogramView extends View {
     public void computeScroll() {
         if (scroller.computeScrollOffset()) {
             scrollTo(scroller.getCurrX(), 0);
-//            postInvalidate();
         }
     }
 
@@ -290,4 +300,41 @@ public class MultiGroupHistogramView extends View {
             }
         }
     }
+
+
+//    private static final float INFLEXION = 0.35f;
+//    private static float mFlingFriction = ViewConfiguration.getScrollFriction();
+//    private static float mPhysicalCoeff = SensorManager.GRAVITY_EARTH * 39.37f * DisplayUtil.getScaleFactor() * 160 * 0.84f;
+//    ;
+//    private static float DECELERATION_RATE = (float) (Math.log(0.78) / Math.log(0.9));
+//
+//    private double getSplineDeceleration(int velocity) {
+//        return Math.log(INFLEXION * Math.abs(velocity) / (mFlingFriction * mPhysicalCoeff));
+//    }
+//
+//    private double getSplineDecelerationByDistance(double distance) {
+//        final double decelMinusOne = DECELERATION_RATE - 1.0;
+//        return decelMinusOne * (Math.log(distance / (mFlingFriction * mPhysicalCoeff))) / DECELERATION_RATE;
+//    }
+//
+//    //通过初始速度获取最终滑动距离
+//    private double getSplineFlingDistance(int velocity) {
+//        final double l = getSplineDeceleration(velocity);
+//        final double decelMinusOne = DECELERATION_RATE - 1.0;
+//        return mFlingFriction * mPhysicalCoeff * Math.exp(DECELERATION_RATE / decelMinusOne * l);
+//    }
+//
+//    //通过需要滑动的距离获取初始速度
+//    private int getVelocityByDistance(double distance) {
+//        final double l = getSplineDecelerationByDistance(distance);
+//        int velocity = (int) (Math.exp(l) * mFlingFriction * mPhysicalCoeff / INFLEXION);
+//        return Math.abs(velocity);
+//    }
+//
+//    //获取滑动的时间
+//    private int getSplineFlingDuration(int velocity) {
+//        final double l = getSplineDeceleration(velocity);
+//        final double decelMinusOne = DECELERATION_RATE - 1.0;
+//        return (int) (1000.0 * Math.exp(l / decelMinusOne));
+//    }
 }
