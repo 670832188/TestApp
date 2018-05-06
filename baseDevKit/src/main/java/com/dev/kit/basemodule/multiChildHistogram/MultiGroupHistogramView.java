@@ -4,8 +4,10 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.Shader;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
@@ -63,6 +65,7 @@ public class MultiGroupHistogramView extends View {
     private Paint histogramPaint;
     // 直方图绘制区域
     private Rect histogramPaintRect;
+    private List<List<Integer>> histogramColors;
     // 直方图表视图总宽度
     private int histogramContentWidth;
 
@@ -266,6 +269,16 @@ public class MultiGroupHistogramView extends View {
         histogramContentWidth += -groupInterval;
     }
 
+    /**
+     * 设置直方图颜色
+     */
+    public void setHistogramColor(List<List<Integer>> histogramColors) {
+        this.histogramColors = histogramColors;
+//        if (colors != null) {
+//            histogramPaint.setShader(new LinearGradient(0, 0, width, height, colors, null, Shader.TileMode.CLAMP));
+//        }
+    }
+
     @Override
     protected void onDraw(Canvas canvas) {
         if (width == 0 || height == 0) {
@@ -293,6 +306,17 @@ public class MultiGroupHistogramView extends View {
                         }
                         histogramPaintRect.top = height - childHistogramHeight - coordinateAxisWidth - distanceFormGroupNameToAxis - groupNameTextSize;
                         histogramPaintRect.bottom = histogramPaintRect.top + childHistogramHeight;
+                        if (histogramColors != null && i < histogramColors.size()) {
+                            int colorSize = histogramColors.get(i).size();
+                            int[] color = new int[colorSize];
+                            for(int k = 0; k < colorSize; k++) {
+                                color[k] = histogramColors.get(i).get(k);
+                            }
+                            LinearGradient linearGradient = new LinearGradient(histogramPaintRect.left, chartPaddingTop + distanceFromValueToHistogram + histogramValueTextSize,
+                                    histogramPaintRect.right, histogramPaintRect.bottom, color, null, Shader.TileMode.CLAMP);
+                            histogramPaint.setShader(linearGradient);
+                        }
+
                         canvas.drawRect(histogramPaintRect, histogramPaint);
 
                         String childHistogramHeightValue = childData.getValue() + childData.getSuffix();

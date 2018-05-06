@@ -21,7 +21,6 @@ import com.dev.kit.basemodule.netRequest.util.BaseServiceUtil;
 import com.dev.kit.basemodule.netRequest.util.CommonInterceptor;
 import com.dev.kit.basemodule.util.FileUtil;
 import com.dev.kit.basemodule.util.LogUtil;
-import com.dev.kit.basemodule.util.MIUIHelper;
 import com.dev.kit.testapp.RxjavaAndRetrofitTest.ApiService;
 import com.dev.kit.testapp.RxjavaAndRetrofitTest.NetRequestDemoActivity;
 import com.dev.kit.testapp.animation.PropertyAnimationEntryActivity;
@@ -43,7 +42,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        MIUIHelper.setStatusBarLightMode(this, false);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         init();
@@ -117,7 +115,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private void initMultiGroupHistogramView() {
         Random random = new Random();
-        int groupSize = random.nextInt(5) + 7;
+        int groupSize = random.nextInt(5) + 10;
         List<MultiGroupHistogramGroupData> groupDataList = new ArrayList<>();
         for (int i = 0; i < groupSize; i++) {
             List<MultiGroupHistogramChildData> childDataList = new ArrayList<>();
@@ -126,13 +124,25 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             for (int j = 0; j < 2; j++) {
                 MultiGroupHistogramChildData childData = new MultiGroupHistogramChildData();
                 childData.setSuffix("%");
-                childData.setValue(random.nextInt(500) + 500);
+                childData.setValue(random.nextInt(50) + 50);
                 childDataList.add(childData);
             }
             groupData.setChildDataList(childDataList);
             groupDataList.add(groupData);
         }
         multiGroupHistogramView.setDataList(groupDataList);
+        List<List<Integer>> colorList = new ArrayList<>();
+        List<Integer> list1 = new ArrayList<>();
+        list1.add(getResources().getColor(R.color.color_orange));
+        list1.add(getResources().getColor(R.color.colorPrimary));
+
+        List<Integer> list2 = new ArrayList<>();
+        list2.add(getResources().getColor(R.color.color_supper_tip_normal));
+        list2.add(getResources().getColor(R.color.bg_supper_selected));
+        colorList.add(list1);
+        colorList.add(list2);
+        multiGroupHistogramView.setHistogramColor(colorList);
+
     }
 
     @Override
