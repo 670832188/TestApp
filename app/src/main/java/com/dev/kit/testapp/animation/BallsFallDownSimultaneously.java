@@ -6,10 +6,11 @@ import android.animation.TimeInterpolator;
 import android.animation.TypeEvaluator;
 import android.animation.ValueAnimator;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
 
-import com.dev.kit.basemodule.activity.BaseActivity;
+import com.dev.kit.basemodule.activity.BaseStateViewActivity;
 import com.dev.kit.basemodule.util.DisplayUtil;
 import com.dev.kit.testapp.R;
 
@@ -19,7 +20,7 @@ import com.dev.kit.testapp.R;
  * Date:   18/5/2 22:39
  * Desc:
  */
-public class BallsFallDownSimultaneously extends BaseActivity implements View.OnClickListener {
+public class BallsFallDownSimultaneously extends BaseStateViewActivity implements View.OnClickListener {
 
     private View freeFallView;
     private View horizontalProjectileMotionView;
@@ -31,15 +32,22 @@ public class BallsFallDownSimultaneously extends BaseActivity implements View.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_balls_fall_down);
         init();
     }
 
+    @Override
+    public View createContentView() {
+        return LayoutInflater.from(this).inflate(R.layout.activity_balls_fall_down, getFlContainer(), false);
+    }
+
     private void init() {
+        setText(R.id.tv_title, "两个小球同时落地");
+        setOnClickListener(R.id.iv_left, this);
         setOnClickListener(R.id.tv_reset, this);
         setOnClickListener(R.id.tv_start, this);
         freeFallView = findViewById(R.id.view_free_fall);
         horizontalProjectileMotionView = findViewById(R.id.view_horizontal_projectile_motion);
+        setContentState(STATE_DATA_CONTENT);
     }
 
     @Override
@@ -90,6 +98,10 @@ public class BallsFallDownSimultaneously extends BaseActivity implements View.On
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.iv_left: {
+                finish();
+                break;
+            }
             case R.id.tv_reset: {
                 reset();
                 break;

@@ -8,12 +8,10 @@ import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.view.LayoutInflater;
 import android.view.View;
 
-import com.dev.kit.basemodule.activity.BaseActivity;
-import com.dev.kit.basemodule.multiChildHistogram.MultiGroupHistogramChildData;
-import com.dev.kit.basemodule.multiChildHistogram.MultiGroupHistogramGroupData;
-import com.dev.kit.basemodule.multiChildHistogram.MultiGroupHistogramView;
+import com.dev.kit.basemodule.activity.BaseStateViewActivity;
 import com.dev.kit.basemodule.netRequest.model.BaseController;
 import com.dev.kit.basemodule.netRequest.subscribers.NetRequestCallback;
 import com.dev.kit.basemodule.netRequest.subscribers.NetRequestSubscriber;
@@ -24,12 +22,10 @@ import com.dev.kit.basemodule.util.LogUtil;
 import com.dev.kit.testapp.RxjavaAndRetrofitTest.ApiService;
 import com.dev.kit.testapp.RxjavaAndRetrofitTest.NetRequestDemoActivity;
 import com.dev.kit.testapp.animation.PropertyAnimationEntryActivity;
+import com.dev.kit.testapp.multiGroupHistogram.MultiGroupHistogramActivity;
 import com.dev.kit.testapp.pagerTest.PagerTestActivity;
 
 import java.io.File;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 import io.reactivex.Observable;
@@ -37,24 +33,28 @@ import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 
-public class MainActivity extends BaseActivity implements View.OnClickListener {
-
-    private MultiGroupHistogramView multiGroupHistogramView;
+public class MainActivity extends BaseStateViewActivity implements View.OnClickListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
         init();
     }
 
+    @Override
+    public View createContentView() {
+        return LayoutInflater.from(this).inflate(R.layout.activity_main, getFlContainer(), false);
+    }
+
     private void init() {
+        setText(R.id.tv_title, R.string.app_name);
+        setOnClickListener(R.id.iv_left, this);
         setOnClickListener(R.id.tv_net_test, this);
         setOnClickListener(R.id.tv_upload_file, this);
         setOnClickListener(R.id.tv_vp_test, this);
         setOnClickListener(R.id.tv_property_animation, this);
-        multiGroupHistogramView = findViewById(R.id.multiGroupHistogramView);
-        initMultiGroupHistogramView();
+        setOnClickListener(R.id.tv_MultiGroupHistogramView, this);
+        setContentState(STATE_DATA_CONTENT);
     }
 
 
@@ -91,6 +91,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.iv_left: {
+                finish();
+                break;
+            }
             case R.id.tv_net_test: {
                 startActivity(new Intent(MainActivity.this, NetRequestDemoActivity.class));
                 break;
@@ -104,41 +108,18 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 break;
             }
             case R.id.tv_vp_test: {
-                startActivity(new Intent(MainActivity.this, PagerTestActivity.class));
+                startActivity(new Intent(this, PagerTestActivity.class));
                 break;
             }
             case R.id.tv_property_animation: {
-                startActivity(new Intent(MainActivity.this, PropertyAnimationEntryActivity.class));
+                startActivity(new Intent(this, PropertyAnimationEntryActivity.class));
+                break;
+            }
+            case R.id.tv_MultiGroupHistogramView: {
+                startActivity(new Intent(this, MultiGroupHistogramActivity.class));
                 break;
             }
         }
-    }
-
-    private void initMultiGroupHistogramView() {
-        Random random = new Random();
-        int groupSize = random.nextInt(5) + 10;
-        List<MultiGroupHistogramGroupData> groupDataList = new ArrayList<>();
-        for (int i = 0; i < groupSize; i++) {
-            List<MultiGroupHistogramChildData> childDataList = new ArrayList<>();
-            MultiGroupHistogramGroupData groupData = new MultiGroupHistogramGroupData();
-            groupData.setGroupName("第" + (i + 1) + "组");
-            MultiGroupHistogramChildData childData1 = new MultiGroupHistogramChildData();
-            childData1.setSuffix("分");
-            childData1.setValue(random.nextInt(50) + 51);
-            childDataList.add(childData1);
-
-            MultiGroupHistogramChildData childData2 = new MultiGroupHistogramChildData();
-            childData2.setSuffix("%");
-            childData2.setValue(random.nextInt(50) + 51);
-            childDataList.add(childData2);
-            groupData.setChildDataList(childDataList);
-            groupDataList.add(groupData);
-        }
-        multiGroupHistogramView.setDataList(groupDataList);
-        int[] color1 = new int[]{getResources().getColor(R.color.color_orange), getResources().getColor(R.color.colorPrimary)};
-
-        int[] color2 = new int[]{getResources().getColor(R.color.color_supper_tip_normal), getResources().getColor(R.color.bg_supper_selected)};
-        multiGroupHistogramView.setHistogramColor(color1, color2);
     }
 
     @Override

@@ -1,27 +1,35 @@
 package com.dev.kit.testapp.animation;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 
 import com.dev.kit.basemodule.View.CircleCountDownView;
-import com.dev.kit.basemodule.activity.BaseActivity;
+import com.dev.kit.basemodule.activity.BaseStateViewActivity;
 import com.dev.kit.basemodule.util.LogUtil;
 import com.dev.kit.testapp.R;
 
 /**
  * Created by cuiyan on 2018/5/3.
  */
-public class CountDownActivity extends BaseActivity implements View.OnClickListener {
+public class CountDownActivity extends BaseStateViewActivity implements View.OnClickListener {
     private CircleCountDownView countDownView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_count_down);
         init();
     }
 
+    @Override
+    public View createContentView() {
+        return LayoutInflater.from(this).inflate(R.layout.activity_count_down, getFlContainer(), false);
+    }
+
     private void init() {
+        setContentState(STATE_DATA_CONTENT);
+        setText(R.id.tv_title, "属性动画");
+        setOnClickListener(R.id.iv_left, this);
         setOnClickListener(R.id.tv_restart, this);
         countDownView = findViewById(R.id.view_count);
         countDownView.setStartCountValue(10);
@@ -48,6 +56,10 @@ public class CountDownActivity extends BaseActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.iv_left: {
+                finish();
+                break;
+            }
             case R.id.tv_restart: {
                 countDownView.restart();
                 break;

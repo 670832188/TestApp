@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.dev.kit.basemodule.activity.BaseActivity;
+import com.dev.kit.basemodule.activity.BaseStateViewActivity;
 import com.dev.kit.basemodule.pageTransformer.HorizontalStackTransformerWithRotation;
 import com.dev.kit.basemodule.pageTransformer.VerticalStackPageTransformerWithRotation;
 import com.dev.kit.basemodule.surpport.CommonPagerAdapter;
@@ -25,20 +25,29 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class PagerTestActivity extends BaseActivity {
-    private ViewPager vpHorizontalStack;
-    private ViewPager vpVerticalStack;
+public class PagerTestActivity extends BaseStateViewActivity {
     private List<Integer> colorsRes = Arrays.asList(R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorPrimary, R.color.colorAccent, R.color.color_red, R.color.bg_lunch_selected, R.color.bg_supper_selected);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_pager_test);
         init();
     }
 
+    @Override
+    public View createContentView() {
+        return LayoutInflater.from(this).inflate(R.layout.activity_pager_test, getFlContainer(), false);
+    }
+
     private void init() {
-        vpHorizontalStack = findViewById(R.id.vp_horizontal_stack);
+        setOnClickListener(R.id.iv_left, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+        setText(R.id.tv_title, "层叠ViewPager");
+        ViewPager vpHorizontalStack = findViewById(R.id.vp_horizontal_stack);
         vpHorizontalStack.setOffscreenPageLimit(3);
         CommonPagerAdapter<Integer> horizontalStackAdapter = new CommonPagerAdapter<Integer>(colorsRes) {
             @Override
@@ -73,7 +82,7 @@ public class PagerTestActivity extends BaseActivity {
         vpHorizontalStack.setPageTransformer(false, new HorizontalStackTransformerWithRotation(vpHorizontalStack));
         vpHorizontalStack.setAdapter(horizontalStackAdapter);
 
-        vpVerticalStack = findViewById(R.id.vp_vertical_stack);
+        ViewPager vpVerticalStack = findViewById(R.id.vp_vertical_stack);
         vpVerticalStack.setOffscreenPageLimit(3);
         CommonPagerAdapter<Integer> verticalStackAdapter = new CommonPagerAdapter<Integer>(deepCopyList(colorsRes)) {
             @Override
@@ -107,6 +116,7 @@ public class PagerTestActivity extends BaseActivity {
 
         vpVerticalStack.setPageTransformer(false, new VerticalStackPageTransformerWithRotation(vpVerticalStack));
         vpVerticalStack.setAdapter(verticalStackAdapter);
+        setContentState(STATE_DATA_CONTENT);
     }
 
     @SuppressWarnings("unchecked")

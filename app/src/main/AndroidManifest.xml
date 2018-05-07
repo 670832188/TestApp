@@ -28,6 +28,7 @@
         <activity android:name=".animation.PropertyAnimationEntryActivity" />
         <activity android:name=".animation.BallsFallDownSimultaneously" />
         <activity android:name=".animation.CountDownActivity" />
+        <activity android:name=".multiGroupHistogram.MultiGroupHistogramActivity"/>
     </application>
 
 </manifest>
