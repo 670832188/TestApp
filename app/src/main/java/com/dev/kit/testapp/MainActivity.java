@@ -27,6 +27,7 @@ import com.dev.kit.testapp.animation.PropertyAnimationEntryActivity;
 import com.dev.kit.testapp.pagerTest.PagerTestActivity;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -121,12 +122,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             List<MultiGroupHistogramChildData> childDataList = new ArrayList<>();
             MultiGroupHistogramGroupData groupData = new MultiGroupHistogramGroupData();
             groupData.setGroupName("第" + (i + 1) + "组");
-            for (int j = 0; j < 2; j++) {
-                MultiGroupHistogramChildData childData = new MultiGroupHistogramChildData();
-                childData.setSuffix("%");
-                childData.setValue(random.nextInt(50) + 50);
-                childDataList.add(childData);
-            }
+            MultiGroupHistogramChildData childData1 = new MultiGroupHistogramChildData();
+            childData1.setSuffix("分");
+            childData1.setValue(random.nextInt(50) + 51);
+            childDataList.add(childData1);
+
+            MultiGroupHistogramChildData childData2 = new MultiGroupHistogramChildData();
+            childData2.setSuffix("%");
+            childData2.setValue(random.nextInt(50) + 51);
+            childDataList.add(childData2);
             groupData.setChildDataList(childDataList);
             groupDataList.add(groupData);
         }
@@ -135,7 +139,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         int[] color2 = new int[]{getResources().getColor(R.color.color_supper_tip_normal), getResources().getColor(R.color.bg_supper_selected)};
         multiGroupHistogramView.setHistogramColor(color1, color2);
-
     }
 
     @Override

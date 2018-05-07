@@ -61,12 +61,13 @@
         app:distanceFromValueToHistogram="10dp"
         app:groupInterval="30dp"
         app:groupNameTextColor="@color/color_common_text"
-        app:groupNameTextSize="14sp"
+        app:groupNameTextSize="13sp"
         app:histogramHistogramWidth="20dp"
         app:histogramInterval="15dp"
         app:histogramPaddingEnd="15dp"
         app:histogramPaddingStart="15dp"
+        app:histogramValueDecimalCount="ZERO"
         app:histogramValueTextColor="@color/color_common_text"
-        app:histogramValueTextSize="10sp" />
+        app:histogramValueTextSize="9sp" />
 
 </LinearLayout>

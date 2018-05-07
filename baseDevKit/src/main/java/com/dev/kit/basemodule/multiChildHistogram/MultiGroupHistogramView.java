@@ -21,6 +21,7 @@ import android.widget.Scroller;
 
 import com.dev.kit.basemodule.R;
 import com.dev.kit.basemodule.util.DisplayUtil;
+import com.dev.kit.basemodule.util.StringUtil;
 
 import java.util.List;
 
@@ -42,6 +43,7 @@ public class MultiGroupHistogramView extends View {
     // 组内子直方图间距
     private int histogramInterval;
     private int histogramValueTextSize;
+    private int histogramValueDecimalCount;
     private int histogramHistogramWidth;
     private int chartPaddingTop;
     private int histogramPaddingStart;
@@ -105,6 +107,7 @@ public class MultiGroupHistogramView extends View {
         // 直方图数值文本颜色
         int histogramValueTextColor = typedArray.getColor(R.styleable.MultiGroupHistogramView_histogramValueTextColor, Color.parseColor("#CC202332"));
         histogramValueTextSize = typedArray.getDimensionPixelSize(R.styleable.MultiGroupHistogramView_histogramValueTextSize, DisplayUtil.dp2px(12));
+        histogramValueDecimalCount = typedArray.getInt(R.styleable.MultiGroupHistogramView_histogramValueDecimalCount, 0);
         histogramHistogramWidth = typedArray.getDimensionPixelSize(R.styleable.MultiGroupHistogramView_histogramHistogramWidth, DisplayUtil.dp2px(20));
         chartPaddingTop = typedArray.getDimensionPixelSize(R.styleable.MultiGroupHistogramView_chartPaddingTop, DisplayUtil.dp2px(10));
         histogramPaddingStart = typedArray.getDimensionPixelSize(R.styleable.MultiGroupHistogramView_histogramPaddingStart, DisplayUtil.dp2px(15));
@@ -308,7 +311,7 @@ public class MultiGroupHistogramView extends View {
                         histogramPaint.setShader(shader);
                         canvas.drawRect(histogramPaintRect, histogramPaint);
                         shader = null;
-                        String childHistogramHeightValue = childData.getValue() + childData.getSuffix();
+                        String childHistogramHeightValue = StringUtil.NumericScaleByFloor(String.valueOf(childData.getValue()), histogramValueDecimalCount) + childData.getSuffix();
 
                         float valueTextX = xAxisOffset + (histogramHistogramWidth - histogramValuePaint.measureText(childHistogramHeightValue)) / 2;
                         float valueTextY = histogramPaintRect.top - distanceFormGroupNameToAxis + (histogramValueFontMetrics.bottom) / 2;
