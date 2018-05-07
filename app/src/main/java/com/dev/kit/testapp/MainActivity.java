@@ -131,17 +131,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             groupDataList.add(groupData);
         }
         multiGroupHistogramView.setDataList(groupDataList);
-        List<List<Integer>> colorList = new ArrayList<>();
-        List<Integer> list1 = new ArrayList<>();
-        list1.add(getResources().getColor(R.color.color_orange));
-        list1.add(getResources().getColor(R.color.colorPrimary));
+        int[] color1 = new int[]{getResources().getColor(R.color.color_orange), getResources().getColor(R.color.colorPrimary)};
 
-        List<Integer> list2 = new ArrayList<>();
-        list2.add(getResources().getColor(R.color.color_supper_tip_normal));
-        list2.add(getResources().getColor(R.color.bg_supper_selected));
-        colorList.add(list1);
-        colorList.add(list2);
-        multiGroupHistogramView.setHistogramColor(colorList);
+        int[] color2 = new int[]{getResources().getColor(R.color.color_supper_tip_normal), getResources().getColor(R.color.bg_supper_selected)};
+        multiGroupHistogramView.setHistogramColor(color1, color2);
 
     }
 

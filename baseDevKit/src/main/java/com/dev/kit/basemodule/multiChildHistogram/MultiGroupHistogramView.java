@@ -65,9 +65,10 @@ public class MultiGroupHistogramView extends View {
     private Paint histogramPaint;
     // 直方图绘制区域
     private Rect histogramPaintRect;
-    private List<List<Integer>> histogramColors;
     // 直方图表视图总宽度
     private int histogramContentWidth;
+    // 存储组内直方图shader color，例如，每组有3个直方图，该SparseArray就存储3个相对应的shader color
+    private SparseArray<int[]> histogramShaderColorArray;
 
     private List<MultiGroupHistogramGroupData> dataList;
     private SparseArray<Float> childMaxValueArray;
@@ -219,21 +220,7 @@ public class MultiGroupHistogramView extends View {
             if (Math.abs(velocityX) > maximumVelocity) {
                 velocityX = maximumVelocity * velocityX / Math.abs(velocityX);
             }
-
-//            velocityX += Math.abs(velocityX) / velocityX * getVelocityByDistance(DisplayUtil.dp2px(15));
             scroller.fling(getScrollX(), getScrollY(), -velocityX, 0, 0, histogramContentWidth + histogramPaddingStart - width, 0, 0);
-
-
-//            int dx = (int) getSplineFlingDistance(velocityX) + DisplayUtil.dp2px(15);
-//            int scrollX = getScrollX();
-//            if (velocityX < 0 && dx > histogramContentWidth + histogramPaddingStart - width - scrollX) {
-//                dx = histogramContentWidth + histogramPaddingStart - width - scrollX;
-//            } else if (velocityX > 0 && dx > scrollX) {
-//                dx = scrollX;
-//            }
-//            int duration = 1000 * dx / 200;
-//            dx = -dx * velocityX / Math.abs(velocityX);
-//            scroller.startScroll(scrollX, 0, dx, 0, duration);
         }
     }
 
@@ -270,13 +257,19 @@ public class MultiGroupHistogramView extends View {
     }
 
     /**
-     * 设置直方图颜色
+     * 设置组内直方图颜色
      */
-    public void setHistogramColor(List<List<Integer>> histogramColors) {
-        this.histogramColors = histogramColors;
-//        if (colors != null) {
-//            histogramPaint.setShader(new LinearGradient(0, 0, width, height, colors, null, Shader.TileMode.CLAMP));
-//        }
+    public void setHistogramColor(int[]... colors) {
+        if (colors != null && colors.length > 0) {
+            if (histogramShaderColorArray == null) {
+                histogramShaderColorArray = new SparseArray<>();
+            } else {
+                histogramShaderColorArray.clear();
+            }
+            for (int i = 0; i < colors.length; i++) {
+                histogramShaderColorArray.put(i, colors[i]);
+            }
+        }
     }
 
     @Override
@@ -306,19 +299,15 @@ public class MultiGroupHistogramView extends View {
                         }
                         histogramPaintRect.top = height - childHistogramHeight - coordinateAxisWidth - distanceFormGroupNameToAxis - groupNameTextSize;
                         histogramPaintRect.bottom = histogramPaintRect.top + childHistogramHeight;
-                        if (histogramColors != null && i < histogramColors.size()) {
-                            int colorSize = histogramColors.get(i).size();
-                            int[] color = new int[colorSize];
-                            for(int k = 0; k < colorSize; k++) {
-                                color[k] = histogramColors.get(i).get(k);
-                            }
-                            LinearGradient linearGradient = new LinearGradient(histogramPaintRect.left, chartPaddingTop + distanceFromValueToHistogram + histogramValueTextSize,
-                                    histogramPaintRect.right, histogramPaintRect.bottom, color, null, Shader.TileMode.CLAMP);
-                            histogramPaint.setShader(linearGradient);
+                        int[] histogramShaderColor = histogramShaderColorArray.get(i);
+                        LinearGradient shader = null;
+                        if (histogramShaderColor != null && histogramShaderColor.length > 0) {
+                            shader = getHistogramShader(histogramPaintRect.left, chartPaddingTop + distanceFromValueToHistogram + histogramValueTextSize,
+                                    histogramPaintRect.right, histogramPaintRect.bottom, histogramShaderColor);
                         }
-
+                        histogramPaint.setShader(shader);
                         canvas.drawRect(histogramPaintRect, histogramPaint);
-
+                        shader = null;
                         String childHistogramHeightValue = childData.getValue() + childData.getSuffix();
 
                         float valueTextX = xAxisOffset + (histogramHistogramWidth - histogramValuePaint.measureText(childHistogramHeightValue)) / 2;
@@ -336,6 +325,10 @@ public class MultiGroupHistogramView extends View {
                 }
             }
         }
+    }
+
+    private LinearGradient getHistogramShader(float x0, float y0, float x1, float y1, int[] colors) {
+        return new LinearGradient(x0, y0, x1, y1, colors, null, Shader.TileMode.CLAMP);
     }
 
 
