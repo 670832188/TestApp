@@ -146,7 +146,10 @@ public class MultiGroupHistogramView extends View {
         height = getMeasuredHeight();
         maxHistogramHeight = height - groupNameTextSize - coordinateAxisWidth - distanceFormGroupNameToAxis - distanceFromValueToHistogram - histogramValueTextSize - chartPaddingTop;
     }
-
+    /**
+     * 判断是否可以水平滑动
+     * @param direction 标识滑动方向  正数：右滑(手指从右至左移动)；负数：左滑(手指由左向右移动)
+     */
     @Override
     public boolean canScrollHorizontally(int direction) {
         if (direction > 0) {
@@ -156,6 +159,10 @@ public class MultiGroupHistogramView extends View {
         }
     }
 
+    /**
+     * 根据滑动方向获取最大可滑动距离
+     * @param direction 标识滑动方向  正数：右滑(手指从右至左移动)；负数：左滑(手指由左向右移动)
+     */
     private int getMaxCanScrollX(int direction) {
         if (direction > 0) {
             return histogramContentWidth - getScrollX() - width + histogramPaddingStart + histogramPaddingEnd > 0 ?
