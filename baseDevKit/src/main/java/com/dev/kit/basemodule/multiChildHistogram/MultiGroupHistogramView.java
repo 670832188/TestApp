@@ -310,7 +310,6 @@ public class MultiGroupHistogramView extends View {
                         }
                         histogramPaint.setShader(shader);
                         canvas.drawRect(histogramPaintRect, histogramPaint);
-                        shader = null;
                         String childHistogramHeightValue = StringUtil.NumericScaleByFloor(String.valueOf(childData.getValue()), histogramValueDecimalCount) + childData.getSuffix();
 
                         float valueTextX = xAxisOffset + (histogramHistogramWidth - histogramValuePaint.measureText(childHistogramHeightValue)) / 2;
