@@ -30,7 +30,8 @@
         <activity android:name=".animation.CountDownActivity" />
         <activity
             android:name=".multiGroupHistogram.MultiGroupHistogramActivity"
-            android:theme="@style/rankTheme" />
+            android:theme="@style/rankTheme"
+            android:configChanges="orientation|keyboard"/>
     </application>
 
 </manifest>
