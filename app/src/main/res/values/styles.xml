@@ -18,4 +18,11 @@
         <item name="android:textSize">@dimen/text_size_large</item>
         <item name="android:textColor">@color/color_white</item>
     </style>
+
+    <style name="rankTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">#FF202332</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowSoftInputMode">adjustResize</item>
+    </style>
 </resources>
