@@ -58,7 +58,7 @@ public class BallsFallDownSimultaneously extends BaseStateViewActivity implement
     }
 
     private void initAnimation() {
-        int verticalDistance = DisplayUtil.getScreenHeight() - freeFallView.getBottom() - DisplayUtil.getStatusBarHeight(this);
+        int verticalDistance = DisplayUtil.getScreenHeight() - freeFallView.getBottom() - DisplayUtil.getStatusBarHeight(this) - DisplayUtil.dp2px(44);
         int horizontalDistance = freeFallView.getLeft() - horizontalProjectileMotionView.getRight();
         freeFallAnimator = ObjectAnimator.ofFloat(freeFallView, "translationY", 0, verticalDistance);
 //        freeFallAnimator.setInterpolator(new AccelerateInterpolator());
