@@ -60,10 +60,10 @@ public class MultiGroupHistogramActivity extends BaseActivity {
                         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
                     }
                 } else if (orientation > 135 && orientation < 225) {
-                    if (screenOrientation != ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT) {
-                        LogUtil.e("kkkkkkkk: " + orientation);
-                        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT);
-                    }
+//                    if (screenOrientation != ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT) {
+//                        LogUtil.e("kkkkkkkk: " + orientation);
+//                        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT);
+//                    }
                 } else if (orientation > 225 && orientation < 315) {
                     if (screenOrientation != ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
                         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
