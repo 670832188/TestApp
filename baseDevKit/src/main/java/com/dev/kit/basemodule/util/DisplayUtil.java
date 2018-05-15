@@ -101,7 +101,7 @@ public class DisplayUtil {
         return mDisplayUtil.mFontScaleFactor;
     }
 
-    public static int dp2px(int dpValue) {
+    public static int dp2px(float dpValue) {
         if (mDisplayUtil == null) {
             getInstance();
         }
