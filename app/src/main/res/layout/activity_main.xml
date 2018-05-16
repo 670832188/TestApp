@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="@color/color_common_white"
     android:orientation="vertical"
-    tools:context="com.dev.kit.testapp.MainActivity">
+    tools:context="com.dev.kit.testapp.activity.MainActivity">
 
     <TextView
         android:id="@+id/tv_net_test"
@@ -15,7 +15,8 @@
         android:background="@color/color_light_grey"
         android:gravity="center"
         android:padding="@dimen/margin_normal"
-        android:text="网络请求组件测试" />
+        android:text="网络请求组件测试"
+        android:textSize="14sp" />
 
     <TextView
         android:id="@+id/tv_upload_file"
@@ -25,7 +26,8 @@
         android:background="@color/color_light_grey"
         android:gravity="center"
         android:padding="@dimen/margin_normal"
-        android:text="文件上传示例" />
+        android:text="文件上传示例"
+        android:textSize="14sp" />
 
     <TextView
         android:id="@+id/tv_vp_test"
@@ -35,7 +37,8 @@
         android:background="@color/color_light_grey"
         android:gravity="center"
         android:padding="@dimen/margin_normal"
-        android:text="层叠ViewPager" />
+        android:text="层叠ViewPager"
+        android:textSize="14sp" />
 
     <TextView
         android:id="@+id/tv_property_animation"
@@ -45,7 +48,8 @@
         android:background="@color/color_light_grey"
         android:gravity="center"
         android:padding="@dimen/margin_normal"
-        android:text="属性动画" />
+        android:text="属性动画"
+        android:textSize="14sp" />
 
     <TextView
         android:id="@+id/tv_MultiGroupHistogramView"
@@ -55,6 +59,17 @@
         android:background="@color/color_light_grey"
         android:gravity="center"
         android:padding="@dimen/margin_normal"
-        android:text="分组直方图表" />
+        android:text="分组直方图表"
+        android:textSize="14sp" />
 
+    <TextView
+        android:id="@+id/tv_set_font"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_large"
+        android:background="@color/color_light_grey"
+        android:gravity="center"
+        android:padding="@dimen/margin_normal"
+        android:text="设置字体大小"
+        android:textSize="14sp" />
 </LinearLayout>

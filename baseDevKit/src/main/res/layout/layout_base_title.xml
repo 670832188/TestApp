@@ -5,7 +5,6 @@
     android:background="@color/color_common_white">
 
     <TextView
-        android:textSize="18sp"
         android:id="@+id/tv_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -14,7 +13,8 @@
         android:layout_marginRight="50dp"
         android:ellipsize="end"
         android:gravity="center"
-        android:maxLines="1" />
+        android:maxLines="1"
+        android:textSize="18sp" />
 
     <ImageView
         android:id="@+id/iv_left"
@@ -52,5 +52,6 @@
         android:layout_height="0.5dp"
         android:layout_alignParentBottom="true"
         android:background="#eeeeee"
-        android:elevation="0.5dp" />
+        android:elevation="0.5dp"
+        android:visibility="gone" />
 </RelativeLayout>

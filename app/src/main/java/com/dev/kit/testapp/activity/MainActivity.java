@@ -1,4 +1,4 @@
-package com.dev.kit.testapp;
+package com.dev.kit.testapp.activity;
 
 import android.Manifest;
 import android.content.Intent;
@@ -19,6 +19,7 @@ import com.dev.kit.basemodule.netRequest.util.BaseServiceUtil;
 import com.dev.kit.basemodule.netRequest.util.CommonInterceptor;
 import com.dev.kit.basemodule.util.FileUtil;
 import com.dev.kit.basemodule.util.LogUtil;
+import com.dev.kit.testapp.R;
 import com.dev.kit.testapp.RxjavaAndRetrofitTest.ApiService;
 import com.dev.kit.testapp.RxjavaAndRetrofitTest.NetRequestDemoActivity;
 import com.dev.kit.testapp.animation.PropertyAnimationEntryActivity;
@@ -35,9 +36,13 @@ import okhttp3.RequestBody;
 
 public class MainActivity extends BaseStateViewActivity implements View.OnClickListener {
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            LogUtil.e("getSavedState: " + savedInstanceState.getString("saveState"));
+        }
         init();
     }
 
@@ -54,6 +59,7 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
         setOnClickListener(R.id.tv_vp_test, this);
         setOnClickListener(R.id.tv_property_animation, this);
         setOnClickListener(R.id.tv_MultiGroupHistogramView, this);
+        setOnClickListener(R.id.tv_set_font, this);
         setContentState(STATE_DATA_CONTENT);
     }
 
@@ -119,6 +125,10 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
                 startActivity(new Intent(this, MultiGroupHistogramActivity.class));
                 break;
             }
+            case R.id.tv_set_font: {
+                startActivity(new Intent(this, SettingActivity.class));
+                break;
+            }
         }
     }
 
@@ -136,5 +146,16 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
 
     private void requestPermission() {
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 12306);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putString("saveState", "saveState");
+        super.onSaveInstanceState(outState);
     }
 }
