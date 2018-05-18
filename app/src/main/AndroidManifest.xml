@@ -23,7 +23,7 @@
         </activity>
 
         <activity
-            android:name=".RxjavaAndRetrofitTest.NetRequestDemoActivity"
+            android:name=".rxJavaAndRetrofitTest.NetRequestDemoActivity"
             android:theme="@style/BaseTheme.TranslucentStatusTheme" />
         <activity android:name=".pagerTest.PagerTestActivity" />
         <activity android:name=".animation.PropertyAnimationEntryActivity" />
@@ -34,6 +34,8 @@
             android:configChanges="orientation|keyboard"
             android:theme="@style/rankTheme" />
         <activity android:name=".activity.SettingActivity"/>
+
+        <activity android:name=".animation.PropertyAnimationBasics_1"/>
     </application>
 
 </manifest>

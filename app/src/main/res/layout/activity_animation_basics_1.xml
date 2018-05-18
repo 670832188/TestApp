@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_animated_value"
+        android:layout_width="66dp"
+        android:layout_height="66dp"
+        android:layout_marginTop="50dp"
+        android:gravity="center"
+        android:text="等待动画执行"
+        android:textColor="@color/color_common_white"
+        android:textSize="@dimen/text_size_14" />
+
+
+    <Button
+        android:id="@+id/bt_interpolator0"
+        style="@style/text_style_normal"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="@dimen/margin_large"
+        android:text="LinearInterpolator"
+        android:textAllCaps="false" />
+
+    <Button
+        android:id="@+id/bt_interpolator1"
+        style="@style/text_style_normal"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="@dimen/margin_large"
+        android:text="AccelerateInterpolator"
+        android:textAllCaps="false" />
+
+
+    <Button
+        android:id="@+id/bt_interpolator2"
+        style="@style/text_style_normal"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="@dimen/margin_large"
+        android:text="自定义加速插值器"
+        android:textAllCaps="false" />
+
+    <Button
+        android:id="@+id/bt_interpolator3"
+        style="@style/text_style_normal"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="@dimen/margin_large"
+        android:text="自定义线性插值器"
+        android:textAllCaps="false" />
+</LinearLayout>

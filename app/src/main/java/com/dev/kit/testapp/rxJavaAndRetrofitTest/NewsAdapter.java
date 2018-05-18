@@ -1,4 +1,4 @@
-package com.dev.kit.testapp.RxjavaAndRetrofitTest;
+package com.dev.kit.testapp.rxJavaAndRetrofitTest;
 
 import android.animation.ObjectAnimator;
 import android.content.Context;
@@ -7,14 +7,12 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.dev.kit.basemodule.surpport.BaseRecyclerAdapter;
 import com.dev.kit.basemodule.surpport.RecyclerViewHolder;
 import com.dev.kit.basemodule.util.DisplayUtil;
 import com.dev.kit.basemodule.util.ImageUtil;
 import com.dev.kit.testapp.R;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;

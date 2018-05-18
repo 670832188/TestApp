@@ -1,4 +1,4 @@
-package com.dev.kit.testapp.RxjavaAndRetrofitTest;
+package com.dev.kit.testapp.rxJavaAndRetrofitTest;
 
 /**
  * Created by cy on 2018/4/3.

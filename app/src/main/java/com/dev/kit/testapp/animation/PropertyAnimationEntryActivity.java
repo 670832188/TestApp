@@ -29,6 +29,7 @@ public class PropertyAnimationEntryActivity extends BaseStateViewActivity implem
         setOnClickListener(R.id.iv_left, this);
         setOnClickListener(R.id.tv_count_down, this);
         setOnClickListener(R.id.tv_balls_fall_down, this);
+        setOnClickListener(R.id.tv_property_animator_basics_1, this);
         setContentState(STATE_DATA_CONTENT);
     }
 
@@ -45,6 +46,10 @@ public class PropertyAnimationEntryActivity extends BaseStateViewActivity implem
             }
             case R.id.tv_balls_fall_down: {
                 startActivity(new Intent(PropertyAnimationEntryActivity.this, BallsFallDownSimultaneously.class));
+                break;
+            }
+            case R.id.tv_property_animator_basics_1: {
+                startActivity(new Intent(this, PropertyAnimationBasics_1.class));
                 break;
             }
         }

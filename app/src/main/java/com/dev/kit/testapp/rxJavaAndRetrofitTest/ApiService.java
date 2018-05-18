@@ -1,4 +1,4 @@
-package com.dev.kit.testapp.RxjavaAndRetrofitTest;
+package com.dev.kit.testapp.rxJavaAndRetrofitTest;
 
 
 import com.dev.kit.basemodule.netRequest.Configs.ApiConstants;

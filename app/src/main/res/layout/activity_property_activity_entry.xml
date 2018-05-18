@@ -25,4 +25,14 @@
         android:padding="@dimen/margin_normal"
         android:text="两个小球同时落地" />
 
+    <TextView
+        android:id="@+id/tv_property_animator_basics_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_large"
+        android:background="@color/color_light_grey"
+        android:gravity="center"
+        android:padding="@dimen/margin_normal"
+        android:text="属性动画基础" />
+
 </LinearLayout>
