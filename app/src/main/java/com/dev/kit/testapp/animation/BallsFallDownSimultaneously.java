@@ -2,6 +2,7 @@ package com.dev.kit.testapp.animation;
 
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
 import android.animation.TimeInterpolator;
 import android.animation.TypeEvaluator;
 import android.animation.ValueAnimator;
@@ -26,8 +27,10 @@ public class BallsFallDownSimultaneously extends BaseStateViewActivity implement
     private View horizontalProjectileMotionView;
     // 模拟自由落体
     private ObjectAnimator freeFallAnimator;
-    // 模拟平抛
+    // 模拟平抛1
     private ValueAnimator horizontalProjectileAnimator;
+    // 模拟平抛2
+    private ValueAnimator horizontalProjectileAnimator1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,12 +82,32 @@ public class BallsFallDownSimultaneously extends BaseStateViewActivity implement
             }
         });
         horizontalProjectileAnimator.setInterpolator(new LinearInterpolator());
+
+        // 平抛2
+        PropertyValuesHolder pvX = PropertyValuesHolder.ofFloat("translationX", 0, horizontalDistance);
+        pvX.setEvaluator(new TypeEvaluator<Float>() {
+            @Override
+            public Float evaluate(float fraction, Float startValue, Float endValue) {
+                return fraction * endValue + startValue;
+            }
+        });
+        PropertyValuesHolder pvY = PropertyValuesHolder.ofFloat("translationY", 0, verticalDistance);
+        pvY.setEvaluator(new TypeEvaluator<Float>() {
+            @Override
+            public Float evaluate(float fraction, Float startValue, Float endValue) {
+                return fraction * fraction * endValue + startValue;
+            }
+        });
+        horizontalProjectileAnimator1 = ObjectAnimator.ofPropertyValuesHolder(horizontalProjectileMotionView, pvX, pvY);
+        horizontalProjectileAnimator1.setInterpolator(new LinearInterpolator());
     }
 
     private void runAnimation() {
         AnimatorSet animatorSet = new AnimatorSet();
 //        animatorSet.play(freeFallAnimator).with(horizontalProjectileAnimator);
-        animatorSet.playTogether(freeFallAnimator, horizontalProjectileAnimator);
+//        animatorSet.playTogether(freeFallAnimator, horizontalProjectileAnimator);
+        animatorSet.playTogether(freeFallAnimator, horizontalProjectileAnimator1);
+
         animatorSet.setDuration(1500);
         animatorSet.start();
     }
@@ -144,8 +167,8 @@ public class BallsFallDownSimultaneously extends BaseStateViewActivity implement
     private class MyTypeEvaluator implements TypeEvaluator<Point> {
         @Override
         public Point evaluate(float fraction, Point startValue, Point endValue) {
-            float pointX = fraction * (endValue.getPointX() - startValue.getPointX());
-            float pointY = fraction * fraction * (endValue.getPointY() - startValue.getPointY());
+            float pointX = fraction * endValue.getPointX() + startValue.getPointX();
+            float pointY = fraction * fraction * endValue.getPointY() + startValue.getPointY();
             return new Point(pointX, pointY);
         }
     }
