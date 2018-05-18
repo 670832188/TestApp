@@ -65,7 +65,7 @@ public class BallsFallDownSimultaneously extends BaseStateViewActivity implement
         freeFallAnimator.setInterpolator(new TimeInterpolator() {
             @Override
             public float getInterpolation(float input) {
-                // 效果等同于第55行设置
+                // 效果等同于freeFallAnimator.setInterpolator(new AccelerateInterpolator());
                 return input * input;
             }
         });
