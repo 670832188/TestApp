@@ -127,7 +127,7 @@ public class BallsFallDownSimultaneously extends BaseStateViewActivity implement
             return pointX;
         }
 
-        private void setPointX(int pointX) {
+        private void setPointX(float pointX) {
             this.pointX = pointX;
         }
 
@@ -135,7 +135,7 @@ public class BallsFallDownSimultaneously extends BaseStateViewActivity implement
             return pointY;
         }
 
-        private void setPointY(int pointY) {
+        private void setPointY(float pointY) {
             this.pointY = pointY;
         }
     }
