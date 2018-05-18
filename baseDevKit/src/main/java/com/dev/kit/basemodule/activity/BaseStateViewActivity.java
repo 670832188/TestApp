@@ -7,6 +7,7 @@ import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.dev.kit.basemodule.R;
@@ -64,7 +65,7 @@ public abstract class BaseStateViewActivity extends BaseActivity {
         progressView = inflater.inflate(R.layout.layout_net_loading, flContainer, false);
         netErrorView = inflater.inflate(R.layout.layout_net_error, flContainer, false);
         dataEmptyView = inflater.inflate(R.layout.layout_data_empty, flContainer, false);
-        dataContentView = createContentView();
+        dataContentView = createContentView(inflater, flContainer);
         progressView.setVisibility(View.GONE);
         netErrorView.setVisibility(View.GONE);
         dataEmptyView.setVisibility(View.GONE);
@@ -79,7 +80,7 @@ public abstract class BaseStateViewActivity extends BaseActivity {
         return flContainer;
     }
 
-    public abstract View createContentView();
+    public abstract View createContentView(LayoutInflater inflater, ViewGroup contentRoot);
 
     public void setOnStateChangeListener(@NonNull OnStateChangeListener onStateChangeListener) {
         this.onStateChangeListener = onStateChangeListener;

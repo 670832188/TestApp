@@ -3,6 +3,7 @@ package com.dev.kit.testapp.animation;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.dev.kit.basemodule.View.CircleCountDownView;
 import com.dev.kit.basemodule.activity.BaseStateViewActivity;
@@ -22,8 +23,8 @@ public class CountDownActivity extends BaseStateViewActivity implements View.OnC
     }
 
     @Override
-    public View createContentView() {
-        return LayoutInflater.from(this).inflate(R.layout.activity_count_down, getFlContainer(), false);
+    public View createContentView(LayoutInflater inflater, ViewGroup contentRoot) {
+        return inflater.inflate(R.layout.activity_count_down, contentRoot, false);
     }
 
     private void init() {

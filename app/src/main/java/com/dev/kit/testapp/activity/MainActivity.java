@@ -10,6 +10,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.dev.kit.basemodule.activity.BaseStateViewActivity;
 import com.dev.kit.basemodule.netRequest.model.BaseController;
@@ -47,8 +48,8 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
     }
 
     @Override
-    public View createContentView() {
-        return LayoutInflater.from(this).inflate(R.layout.activity_main, getFlContainer(), false);
+    public View createContentView(LayoutInflater inflater, ViewGroup contentRoot) {
+        return inflater.inflate(R.layout.activity_main, contentRoot, false);
     }
 
     private void init() {

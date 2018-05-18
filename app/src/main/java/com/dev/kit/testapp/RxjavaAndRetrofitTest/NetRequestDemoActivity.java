@@ -9,6 +9,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.bumptech.glide.request.target.SimpleTarget;
@@ -19,7 +20,6 @@ import com.dev.kit.basemodule.netRequest.model.BaseController;
 import com.dev.kit.basemodule.netRequest.subscribers.NetRequestCallback;
 import com.dev.kit.basemodule.netRequest.subscribers.NetRequestSubscriber;
 import com.dev.kit.basemodule.netRequest.util.BaseServiceUtil;
-import com.dev.kit.basemodule.netRequest.util.CommonInterceptor;
 import com.dev.kit.basemodule.util.EasyBlur;
 import com.dev.kit.basemodule.util.ImageUtil;
 import com.dev.kit.basemodule.util.MIUIHelper;
@@ -48,8 +48,8 @@ public class NetRequestDemoActivity extends BaseStateViewActivity {
     }
 
     @Override
-    public View createContentView() {
-        return LayoutInflater.from(this).inflate(R.layout.activity_net_request, getFlContainer(), false);
+    public View createContentView(LayoutInflater inflater, ViewGroup contentRoot) {
+        return inflater.inflate(R.layout.activity_net_request, contentRoot, false);
     }
 
     private void init() {

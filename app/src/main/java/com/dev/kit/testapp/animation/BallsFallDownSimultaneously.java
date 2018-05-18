@@ -9,6 +9,7 @@ import android.animation.ValueAnimator;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
 
 import com.dev.kit.basemodule.activity.BaseStateViewActivity;
@@ -39,8 +40,8 @@ public class BallsFallDownSimultaneously extends BaseStateViewActivity implement
     }
 
     @Override
-    public View createContentView() {
-        return LayoutInflater.from(this).inflate(R.layout.activity_balls_fall_down, getFlContainer(), false);
+    public View createContentView(LayoutInflater inflater, ViewGroup contentRoot) {
+        return inflater.inflate(R.layout.activity_balls_fall_down, contentRoot, false);
     }
 
     private void init() {

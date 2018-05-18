@@ -35,8 +35,8 @@ public class PagerTestActivity extends BaseStateViewActivity {
     }
 
     @Override
-    public View createContentView() {
-        return LayoutInflater.from(this).inflate(R.layout.activity_pager_test, getFlContainer(), false);
+    public View createContentView(LayoutInflater inflater, ViewGroup contentRoot) {
+        return inflater.inflate(R.layout.activity_pager_test, contentRoot, false);
     }
 
     private void init() {

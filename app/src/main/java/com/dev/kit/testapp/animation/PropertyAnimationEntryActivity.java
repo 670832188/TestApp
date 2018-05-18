@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.dev.kit.basemodule.activity.BaseStateViewActivity;
 import com.dev.kit.testapp.R;
@@ -19,8 +20,8 @@ public class PropertyAnimationEntryActivity extends BaseStateViewActivity implem
     }
 
     @Override
-    public View createContentView() {
-        return LayoutInflater.from(this).inflate(R.layout.activity_property_activity_entry, getFlContainer(), false);
+    public View createContentView(LayoutInflater inflater, ViewGroup contentRoot) {
+        return inflater.inflate(R.layout.activity_property_activity_entry, contentRoot, false);
     }
 
     private void init() {
