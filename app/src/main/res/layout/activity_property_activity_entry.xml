@@ -33,6 +33,6 @@
         android:background="@color/color_light_grey"
         android:gravity="center"
         android:padding="@dimen/margin_normal"
-        android:text="属性动画基础" />
+        android:text="属性动画基础（一）" />
 
 </LinearLayout>

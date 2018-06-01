@@ -2,8 +2,8 @@ package com.dev.kit.testapp.animation;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
 import android.animation.TimeInterpolator;
-import android.animation.TypeEvaluator;
 import android.animation.ValueAnimator;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
@@ -24,7 +24,7 @@ import com.dev.kit.testapp.R;
  */
 public class PropertyAnimationBasics_1 extends BaseStateViewActivity implements View.OnClickListener {
     private TextView tvAnimatedValue;
-    private ValueAnimator exampleAnimator;
+    private ObjectAnimator exampleAnimator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +38,7 @@ public class PropertyAnimationBasics_1 extends BaseStateViewActivity implements 
     }
 
     private void init() {
-        setText(R.id.tv_title, "属性动画之ValueAnimator基础一");
+        setText(R.id.tv_title, "属性动画基础（一）");
         setOnClickListener(R.id.iv_left, this);
         setOnClickListener(R.id.bt_interpolator0, this);
         setOnClickListener(R.id.bt_interpolator1, this);
@@ -50,27 +50,39 @@ public class PropertyAnimationBasics_1 extends BaseStateViewActivity implements 
         drawable.setCornerRadius(DisplayUtil.getScaleFactor() * 45);
         drawable.setColor(getResources().getColor(R.color.bg_supper_selected));
         tvAnimatedValue.setBackground(drawable);
-        exampleAnimator = ValueAnimator.ofInt(0, 50).setDuration(500);
+        tvAnimatedValue.measure(-1, -1);
+        float translationX = DisplayUtil.getScreenWidth() - tvAnimatedValue.getMeasuredWidth();
+        exampleAnimator = ObjectAnimator.ofFloat(tvAnimatedValue, "translationX", 0, translationX, 0).setDuration(1000);
+        // 测试重复次数与重复模式对插值器的影响
+//        exampleAnimator.setRepeatCount(1);
+//        exampleAnimator.setRepeatMode(ValueAnimator.RESTART);
+//        exampleAnimator.setRepeatMode(ValueAnimator.REVERSE);
         exampleAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
-                LogUtil.e("animatedFraction " + String.valueOf(animation.getAnimatedFraction()));
-                tvAnimatedValue.setText(String.valueOf((int) animation.getAnimatedValue()));
+                float animatedValue = (float) animation.getAnimatedValue();
+                LogUtil.e("animatedFraction " + animation.getAnimatedFraction() + " --- animatedValue: " + animatedValue);
             }
         });
         exampleAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                tvAnimatedValue.setText("等待动画执行");
+                tvAnimatedValue.setText("动画结束");
             }
-        });
-        exampleAnimator.setEvaluator(new TypeEvaluator<Integer>() {
+
             @Override
-            public Integer evaluate(float fraction, Integer startValue, Integer endValue) {
-                LogUtil.e("evaluatedFraction: " + fraction);
-                return (int) (startValue + (endValue - startValue) * fraction);
+            public void onAnimationStart(Animator animation) {
+                tvAnimatedValue.setText("动画开始");
             }
         });
+//        exampleAnimator.setEvaluator(new TypeEvaluator<Float>() {
+//            @Override
+//            public Float evaluate(float fraction, Float startValue, Float endValue) {
+//                float evaluatedValue = startValue + (endValue - startValue) * fraction;
+//                LogUtil.e("evaluatedFraction: " + fraction + " --- evaluatedValue: " + evaluatedValue);
+//                return evaluatedValue;
+//            }
+//        });
         setContentState(STATE_DATA_CONTENT);
     }
 
@@ -94,7 +106,7 @@ public class PropertyAnimationBasics_1 extends BaseStateViewActivity implements 
                         @Override
                         public float getInterpolation(float input) {
                             float interpolation = input * input;
-                            LogUtil.e("realFraction: " + input + " --- interpolatedFraction: " + interpolation);
+                            LogUtil.e("accelerateRealFraction: " + input + " --- interpolatedFraction: " + interpolation);
                             return interpolation;
                         }
                     };
@@ -105,6 +117,7 @@ public class PropertyAnimationBasics_1 extends BaseStateViewActivity implements 
                     interpolator = new TimeInterpolator() {
                         @Override
                         public float getInterpolation(float input) {
+                            LogUtil.e("linearRealFraction: " + input);
                             return input;
                         }
                     };

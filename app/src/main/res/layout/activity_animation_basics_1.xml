@@ -9,9 +9,10 @@
         android:id="@+id/tv_animated_value"
         android:layout_width="66dp"
         android:layout_height="66dp"
+        android:layout_gravity="start"
         android:layout_marginTop="50dp"
         android:gravity="center"
-        android:text="等待动画执行"
+        android:text="动画测试"
         android:textColor="@color/color_common_white"
         android:textSize="@dimen/text_size_14" />
 
