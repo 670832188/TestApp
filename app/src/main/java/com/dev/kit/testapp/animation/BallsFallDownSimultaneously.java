@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
 import android.view.animation.LinearInterpolator;
 
 import com.dev.kit.basemodule.activity.BaseStateViewActivity;
@@ -29,9 +30,9 @@ public class BallsFallDownSimultaneously extends BaseStateViewActivity implement
     // 模拟自由落体
     private ObjectAnimator freeFallAnimator;
     // 模拟平抛1
-    private ValueAnimator horizontalProjectileAnimator;
-    // 模拟平抛2
     private ValueAnimator horizontalProjectileAnimator1;
+    // 模拟平抛2
+    private ValueAnimator horizontalProjectileAnimator2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,17 +65,27 @@ public class BallsFallDownSimultaneously extends BaseStateViewActivity implement
     private void initAnimation() {
         int verticalDistance = DisplayUtil.getScreenHeight() - freeFallView.getBottom() - DisplayUtil.getStatusBarHeight(this) - DisplayUtil.dp2px(44);
         int horizontalDistance = freeFallView.getLeft() - horizontalProjectileMotionView.getRight();
+        // 自由落体
         freeFallAnimator = ObjectAnimator.ofFloat(freeFallView, "translationY", 0, verticalDistance);
-//        freeFallAnimator.setInterpolator(new AccelerateInterpolator());
-        freeFallAnimator.setInterpolator(new TimeInterpolator() {
+        freeFallAnimator.setInterpolator(new LinearInterpolator());
+        freeFallAnimator.setEvaluator(new TypeEvaluator<Float>() {
             @Override
-            public float getInterpolation(float input) {
-                // 效果等同于freeFallAnimator.setInterpolator(new AccelerateInterpolator());
-                return input * input;
+            public Float evaluate(float fraction, Float startValue, Float endValue) {
+                return fraction * fraction * (endValue - startValue) + startValue;
             }
         });
-        horizontalProjectileAnimator = ValueAnimator.ofObject(new MyTypeEvaluator(), new Point(0, 0), new Point(horizontalDistance, verticalDistance));
-        horizontalProjectileAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+//        freeFallAnimator.setInterpolator(new AccelerateInterpolator());
+//        freeFallAnimator.setInterpolator(new TimeInterpolator() {
+//            @Override
+//            public float getInterpolation(float input) {
+//                // 效果等同于freeFallAnimator.setInterpolator(new AccelerateInterpolator());
+//                return input * input;
+//            }
+//        });
+
+        // 平抛1
+        horizontalProjectileAnimator1 = ValueAnimator.ofObject(new MyTypeEvaluator(), new Point(0, 0), new Point(horizontalDistance, verticalDistance));
+        horizontalProjectileAnimator1.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 Point point = (Point) animation.getAnimatedValue();
@@ -82,7 +93,7 @@ public class BallsFallDownSimultaneously extends BaseStateViewActivity implement
                 horizontalProjectileMotionView.setTranslationY(point.getPointY());
             }
         });
-        horizontalProjectileAnimator.setInterpolator(new LinearInterpolator());
+        horizontalProjectileAnimator1.setInterpolator(new LinearInterpolator());
 
         // 平抛2
         PropertyValuesHolder pvX = PropertyValuesHolder.ofFloat("translationX", 0, horizontalDistance);
@@ -99,15 +110,15 @@ public class BallsFallDownSimultaneously extends BaseStateViewActivity implement
                 return fraction * fraction * (endValue - startValue) + startValue;
             }
         });
-        horizontalProjectileAnimator1 = ObjectAnimator.ofPropertyValuesHolder(horizontalProjectileMotionView, pvX, pvY);
-        horizontalProjectileAnimator1.setInterpolator(new LinearInterpolator());
+        horizontalProjectileAnimator2 = ObjectAnimator.ofPropertyValuesHolder(horizontalProjectileMotionView, pvX, pvY);
+        horizontalProjectileAnimator2.setInterpolator(new LinearInterpolator());
     }
 
     private void runAnimation() {
         AnimatorSet animatorSet = new AnimatorSet();
 //        animatorSet.play(freeFallAnimator).with(horizontalProjectileAnimator);
-//        animatorSet.playTogether(freeFallAnimator, horizontalProjectileAnimator);
-        animatorSet.playTogether(freeFallAnimator, horizontalProjectileAnimator1);
+//        animatorSet.playTogether(freeFallAnimator, horizontalProjectileAnimator1);
+        animatorSet.playTogether(freeFallAnimator, horizontalProjectileAnimator2);
 
         animatorSet.setDuration(1500);
         animatorSet.start();
