@@ -89,14 +89,14 @@ public class BallsFallDownSimultaneously extends BaseStateViewActivity implement
         pvX.setEvaluator(new TypeEvaluator<Float>() {
             @Override
             public Float evaluate(float fraction, Float startValue, Float endValue) {
-                return fraction * endValue + startValue;
+                return fraction * (endValue - startValue) + startValue;
             }
         });
         PropertyValuesHolder pvY = PropertyValuesHolder.ofFloat("translationY", 0, verticalDistance);
         pvY.setEvaluator(new TypeEvaluator<Float>() {
             @Override
             public Float evaluate(float fraction, Float startValue, Float endValue) {
-                return fraction * fraction * endValue + startValue;
+                return fraction * fraction * (endValue - startValue) + startValue;
             }
         });
         horizontalProjectileAnimator1 = ObjectAnimator.ofPropertyValuesHolder(horizontalProjectileMotionView, pvX, pvY);
