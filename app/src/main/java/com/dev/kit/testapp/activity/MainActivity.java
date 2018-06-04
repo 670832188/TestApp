@@ -21,11 +21,12 @@ import com.dev.kit.basemodule.netRequest.util.CommonInterceptor;
 import com.dev.kit.basemodule.util.FileUtil;
 import com.dev.kit.basemodule.util.LogUtil;
 import com.dev.kit.testapp.R;
-import com.dev.kit.testapp.rxJavaAndRetrofitTest.ApiService;
-import com.dev.kit.testapp.rxJavaAndRetrofitTest.NetRequestDemoActivity;
 import com.dev.kit.testapp.animation.PropertyAnimationEntryActivity;
+import com.dev.kit.testapp.bezierCurve.BezierCurveTestActivity;
 import com.dev.kit.testapp.multiGroupHistogram.MultiGroupHistogramActivity;
 import com.dev.kit.testapp.pagerTest.PagerTestActivity;
+import com.dev.kit.testapp.rxJavaAndRetrofitTest.ApiService;
+import com.dev.kit.testapp.rxJavaAndRetrofitTest.NetRequestDemoActivity;
 
 import java.io.File;
 import java.util.Random;
@@ -61,6 +62,7 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
         setOnClickListener(R.id.tv_property_animation, this);
         setOnClickListener(R.id.tv_MultiGroupHistogramView, this);
         setOnClickListener(R.id.tv_set_font, this);
+        setOnClickListener(R.id.tv_bezier_curve, this);
         setContentState(STATE_DATA_CONTENT);
     }
 
@@ -128,6 +130,10 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
             }
             case R.id.tv_set_font: {
                 startActivity(new Intent(this, SettingActivity.class));
+                break;
+            }
+            case R.id.tv_bezier_curve: {
+                startActivity(new Intent(this, BezierCurveTestActivity.class));
                 break;
             }
         }

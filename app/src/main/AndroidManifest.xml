@@ -36,6 +36,7 @@
         <activity android:name=".activity.SettingActivity"/>
 
         <activity android:name=".animation.PropertyAnimationBasics_1"/>
+        <activity android:name=".bezierCurve.BezierCurveTestActivity"/>
     </application>
 
 </manifest>

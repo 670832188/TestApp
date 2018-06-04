@@ -72,4 +72,15 @@
         android:padding="@dimen/margin_normal"
         android:text="设置字体大小"
         android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/tv_bezier_curve"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_large"
+        android:background="@color/color_light_grey"
+        android:gravity="center"
+        android:padding="@dimen/margin_normal"
+        android:text="贝塞尔曲线"
+        android:textSize="14sp" />
 </LinearLayout>
