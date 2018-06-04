@@ -168,8 +168,8 @@ public class BallsFallDownSimultaneously extends BaseStateViewActivity implement
     private class MyTypeEvaluator implements TypeEvaluator<Point> {
         @Override
         public Point evaluate(float fraction, Point startValue, Point endValue) {
-            float pointX = fraction * endValue.getPointX() + startValue.getPointX();
-            float pointY = fraction * fraction * endValue.getPointY() + startValue.getPointY();
+            float pointX = fraction * (endValue.getPointX() - startValue.getPointY()) + startValue.getPointX();
+            float pointY = fraction * fraction * (endValue.getPointY() - startValue.getPointY()) + startValue.getPointY();
             return new Point(pointX, pointY);
         }
     }
