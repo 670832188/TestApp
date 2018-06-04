@@ -3,14 +3,12 @@ package com.dev.kit.testapp.animation;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
-import android.animation.TimeInterpolator;
 import android.animation.TypeEvaluator;
 import android.animation.ValueAnimator;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateInterpolator;
 import android.view.animation.LinearInterpolator;
 
 import com.dev.kit.basemodule.activity.BaseStateViewActivity;
@@ -32,7 +30,7 @@ public class BallsFallDownSimultaneously extends BaseStateViewActivity implement
     // 模拟平抛1
     private ValueAnimator horizontalProjectileAnimator1;
     // 模拟平抛2
-    private ValueAnimator horizontalProjectileAnimator2;
+    private ObjectAnimator horizontalProjectileAnimator2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,10 +61,11 @@ public class BallsFallDownSimultaneously extends BaseStateViewActivity implement
     }
 
     private void initAnimation() {
-        int verticalDistance = DisplayUtil.getScreenHeight() - freeFallView.getBottom() - DisplayUtil.getStatusBarHeight(this) - DisplayUtil.dp2px(44);
+        final int verticalDistance = DisplayUtil.getScreenHeight() - freeFallView.getBottom() - DisplayUtil.getStatusBarHeight(this) - DisplayUtil.dp2px(44);
         int horizontalDistance = freeFallView.getLeft() - horizontalProjectileMotionView.getRight();
-        // 自由落体
+        // 自由落体，动画系统利用反射直接修改view平移属性
         freeFallAnimator = ObjectAnimator.ofFloat(freeFallView, "translationY", 0, verticalDistance);
+        // 自由落体动画设置方式1
         freeFallAnimator.setInterpolator(new LinearInterpolator());
         freeFallAnimator.setEvaluator(new TypeEvaluator<Float>() {
             @Override
@@ -74,7 +73,9 @@ public class BallsFallDownSimultaneously extends BaseStateViewActivity implement
                 return fraction * fraction * (endValue - startValue) + startValue;
             }
         });
+        // 自由落体动画设置方式2
 //        freeFallAnimator.setInterpolator(new AccelerateInterpolator());
+        // 自由落体动画设置方式3
 //        freeFallAnimator.setInterpolator(new TimeInterpolator() {
 //            @Override
 //            public float getInterpolation(float input) {
@@ -83,7 +84,7 @@ public class BallsFallDownSimultaneously extends BaseStateViewActivity implement
 //            }
 //        });
 
-        // 平抛1
+        // 平抛1，需手动修改平移属性
         horizontalProjectileAnimator1 = ValueAnimator.ofObject(new MyTypeEvaluator(), new Point(0, 0), new Point(horizontalDistance, verticalDistance));
         horizontalProjectileAnimator1.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -95,22 +96,22 @@ public class BallsFallDownSimultaneously extends BaseStateViewActivity implement
         });
         horizontalProjectileAnimator1.setInterpolator(new LinearInterpolator());
 
-        // 平抛2
-        PropertyValuesHolder pvX = PropertyValuesHolder.ofFloat("translationX", 0, horizontalDistance);
-        pvX.setEvaluator(new TypeEvaluator<Float>() {
+        // 平抛2，动画系统通过反射直接修改view平移属性
+        PropertyValuesHolder pvhX = PropertyValuesHolder.ofFloat("translationX", 0, horizontalDistance);
+        pvhX.setEvaluator(new TypeEvaluator<Float>() {
             @Override
             public Float evaluate(float fraction, Float startValue, Float endValue) {
                 return fraction * (endValue - startValue) + startValue;
             }
         });
-        PropertyValuesHolder pvY = PropertyValuesHolder.ofFloat("translationY", 0, verticalDistance);
-        pvY.setEvaluator(new TypeEvaluator<Float>() {
+        PropertyValuesHolder pvhY = PropertyValuesHolder.ofFloat("translationY", 0, verticalDistance);
+        pvhY.setEvaluator(new TypeEvaluator<Float>() {
             @Override
             public Float evaluate(float fraction, Float startValue, Float endValue) {
                 return fraction * fraction * (endValue - startValue) + startValue;
             }
         });
-        horizontalProjectileAnimator2 = ObjectAnimator.ofPropertyValuesHolder(horizontalProjectileMotionView, pvX, pvY);
+        horizontalProjectileAnimator2 = ObjectAnimator.ofPropertyValuesHolder(horizontalProjectileMotionView, pvhX, pvhY);
         horizontalProjectileAnimator2.setInterpolator(new LinearInterpolator());
     }
 
