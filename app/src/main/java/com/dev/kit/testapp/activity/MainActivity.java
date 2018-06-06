@@ -3,8 +3,10 @@ package com.dev.kit.testapp.activity;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.LocaleList;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -29,6 +31,7 @@ import com.dev.kit.testapp.rxJavaAndRetrofitTest.ApiService;
 import com.dev.kit.testapp.rxJavaAndRetrofitTest.NetRequestDemoActivity;
 
 import java.io.File;
+import java.util.Locale;
 import java.util.Random;
 
 import io.reactivex.Observable;
@@ -46,6 +49,13 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
             LogUtil.e("getSavedState: " + savedInstanceState.getString("saveState"));
         }
         init();
+        Locale locale;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            locale = LocaleList.getDefault().get(0);
+        } else locale = Locale.getDefault();
+
+        String language = locale.getLanguage() + "-" + locale.getCountry();
+        LogUtil.e("language: " + language);
     }
 
     @Override
