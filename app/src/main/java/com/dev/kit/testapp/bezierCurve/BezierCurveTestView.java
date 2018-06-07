@@ -12,6 +12,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.dev.kit.basemodule.util.DisplayUtil;
+import com.dev.kit.basemodule.util.LogUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +36,7 @@ public class BezierCurveTestView extends View {
     private int height;
     private Path arcPath;
 
-    private float moveX;
+    private float translationFactor;
 
     public BezierCurveTestView(Context context) {
         this(context, null);
@@ -116,19 +117,21 @@ public class BezierCurveTestView extends View {
         height = getMeasuredHeight();
     }
 
+    float downX = 0;
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        float downX = 0;
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN: {
                 downX = event.getX();
                 return true;
             }
             case MotionEvent.ACTION_MOVE: {
-                moveX = downX - event.getX();
-                if (moveX >= 0 && moveX <= 100) {
-                    invalidate();
+                translationFactor = (downX - event.getX()) / 300;
+                if (Math.abs(translationFactor) > 1) {
+                    translationFactor = 1;
                 }
+                postInvalidate();
                 break;
             }
         }
@@ -150,12 +153,21 @@ public class BezierCurveTestView extends View {
                     pointRadius = selectedPointRadius;
                 }
                 if (i < selectedPointIndex) {
+                    pointRadius = normalPointRadius;
                     centerX = (i * 2 + 1) * normalPointRadius + i * pointInterval;
                 } else if (selectedPointIndex == i) {
                     centerX = (i * 2 + 1) * normalPointRadius + i * pointInterval + selectedPointRadius - normalPointRadius;
                 } else {
                     centerX = (i * 2 + 1) * normalPointRadius + i * pointInterval + (selectedPointRadius - normalPointRadius) * 2;
                 }
+//                if (i == selectedPointIndex - 1 && translationFactor < 0) {
+//
+//                } else if (i == selectedPointIndex + 1 && translationFactor > 0) {
+//                } else if (i == selectedPointIndex) {
+//                    centerX = (i * 2 + 1) * normalPointRadius + i * pointInterval + selectedPointRadius - normalPointRadius;
+//                } else {
+//                    centerX = (i * 2 + 1) * normalPointRadius + i * pointInterval + (selectedPointRadius - normalPointRadius) * 2;
+//                }
                 arcPath.moveTo(centerX + pointRadius, centerY);
                 for (int k = 0; k < relativeControlPoints.size() / 2; k++) {
                     switch (k) {
@@ -185,10 +197,11 @@ public class BezierCurveTestView extends View {
                     float controlPointX2;
                     float controlPointY2;
                     if (i == selectedPointIndex) {
-                        controlPointX1 = centerX + relativeControlPoints.get(k * 2).x * selectedPointRadius / normalPointRadius;
-                        controlPointY1 = centerY + relativeControlPoints.get(k * 2).y * selectedPointRadius / normalPointRadius;
-                        controlPointX2 = centerX + relativeControlPoints.get(k * 2 + 1).x * selectedPointRadius / normalPointRadius;
-                        controlPointY2 = centerY + relativeControlPoints.get(k * 2 + 1).y * selectedPointRadius / normalPointRadius;
+                        float stretchFactor = selectedPointRadius / normalPointRadius - (selectedPointRadius / normalPointRadius - 1) * translationFactor;
+                        controlPointX1 = centerX + relativeControlPoints.get(k * 2).x * stretchFactor;
+                        controlPointY1 = centerY + relativeControlPoints.get(k * 2).y * stretchFactor;
+                        controlPointX2 = centerX + relativeControlPoints.get(k * 2 + 1).x * stretchFactor;
+                        controlPointY2 = centerY + relativeControlPoints.get(k * 2 + 1).y * stretchFactor;
                     } else {
                         controlPointX1 = centerX + relativeControlPoints.get(k * 2).x;
                         controlPointY1 = centerY + relativeControlPoints.get(k * 2).y;
