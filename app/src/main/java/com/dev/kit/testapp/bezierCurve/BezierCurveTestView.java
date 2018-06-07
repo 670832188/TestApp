@@ -8,6 +8,7 @@ import android.graphics.Path;
 import android.graphics.PointF;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 
 import com.dev.kit.basemodule.util.DisplayUtil;
@@ -21,10 +22,11 @@ import java.util.List;
 public class BezierCurveTestView extends View {
     private static final double factor = 0.55191502449;
     Paint paint;
-    private float pointRadius;
+    private float normalPointRadius;
     private int pointInterval;
     private int pointColor;
     private float selectedPointRadius;
+    private int selectedPointIndex = 1;
     private List<PointF> relativeControlPoints;
     private int pointCount = 5;
     private int paddingLeft;
@@ -32,6 +34,8 @@ public class BezierCurveTestView extends View {
     private int width;
     private int height;
     private Path arcPath;
+
+    private float moveX;
 
     public BezierCurveTestView(Context context) {
         this(context, null);
@@ -47,7 +51,8 @@ public class BezierCurveTestView extends View {
     }
 
     private void init() {
-        pointRadius = DisplayUtil.dp2px(15);
+        normalPointRadius = DisplayUtil.dp2px(10);
+        selectedPointRadius = DisplayUtil.dp2px(15);
         pointInterval = DisplayUtil.dp2px(15);
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         paint.setStyle(Paint.Style.FILL);
@@ -59,43 +64,43 @@ public class BezierCurveTestView extends View {
             float y;
             switch (i) {
                 case 0: {
-                    x = pointRadius;
-                    y = (float) (pointRadius * factor);
+                    x = normalPointRadius;
+                    y = (float) (normalPointRadius * factor);
                     break;
                 }
                 case 1: {
-                    x = (float) (pointRadius * factor);
-                    y = pointRadius;
+                    x = (float) (normalPointRadius * factor);
+                    y = normalPointRadius;
                     break;
                 }
                 case 2: {
-                    x = -(float) (pointRadius * factor);
-                    y = pointRadius;
+                    x = -(float) (normalPointRadius * factor);
+                    y = normalPointRadius;
                     break;
                 }
                 case 3: {
-                    x = -pointRadius;
-                    y = (float) (pointRadius * factor);
+                    x = -normalPointRadius;
+                    y = (float) (normalPointRadius * factor);
                     break;
                 }
                 case 4: {
-                    x = -pointRadius;
-                    y = -(float) (pointRadius * factor);
+                    x = -normalPointRadius;
+                    y = -(float) (normalPointRadius * factor);
                     break;
                 }
                 case 5: {
-                    x = -(float) (pointRadius * factor);
-                    y = -pointRadius;
+                    x = -(float) (normalPointRadius * factor);
+                    y = -normalPointRadius;
                     break;
                 }
                 case 6: {
-                    x = (float) (pointRadius * factor);
-                    y = -pointRadius;
+                    x = (float) (normalPointRadius * factor);
+                    y = -normalPointRadius;
                     break;
                 }
                 default: {
-                    x = pointRadius;
-                    y = -(float) (pointRadius * factor);
+                    x = normalPointRadius;
+                    y = -(float) (normalPointRadius * factor);
                     break;
                 }
             }
@@ -112,35 +117,45 @@ public class BezierCurveTestView extends View {
     }
 
     @Override
-    protected void onDraw(Canvas canvas) {
-//        Path path = new Path();
-//        float centerX = 400;
-//        float centerY = 400;
-//        path.moveTo(400, centerY + pointRadius);
-//        float relativeX1 = (float) (factor * pointRadius);
-//        float relativeY1 = pointRadius;
-//        float relativeX2 = pointRadius;
-//        float relativeY2 = (float) (factor * pointRadius);
-//        path.cubicTo(centerX + relativeX1, centerY + relativeY1, centerX + relativeX2, centerY + relativeY2, centerX + pointRadius, centerY);
-////        path.cubicTo(400,200, 200, 300, 300, 400);
-////        path.quadTo(pointRadius + centerX, pointRadius + centerY, pointRadius + centerX, centerY);
-////        path.quadTo(centerX + pointRadius, centerY - pointRadius, centerX, centerY - pointRadius);
-//        canvas.drawPath(path, paint);
-//        canvas.drawCircle(centerX + relativeX1, centerY + relativeY1, 5, paint);
-//        canvas.drawCircle(centerX + relativeX2, centerY + relativeY2, 5, paint);
-//        canvas.drawCircle(centerX, centerY, pointRadius, paint);
+    public boolean onTouchEvent(MotionEvent event) {
+        float downX = 0;
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN: {
+                downX = event.getX();
+                return true;
+            }
+            case MotionEvent.ACTION_MOVE: {
+                moveX = downX - event.getX();
+                if (moveX >= 0 && moveX <= 100) {
+                    invalidate();
+                }
+                break;
+            }
+        }
+        return super.onTouchEvent(event);
+    }
 
+    @Override
+    protected void onDraw(Canvas canvas) {
+        float pointRadius;
         if (height > 0) {
             float centerX;
             float centerY = height / 2;
             float endX;
             float endY;
             for (int i = 0; i < pointCount; i++) {
-                centerX = (i * 2 + 1) * pointRadius + i * pointInterval;
-                float controlPointX1;
-                float controlPointY1;
-                float controlPointX2;
-                float controlPointY2;
+                if (i != selectedPointIndex) {
+                    pointRadius = normalPointRadius;
+                } else {
+                    pointRadius = selectedPointRadius;
+                }
+                if (i < selectedPointIndex) {
+                    centerX = (i * 2 + 1) * normalPointRadius + i * pointInterval;
+                } else if (selectedPointIndex == i) {
+                    centerX = (i * 2 + 1) * normalPointRadius + i * pointInterval + selectedPointRadius - normalPointRadius;
+                } else {
+                    centerX = (i * 2 + 1) * normalPointRadius + i * pointInterval + (selectedPointRadius - normalPointRadius) * 2;
+                }
                 arcPath.moveTo(centerX + pointRadius, centerY);
                 for (int k = 0; k < relativeControlPoints.size() / 2; k++) {
                     switch (k) {
@@ -165,10 +180,21 @@ public class BezierCurveTestView extends View {
                             break;
                         }
                     }
-                    controlPointX1 = centerX + relativeControlPoints.get(k * 2).x;
-                    controlPointY1 = centerY + relativeControlPoints.get(k * 2).y;
-                    controlPointX2 = centerX + relativeControlPoints.get(k * 2 + 1).x;
-                    controlPointY2 = centerY + relativeControlPoints.get(k * 2 + 1).y;
+                    float controlPointX1;
+                    float controlPointY1;
+                    float controlPointX2;
+                    float controlPointY2;
+                    if (i == selectedPointIndex) {
+                        controlPointX1 = centerX + relativeControlPoints.get(k * 2).x * selectedPointRadius / normalPointRadius;
+                        controlPointY1 = centerY + relativeControlPoints.get(k * 2).y * selectedPointRadius / normalPointRadius;
+                        controlPointX2 = centerX + relativeControlPoints.get(k * 2 + 1).x * selectedPointRadius / normalPointRadius;
+                        controlPointY2 = centerY + relativeControlPoints.get(k * 2 + 1).y * selectedPointRadius / normalPointRadius;
+                    } else {
+                        controlPointX1 = centerX + relativeControlPoints.get(k * 2).x;
+                        controlPointY1 = centerY + relativeControlPoints.get(k * 2).y;
+                        controlPointX2 = centerX + relativeControlPoints.get(k * 2 + 1).x;
+                        controlPointY2 = centerY + relativeControlPoints.get(k * 2 + 1).y;
+                    }
                     arcPath.cubicTo(controlPointX1, controlPointY1, controlPointX2, controlPointY2, endX, endY);
                     canvas.drawPath(arcPath, paint);
                 }
