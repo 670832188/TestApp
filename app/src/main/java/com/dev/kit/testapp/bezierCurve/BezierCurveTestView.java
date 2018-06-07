@@ -8,11 +8,9 @@ import android.graphics.Path;
 import android.graphics.PointF;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.view.MotionEvent;
 import android.view.View;
 
 import com.dev.kit.basemodule.util.DisplayUtil;
-import com.dev.kit.basemodule.util.LogUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +25,7 @@ public class BezierCurveTestView extends View {
     private int pointInterval;
     private int pointColor;
     private float selectedPointRadius;
-    private int selectedPointIndex = 1;
+    private int selectedPointIndex;
     private List<PointF> relativeControlPoints;
     private int pointCount = 5;
     private int paddingLeft;
@@ -117,29 +115,9 @@ public class BezierCurveTestView extends View {
         height = getMeasuredHeight();
     }
 
-    float downX = 0;
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN: {
-                downX = event.getX();
-                return true;
-            }
-            case MotionEvent.ACTION_MOVE: {
-                translationFactor = (downX - event.getX()) / 300;
-                if (Math.abs(translationFactor) > 1) {
-                    translationFactor = 1;
-                }
-                postInvalidate();
-                break;
-            }
-        }
-        return super.onTouchEvent(event);
-    }
-
     @Override
     protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
         float pointRadius;
         if (height > 0) {
             float centerX;
@@ -147,27 +125,17 @@ public class BezierCurveTestView extends View {
             float endX;
             float endY;
             for (int i = 0; i < pointCount; i++) {
-                if (i != selectedPointIndex) {
-                    pointRadius = normalPointRadius;
+                centerX = (i * 2 + 1) * normalPointRadius + i * pointInterval + selectedPointRadius - normalPointRadius;
+                if (i == selectedPointIndex - 1 && translationFactor < 0) {
+                    pointRadius = normalPointRadius + (-translationFactor) * (selectedPointRadius - normalPointRadius);
+                } else if (i == selectedPointIndex + 1 && translationFactor > 0) {
+                    pointRadius = normalPointRadius + (translationFactor) * (selectedPointRadius - normalPointRadius);
+                } else if (i == selectedPointIndex) {
+                    pointRadius = normalPointRadius + (1 - Math.abs(translationFactor)) * (selectedPointRadius - normalPointRadius);
                 } else {
-                    pointRadius = selectedPointRadius;
-                }
-                if (i < selectedPointIndex) {
                     pointRadius = normalPointRadius;
-                    centerX = (i * 2 + 1) * normalPointRadius + i * pointInterval;
-                } else if (selectedPointIndex == i) {
-                    centerX = (i * 2 + 1) * normalPointRadius + i * pointInterval + selectedPointRadius - normalPointRadius;
-                } else {
-                    centerX = (i * 2 + 1) * normalPointRadius + i * pointInterval + (selectedPointRadius - normalPointRadius) * 2;
                 }
-//                if (i == selectedPointIndex - 1 && translationFactor < 0) {
-//
-//                } else if (i == selectedPointIndex + 1 && translationFactor > 0) {
-//                } else if (i == selectedPointIndex) {
-//                    centerX = (i * 2 + 1) * normalPointRadius + i * pointInterval + selectedPointRadius - normalPointRadius;
-//                } else {
-//                    centerX = (i * 2 + 1) * normalPointRadius + i * pointInterval + (selectedPointRadius - normalPointRadius) * 2;
-//                }
+                arcPath.reset();
                 arcPath.moveTo(centerX + pointRadius, centerY);
                 for (int k = 0; k < relativeControlPoints.size() / 2; k++) {
                     switch (k) {
@@ -192,12 +160,13 @@ public class BezierCurveTestView extends View {
                             break;
                         }
                     }
+
                     float controlPointX1;
                     float controlPointY1;
                     float controlPointX2;
                     float controlPointY2;
                     if (i == selectedPointIndex) {
-                        float stretchFactor = selectedPointRadius / normalPointRadius - (selectedPointRadius / normalPointRadius - 1) * translationFactor;
+                        float stretchFactor = pointRadius / normalPointRadius;
                         controlPointX1 = centerX + relativeControlPoints.get(k * 2).x * stretchFactor;
                         controlPointY1 = centerY + relativeControlPoints.get(k * 2).y * stretchFactor;
                         controlPointX2 = centerX + relativeControlPoints.get(k * 2 + 1).x * stretchFactor;
