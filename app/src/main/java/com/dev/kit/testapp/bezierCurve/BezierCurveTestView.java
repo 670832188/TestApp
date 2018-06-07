@@ -2,6 +2,7 @@ package com.dev.kit.testapp.bezierCurve;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PointF;
@@ -18,10 +19,12 @@ import java.util.List;
  * Created by cuiyan on 2018/6/4.
  */
 public class BezierCurveTestView extends View {
+    private static final double factor = 0.55191502449;
     Paint paint;
-    private float radius;
+    private float pointRadius;
     private int pointInterval;
-    private double factor = 0.55191502449;
+    private int pointColor;
+    private float selectedPointRadius;
     private List<PointF> relativeControlPoints;
     private int pointCount = 5;
     private int paddingLeft;
@@ -44,10 +47,11 @@ public class BezierCurveTestView extends View {
     }
 
     private void init() {
-        radius = DisplayUtil.dp2px(15);
+        pointRadius = DisplayUtil.dp2px(15);
         pointInterval = DisplayUtil.dp2px(15);
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paint.setStyle(Paint.Style.STROKE);
+        paint.setStyle(Paint.Style.FILL);
+        paint.setColor(Color.parseColor("#ff8400"));
         arcPath = new Path();
         relativeControlPoints = new ArrayList<>();
         for (int i = 0; i < 8; i++) {
@@ -55,43 +59,43 @@ public class BezierCurveTestView extends View {
             float y;
             switch (i) {
                 case 0: {
-                    x = radius;
-                    y = (float) (radius * factor);
+                    x = pointRadius;
+                    y = (float) (pointRadius * factor);
                     break;
                 }
                 case 1: {
-                    x = (float) (radius * factor);
-                    y = radius;
+                    x = (float) (pointRadius * factor);
+                    y = pointRadius;
                     break;
                 }
                 case 2: {
-                    x = -(float) (radius * factor);
-                    y = radius;
+                    x = -(float) (pointRadius * factor);
+                    y = pointRadius;
                     break;
                 }
                 case 3: {
-                    x = -radius;
-                    y = (float) (radius * factor);
+                    x = -pointRadius;
+                    y = (float) (pointRadius * factor);
                     break;
                 }
                 case 4: {
-                    x = -radius;
-                    y = -(float) (radius * factor);
+                    x = -pointRadius;
+                    y = -(float) (pointRadius * factor);
                     break;
                 }
                 case 5: {
-                    x = -(float) (radius * factor);
-                    y = -radius;
+                    x = -(float) (pointRadius * factor);
+                    y = -pointRadius;
                     break;
                 }
                 case 6: {
-                    x = (float) (radius * factor);
-                    y = -radius;
+                    x = (float) (pointRadius * factor);
+                    y = -pointRadius;
                     break;
                 }
                 default: {
-                    x = radius;
-                    y = -(float) (radius * factor);
+                    x = pointRadius;
+                    y = -(float) (pointRadius * factor);
                     break;
                 }
             }
@@ -112,19 +116,19 @@ public class BezierCurveTestView extends View {
 //        Path path = new Path();
 //        float centerX = 400;
 //        float centerY = 400;
-//        path.moveTo(400, centerY + radius);
-//        float relativeX1 = (float) (factor * radius);
-//        float relativeY1 = radius;
-//        float relativeX2 = radius;
-//        float relativeY2 = (float) (factor * radius);
-//        path.cubicTo(centerX + relativeX1, centerY + relativeY1, centerX + relativeX2, centerY + relativeY2, centerX + radius, centerY);
+//        path.moveTo(400, centerY + pointRadius);
+//        float relativeX1 = (float) (factor * pointRadius);
+//        float relativeY1 = pointRadius;
+//        float relativeX2 = pointRadius;
+//        float relativeY2 = (float) (factor * pointRadius);
+//        path.cubicTo(centerX + relativeX1, centerY + relativeY1, centerX + relativeX2, centerY + relativeY2, centerX + pointRadius, centerY);
 ////        path.cubicTo(400,200, 200, 300, 300, 400);
-////        path.quadTo(radius + centerX, radius + centerY, radius + centerX, centerY);
-////        path.quadTo(centerX + radius, centerY - radius, centerX, centerY - radius);
+////        path.quadTo(pointRadius + centerX, pointRadius + centerY, pointRadius + centerX, centerY);
+////        path.quadTo(centerX + pointRadius, centerY - pointRadius, centerX, centerY - pointRadius);
 //        canvas.drawPath(path, paint);
 //        canvas.drawCircle(centerX + relativeX1, centerY + relativeY1, 5, paint);
 //        canvas.drawCircle(centerX + relativeX2, centerY + relativeY2, 5, paint);
-//        canvas.drawCircle(centerX, centerY, radius, paint);
+//        canvas.drawCircle(centerX, centerY, pointRadius, paint);
 
         if (height > 0) {
             float centerX;
@@ -132,31 +136,31 @@ public class BezierCurveTestView extends View {
             float endX;
             float endY;
             for (int i = 0; i < pointCount; i++) {
-                centerX = (i * 2 + 1) * radius + i * pointInterval;
+                centerX = (i * 2 + 1) * pointRadius + i * pointInterval;
                 float controlPointX1;
                 float controlPointY1;
                 float controlPointX2;
                 float controlPointY2;
-                arcPath.moveTo(centerX + radius, centerY);
+                arcPath.moveTo(centerX + pointRadius, centerY);
                 for (int k = 0; k < relativeControlPoints.size() / 2; k++) {
                     switch (k) {
                         case 0: {
                             endX = centerX;
-                            endY = centerY + radius;
+                            endY = centerY + pointRadius;
                             break;
                         }
                         case 1: {
-                            endX = centerX - radius;
+                            endX = centerX - pointRadius;
                             endY = centerY;
                             break;
                         }
                         case 2: {
                             endX = centerX;
-                            endY = centerY - radius;
+                            endY = centerY - pointRadius;
                             break;
                         }
                         default: {
-                            endX = centerX + radius;
+                            endX = centerX + pointRadius;
                             endY = centerY;
                             break;
                         }
