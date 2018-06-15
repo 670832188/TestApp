@@ -28,6 +28,7 @@ public class CustomIndicator extends View {
     private static final int INDICATOR_TYPE_SCALE = 0;
     private static final int INDICATOR_TYPE_GRADUAL = 1;
     private static final int INDICATOR_TYPE_SPLIT = 2;
+    private static final int INVALID_INDEX = -1;
     private int heightMeasureSpec;
     Paint paint;
     private float normalPointRadius;
@@ -39,7 +40,7 @@ public class CustomIndicator extends View {
     private int pointCount;
     private List<PointF> relativeControlPoints;
     private int selectedPointIndex;
-    private int nextPointIndex = -1;
+    private int nextPointIndex = INVALID_INDEX;
     private int width;
     private int height;
     private Path arcPath;
@@ -135,16 +136,17 @@ public class CustomIndicator extends View {
                 public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                     LogUtil.e("posInfo: " + selectedPointIndex + " " + position + " " + positionOffset + " " + positionOffsetPixels);
                     if (selectedPointIndex == position) {
-                        if (positionOffsetPixels > 0) {
-                            nextPointIndex = position + 1;
+                        if ((selectedPointIndex == 0 || selectedPointIndex == adapter.getRealCount()) && positionOffsetPixels <= 0) {
+                            nextPointIndex = INVALID_INDEX;
                         } else {
-                            nextPointIndex = position;
+                            nextPointIndex = position + 1;
                         }
-//                        translationFactor = 1 - positionOffset;
+                        translationFactor = positionOffset;
                     } else {
                         nextPointIndex = position;
-//                        translationFactor = positionOffset;
+                        translationFactor = 1 - positionOffset;
                     }
+                    postInvalidate();
                 }
 
                 @Override
@@ -191,8 +193,6 @@ public class CustomIndicator extends View {
             height = (int) (selectedPointRadius * 2) + 2;
         }
         setMeasuredDimension(width, height);
-
-        LogUtil.e("wh: " + width + " " + height);
     }
 
     @Override
@@ -208,15 +208,12 @@ public class CustomIndicator extends View {
             float centerY = height / 2;
             float endX;
             float endY;
-
             for (int i = 0; i < pointCount; i++) {
                 centerX = (i * 2 + 1) * normalPointRadius + i * pointInterval + selectedPointRadius - normalPointRadius;
-                if (i == selectedPointIndex - 1 && translationFactor < 0) {
-                    pointRadius = normalPointRadius + (-translationFactor) * (selectedPointRadius - normalPointRadius);
-                } else if (i == selectedPointIndex + 1 && translationFactor > 0) {
+                if (i == selectedPointIndex) {
+                    pointRadius = normalPointRadius + (1 - translationFactor) * (selectedPointRadius - normalPointRadius);
+                } else if (i == nextPointIndex) {
                     pointRadius = normalPointRadius + (translationFactor) * (selectedPointRadius - normalPointRadius);
-                } else if (i == selectedPointIndex) {
-                    pointRadius = normalPointRadius + (1 - Math.abs(translationFactor)) * (selectedPointRadius - normalPointRadius);
                 } else {
                     pointRadius = normalPointRadius;
                 }
@@ -249,7 +246,16 @@ public class CustomIndicator extends View {
                     float controlPointY1;
                     float controlPointX2;
                     float controlPointY2;
-                    if (i == selectedPointIndex) {
+                    if (i == selectedPointIndex || i == nextPointIndex) {
+//                        switch (indicatorType) {
+//                            case INDICATOR_TYPE_SCALE:{
+//                                break;
+//                            }case INDICATOR_TYPE_GRADUAL:{
+//                                break;
+//                            }case INDICATOR_TYPE_SPLIT:{
+//                                break;
+//                            }
+//                        }
                         float stretchFactor = pointRadius / normalPointRadius;
                         controlPointX1 = centerX + relativeControlPoints.get(k * 2).x * stretchFactor;
                         controlPointY1 = centerY + relativeControlPoints.get(k * 2).y * stretchFactor;
@@ -268,6 +274,9 @@ public class CustomIndicator extends View {
         }
     }
 
+    private void drawScaleTypeIndicator(Canvas canvas, float endX, float endY) {
+
+    }
     @Override
     protected void onDetachedFromWindow() {
         if (adapter != null && dataSetObserver != null) {
