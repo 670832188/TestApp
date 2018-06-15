@@ -35,10 +35,11 @@ public class CustomIndicator extends View {
     private int pointInterval;
     private int normalPointColor;
     private int selectedPointColor;
-    private int selectedPointIndex;
     private int indicatorType;
     private int pointCount;
     private List<PointF> relativeControlPoints;
+    private int selectedPointIndex;
+    private int nextPointIndex = -1;
     private int width;
     private int height;
     private Path arcPath;
@@ -132,7 +133,18 @@ public class CustomIndicator extends View {
             boundPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                 @Override
                 public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                    measure(0, heightMeasureSpec);
+                    LogUtil.e("posInfo: " + selectedPointIndex + " " + position + " " + positionOffset + " " + positionOffsetPixels);
+                    if (selectedPointIndex == position) {
+                        if (positionOffsetPixels > 0) {
+                            nextPointIndex = position + 1;
+                        } else {
+                            nextPointIndex = position;
+                        }
+//                        translationFactor = 1 - positionOffset;
+                    } else {
+                        nextPointIndex = position;
+//                        translationFactor = positionOffset;
+                    }
                 }
 
                 @Override
@@ -238,6 +250,7 @@ public class CustomIndicator extends View {
                     float controlPointX2;
                     float controlPointY2;
                     if (i == selectedPointIndex) {
+                        LogUtil.e("");
                         float stretchFactor = pointRadius / normalPointRadius;
                         controlPointX1 = centerX + relativeControlPoints.get(k * 2).x * stretchFactor;
                         controlPointY1 = centerY + relativeControlPoints.get(k * 2).y * stretchFactor;
