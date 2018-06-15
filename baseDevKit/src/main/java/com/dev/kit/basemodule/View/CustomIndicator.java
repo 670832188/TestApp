@@ -250,7 +250,6 @@ public class CustomIndicator extends View {
                     float controlPointX2;
                     float controlPointY2;
                     if (i == selectedPointIndex) {
-                        LogUtil.e("");
                         float stretchFactor = pointRadius / normalPointRadius;
                         controlPointX1 = centerX + relativeControlPoints.get(k * 2).x * stretchFactor;
                         controlPointY1 = centerY + relativeControlPoints.get(k * 2).y * stretchFactor;
@@ -266,7 +265,6 @@ public class CustomIndicator extends View {
                     canvas.drawPath(arcPath, paint);
                 }
             }
-            super.onDetachedFromWindow();
         }
     }
 
@@ -275,8 +273,6 @@ public class CustomIndicator extends View {
         if (adapter != null && dataSetObserver != null) {
             adapter.unregisterDataSetObserver(dataSetObserver);
         }
-        LogUtil.e("onDetachedFromWindow");
         super.onDetachedFromWindow();
-
     }
 }
