@@ -46,7 +46,6 @@
             <enum name="Vertical" value="1" />
         </attr>
         <attr name="checkedButton" format="integer" />
-
     </declare-styleable>
 
     <declare-styleable name="CircleCountDownView">
@@ -86,4 +85,16 @@
         </attr>
     </declare-styleable>
 
+    <declare-styleable name="CustomIndicator">
+        <attr name="indicatorType" format="enum">
+            <enum name="scale" value="0"/>
+            <enum name="gradual" value="1"/>
+            <enum name="split" value="2"/>
+        </attr>
+        <attr name="normalPointRadius" format="dimension"/>
+        <attr name="selectedPointRadius" format="dimension"/>
+        <attr name="normalPointColor" format="color"/>
+        <attr name="selectedPointColor" format="color"/>
+        <attr name="pointInterval" format="dimension"/>
+    </declare-styleable>
 </resources>

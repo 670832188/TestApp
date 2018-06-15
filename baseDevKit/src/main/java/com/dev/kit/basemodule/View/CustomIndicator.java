@@ -1,16 +1,21 @@
-package com.dev.kit.testapp.bezierCurve;
+package com.dev.kit.basemodule.View;
 
 import android.content.Context;
+import android.content.res.TypedArray;
+import android.database.DataSetObserver;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PointF;
 import android.support.annotation.Nullable;
+import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.dev.kit.basemodule.util.DisplayUtil;
+import com.dev.kit.basemodule.R;
+import com.dev.kit.basemodule.surpport.CommonPagerAdapter;
+import com.dev.kit.basemodule.util.LogUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,44 +23,56 @@ import java.util.List;
 /**
  * Created by cuiyan on 2018/6/4.
  */
-public class BezierCurveTestView extends View {
+public class CustomIndicator extends View {
     private static final double factor = 0.55191502449;
+    private static final int INDICATOR_TYPE_SCALE = 0;
+    private static final int INDICATOR_TYPE_GRADUAL = 1;
+    private static final int INDICATOR_TYPE_SPLIT = 2;
+    private int heightMeasureSpec;
     Paint paint;
     private float normalPointRadius;
-    private int pointInterval;
-    private int pointColor;
     private float selectedPointRadius;
+    private int pointInterval;
+    private int normalPointColor;
+    private int selectedPointColor;
     private int selectedPointIndex;
+    private int indicatorType;
+    private int pointCount;
     private List<PointF> relativeControlPoints;
-    private int pointCount = 5;
-    private int paddingLeft;
-    private int paddingRight;
     private int width;
     private int height;
     private Path arcPath;
-
+    private ViewPager boundPager;
     private float translationFactor;
+    private CommonPagerAdapter adapter;
+    private DataSetObserver dataSetObserver;
 
-    public BezierCurveTestView(Context context) {
+    public CustomIndicator(Context context) {
         this(context, null);
     }
 
-    public BezierCurveTestView(Context context, @Nullable AttributeSet attrs) {
+    public CustomIndicator(Context context, @Nullable AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public BezierCurveTestView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public CustomIndicator(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init();
+        init(attrs);
     }
 
-    private void init() {
-        normalPointRadius = DisplayUtil.dp2px(10);
-        selectedPointRadius = DisplayUtil.dp2px(15);
-        pointInterval = DisplayUtil.dp2px(15);
+    private void init(AttributeSet attrs) {
+        TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.CustomIndicator);
+        indicatorType = typedArray.getInt(R.styleable.CustomIndicator_indicatorType, 0);
+        normalPointRadius = typedArray.getDimensionPixelSize(R.styleable.CustomIndicator_normalPointRadius, 8);
+        selectedPointRadius = typedArray.getDimensionPixelSize(R.styleable.CustomIndicator_selectedPointRadius, indicatorType == INDICATOR_TYPE_GRADUAL ? 5 : 12);
+        pointInterval = typedArray.getDimensionPixelSize(R.styleable.CustomIndicator_pointInterval, 20);
+        normalPointColor = typedArray.getColor(R.styleable.CustomIndicator_normalPointColor, Color.parseColor("#FFFFFF"));
+        selectedPointColor = typedArray.getColor(R.styleable.CustomIndicator_selectedPointColor, Color.parseColor("#FF4081"));
+        typedArray.recycle();
+
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         paint.setStyle(Paint.Style.FILL);
-        paint.setColor(Color.parseColor("#ff8400"));
+        paint.setColor(normalPointColor);
         arcPath = new Path();
         relativeControlPoints = new ArrayList<>();
         for (int i = 0; i < 8; i++) {
@@ -106,24 +123,80 @@ public class BezierCurveTestView extends View {
             PointF pointF = new PointF(x, y);
             relativeControlPoints.add(pointF);
         }
+
+    }
+
+    public void bindViewPager(ViewPager viewPager) {
+        boundPager = viewPager;
+        if (boundPager != null) {
+            boundPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                @Override
+                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                    measure(0, heightMeasureSpec);
+                }
+
+                @Override
+                public void onPageSelected(int position) {
+                    selectedPointIndex = position;
+                    postInvalidate();
+                }
+
+                @Override
+                public void onPageScrollStateChanged(int state) {
+
+                }
+            });
+            adapter = (CommonPagerAdapter) boundPager.getAdapter();
+            if (adapter != null) {
+                pointCount = adapter.getRealCount();
+                measure(0, heightMeasureSpec);
+                dataSetObserver = new DataSetObserver() {
+                    @Override
+                    public void onChanged() {
+                        pointCount = adapter.getRealCount();
+                        postInvalidate();
+                    }
+                };
+                adapter.registerDataSetObserver(dataSetObserver);
+            } else {
+                throw new RuntimeException("please set adapter before bind this viewPager");
+            }
+        }
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        width = getMeasuredWidth();
-        height = getMeasuredHeight();
+        this.heightMeasureSpec = heightMeasureSpec;
+        if (pointCount > 0) {
+            width = (int) (pointCount * normalPointRadius * 2 + pointCount * pointInterval) + 2;
+        } else {
+            width = 0;
+        }
+
+        if (heightMeasureSpec == MeasureSpec.EXACTLY) {
+            height = getDefaultSize(getSuggestedMinimumHeight(), heightMeasureSpec);
+        } else {
+            height = (int) (selectedPointRadius * 2) + 2;
+        }
+        setMeasuredDimension(width, height);
+
+        LogUtil.e("wh: " + width + " " + height);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
+        if (pointCount <= 0) {
+            LogUtil.e("adapter size is 0");
+            return;
+        }
+
         float pointRadius;
         if (height > 0) {
             float centerX;
             float centerY = height / 2;
             float endX;
             float endY;
+
             for (int i = 0; i < pointCount; i++) {
                 centerX = (i * 2 + 1) * normalPointRadius + i * pointInterval + selectedPointRadius - normalPointRadius;
                 if (i == selectedPointIndex - 1 && translationFactor < 0) {
@@ -160,7 +233,6 @@ public class BezierCurveTestView extends View {
                             break;
                         }
                     }
-
                     float controlPointX1;
                     float controlPointY1;
                     float controlPointX2;
@@ -181,7 +253,17 @@ public class BezierCurveTestView extends View {
                     canvas.drawPath(arcPath, paint);
                 }
             }
+            super.onDetachedFromWindow();
         }
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        if (adapter != null && dataSetObserver != null) {
+            adapter.unregisterDataSetObserver(dataSetObserver);
+        }
+        LogUtil.e("onDetachedFromWindow");
+        super.onDetachedFromWindow();
 
     }
 }

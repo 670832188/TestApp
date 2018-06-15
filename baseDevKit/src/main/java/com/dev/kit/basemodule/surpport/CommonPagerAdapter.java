@@ -38,6 +38,10 @@ public abstract class CommonPagerAdapter<T> extends PagerAdapter {
         return dataList == null ? 0 : dataList.size();
     }
 
+    public final int getRealCount() {
+        return dataList == null ? 0 : dataList.size();
+    }
+
     @Override
     public boolean isViewFromObject(@NonNull View view, @NonNull Object object) {
         return view == object;
