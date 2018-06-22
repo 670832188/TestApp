@@ -90,6 +90,7 @@
             <enum name="scale" value="0"/>
             <enum name="gradual" value="1"/>
             <enum name="split" value="2"/>
+            <enum name="scaleAndGradual" value="3"/>
         </attr>
         <attr name="normalPointRadius" format="dimension"/>
         <attr name="selectedPointRadius" format="dimension"/>

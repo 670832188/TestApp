@@ -28,9 +28,15 @@ public class CustomIndicator extends View {
     private static final int INDICATOR_TYPE_SCALE = 0;
     private static final int INDICATOR_TYPE_GRADUAL = 1;
     private static final int INDICATOR_TYPE_SPLIT = 2;
+    private static final int INDICATOR_TYPE_SCALE_AND_GRADUAL = 3;
+    private static final int DEFAULT_NORMAL_POINT_RADIUS = 8;
+    private static final int DEFAULT_SELECTED_POINT_RADIUS = 12;
+
     private static final int INVALID_INDEX = -1;
     private int heightMeasureSpec;
-    Paint paint;
+    private Paint normalPointPaint;
+    private Paint selectedPointPaint;
+    private Paint nextPointPaint;
     private float normalPointRadius;
     private float selectedPointRadius;
     private int pointInterval;
@@ -65,16 +71,24 @@ public class CustomIndicator extends View {
     private void init(AttributeSet attrs) {
         TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.CustomIndicator);
         indicatorType = typedArray.getInt(R.styleable.CustomIndicator_indicatorType, 0);
-        normalPointRadius = typedArray.getDimensionPixelSize(R.styleable.CustomIndicator_normalPointRadius, 8);
-        selectedPointRadius = typedArray.getDimensionPixelSize(R.styleable.CustomIndicator_selectedPointRadius, indicatorType == INDICATOR_TYPE_GRADUAL ? 5 : 12);
+        normalPointRadius = typedArray.getDimensionPixelSize(R.styleable.CustomIndicator_normalPointRadius, DEFAULT_NORMAL_POINT_RADIUS);
+        selectedPointRadius = typedArray.getDimensionPixelSize(R.styleable.CustomIndicator_selectedPointRadius, indicatorType == INDICATOR_TYPE_GRADUAL ? DEFAULT_NORMAL_POINT_RADIUS : DEFAULT_SELECTED_POINT_RADIUS);
         pointInterval = typedArray.getDimensionPixelSize(R.styleable.CustomIndicator_pointInterval, 20);
         normalPointColor = typedArray.getColor(R.styleable.CustomIndicator_normalPointColor, Color.parseColor("#FFFFFF"));
-        selectedPointColor = typedArray.getColor(R.styleable.CustomIndicator_selectedPointColor, Color.parseColor("#FF4081"));
+        selectedPointColor = typedArray.getColor(R.styleable.CustomIndicator_selectedPointColor, Color.parseColor("#11EEEE"));
         typedArray.recycle();
 
-        paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paint.setStyle(Paint.Style.FILL);
-        paint.setColor(normalPointColor);
+        normalPointPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        normalPointPaint.setStyle(Paint.Style.FILL);
+        normalPointPaint.setColor(normalPointColor);
+        if (indicatorType == INDICATOR_TYPE_GRADUAL || indicatorType == INDICATOR_TYPE_SCALE_AND_GRADUAL) {
+            selectedPointPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            selectedPointPaint.setStyle(Paint.Style.FILL);
+            selectedPointPaint.setColor(selectedPointColor);
+            nextPointPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            nextPointPaint.setStyle(Paint.Style.FILL);
+            nextPointPaint.setColor(selectedPointColor);
+        }
         arcPath = new Path();
         relativeControlPoints = new ArrayList<>();
         for (int i = 0; i < 8; i++) {
@@ -134,7 +148,7 @@ public class CustomIndicator extends View {
             boundPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                 @Override
                 public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                    LogUtil.e("posInfo: " + selectedPointIndex + " " + position + " " + positionOffset + " " + positionOffsetPixels);
+                    LogUtil.w("posInfo: " + selectedPointIndex + " " + position + " " + positionOffset + " " + positionOffsetPixels);
                     if (selectedPointIndex == position) {
                         if ((selectedPointIndex == 0 || selectedPointIndex == adapter.getRealCount()) && positionOffsetPixels <= 0) {
                             nextPointIndex = INVALID_INDEX;
@@ -268,15 +282,35 @@ public class CustomIndicator extends View {
                         controlPointY2 = centerY + relativeControlPoints.get(k * 2 + 1).y;
                     }
                     arcPath.cubicTo(controlPointX1, controlPointY1, controlPointX2, controlPointY2, endX, endY);
-                    canvas.drawPath(arcPath, paint);
+//                    canvas.drawPath(arcPath, normalPointPaint);
+                    if (indicatorType == INDICATOR_TYPE_GRADUAL || indicatorType == INDICATOR_TYPE_SCALE_AND_GRADUAL) {
+                        int alpha = (int) (translationFactor * 255);
+                        if (i == selectedPointIndex) {
+                            selectedPointPaint.setAlpha(255 - alpha);
+                            normalPointPaint.setAlpha(alpha);
+                            canvas.drawPath(arcPath, normalPointPaint);
+                            canvas.drawPath(arcPath, selectedPointPaint);
+                        } else if (i == nextPointIndex) {
+                            nextPointPaint.setAlpha(alpha);
+                            normalPointPaint.setAlpha(255 - alpha);
+                            canvas.drawPath(arcPath, normalPointPaint);
+                            canvas.drawPath(arcPath, nextPointPaint);
+                        } else {
+                            normalPointPaint.setAlpha(255);
+                            canvas.drawPath(arcPath, normalPointPaint);
+                        }
+                    } else {
+                        canvas.drawPath(arcPath, normalPointPaint);
+                    }
                 }
             }
         }
     }
 
-    private void drawScaleTypeIndicator(Canvas canvas, float endX, float endY) {
+    private void drawScaleTypeIndicator(Canvas canvas, float centerX, float centerY, float endX, float endY) {
 
     }
+
     @Override
     protected void onDetachedFromWindow() {
         if (adapter != null && dataSetObserver != null) {

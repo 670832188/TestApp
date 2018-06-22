@@ -2,7 +2,6 @@ package com.dev.kit.testapp.bezierCurve;
 
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
@@ -12,12 +11,9 @@ import android.widget.TextView;
 
 import com.dev.kit.basemodule.View.CustomIndicator;
 import com.dev.kit.basemodule.activity.BaseStateViewActivity;
-import com.dev.kit.basemodule.pageTransformer.HorizontalStackTransformerWithRotation;
-import com.dev.kit.basemodule.pageTransformer.VerticalStackPageTransformerWithRotation;
 import com.dev.kit.basemodule.surpport.CommonPagerAdapter;
 import com.dev.kit.basemodule.util.DisplayUtil;
 import com.dev.kit.testapp.R;
-import com.dev.kit.testapp.pagerTest.PagerTestActivity;
 
 import java.util.Arrays;
 import java.util.List;
@@ -28,7 +24,7 @@ import java.util.List;
 public class BezierCurveTestActivity extends BaseStateViewActivity {
 
     private CustomIndicator customIndicator;
-    private List<Integer> colorsRes = Arrays.asList(R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorPrimary, R.color.colorAccent, R.color.color_red, R.color.bg_lunch_selected, R.color.bg_supper_selected);
+    private List<Integer> colorsRes = Arrays.asList(R.color.colorPrimary, R.color.colorPrimaryDark, R.color.color_breakfast_tip_normal,  R.color.bg_lunch_selected, R.color.color_light_red);
 
     @Override
     public View createContentView(LayoutInflater inflater, ViewGroup contentRoot) {

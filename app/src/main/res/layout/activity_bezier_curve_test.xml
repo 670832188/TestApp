@@ -10,6 +10,12 @@
         android:layout_height="match_parent" />
 
     <com.dev.kit.basemodule.View.CustomIndicator
+        app:indicatorType="scaleAndGradual"
+        app:normalPointRadius="3dp"
+        app:selectedPointRadius="4dp"
+        app:normalPointColor="@color/color_common_white"
+        app:selectedPointColor="#11EEEE"
+        app:pointInterval="7dp"
         android:id="@+id/CustomIndicator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
