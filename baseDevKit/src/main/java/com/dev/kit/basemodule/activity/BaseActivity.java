@@ -13,6 +13,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.dev.kit.basemodule.util.PermissionRequestUtil;
 import com.dev.kit.basemodule.util.ToastUtil;
 
 public class BaseActivity extends RxActivity {
@@ -93,5 +94,11 @@ public class BaseActivity extends RxActivity {
 
     public interface OnBackPressedListener {
         void onBackPressed();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        PermissionRequestUtil.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 }

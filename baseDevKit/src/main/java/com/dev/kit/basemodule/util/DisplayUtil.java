@@ -155,24 +155,28 @@ public class DisplayUtil {
         return locationArray[1];
     }
 
+    public static int getViewXPosOnScreen(View view) {
+        int[] locationArray = new int[2];
+        view.getLocationOnScreen(locationArray);
+        return locationArray[0];
+    }
+
+    public static int[] getViewPosOnScreen(View view) {
+        int[] locationArray = new int[2];
+        view.getLocationOnScreen(locationArray);
+        return locationArray;
+    }
+
     public static boolean hasBottomNav(WindowManager windowManager) {
         Display d = windowManager.getDefaultDisplay();
         DisplayMetrics realDisplayMetrics = new DisplayMetrics();
         d.getRealMetrics(realDisplayMetrics);
-
-
         int realHeight = realDisplayMetrics.heightPixels;
         int realWidth = realDisplayMetrics.widthPixels;
-
-
         DisplayMetrics displayMetrics = new DisplayMetrics();
         d.getMetrics(displayMetrics);
-
-
         int displayHeight = displayMetrics.heightPixels;
         int displayWidth = displayMetrics.widthPixels;
-
-
         return (realWidth - displayWidth) > 0 || (realHeight - displayHeight) > 0;
     }
 }

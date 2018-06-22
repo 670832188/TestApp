@@ -2,14 +2,10 @@ package com.dev.kit.testapp.activity;
 
 import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.LocaleList;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +18,7 @@ import com.dev.kit.basemodule.netRequest.util.BaseServiceUtil;
 import com.dev.kit.basemodule.netRequest.util.CommonInterceptor;
 import com.dev.kit.basemodule.util.FileUtil;
 import com.dev.kit.basemodule.util.LogUtil;
+import com.dev.kit.basemodule.util.PermissionRequestUtil;
 import com.dev.kit.testapp.R;
 import com.dev.kit.testapp.animation.PropertyAnimationEntryActivity;
 import com.dev.kit.testapp.bezierCurve.BezierCurveTestActivity;
@@ -56,6 +53,7 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
 
         String language = locale.getLanguage() + "-" + locale.getCountry();
         LogUtil.e("language: " + language);
+        permissionTest();
     }
 
     @Override
@@ -119,10 +117,20 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
                 break;
             }
             case R.id.tv_upload_file: {
-                if (checkPermission()) {
+                if (PermissionRequestUtil.isPermissionGranted(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
                     uploadFile();
                 } else {
-                    requestPermission();
+                    PermissionRequestUtil.requestPermission(MainActivity.this, new PermissionRequestUtil.OnPermissionRequestListener() {
+                        @Override
+                        public void onPermissionsGranted() {
+                            uploadFile();
+                        }
+
+                        @Override
+                        public void onPermissionsDenied(String... deniedPermissions) {
+                            showToast("您拒绝了存储读取权限，应用无法访问您的文件");
+                        }
+                    }, Manifest.permission.READ_EXTERNAL_STORAGE);
                 }
                 break;
             }
@@ -150,22 +158,6 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == 12360 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            uploadFile();
-        }
-    }
-
-    private boolean checkPermission() {
-        int permissionCheck1 = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE);
-        return permissionCheck1 == PackageManager.PERMISSION_GRANTED;
-    }
-
-    private void requestPermission() {
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 12306);
-    }
-
-    @Override
     protected void onDestroy() {
         super.onDestroy();
     }
@@ -174,5 +166,26 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
     protected void onSaveInstanceState(Bundle outState) {
         outState.putString("saveState", "saveState");
         super.onSaveInstanceState(outState);
+    }
+
+    private void permissionTest() {
+        String[] permissions = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.READ_PHONE_STATE, Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        PermissionRequestUtil.requestPermission(this, new PermissionRequestUtil.OnPermissionRequestListener() {
+            @Override
+            public void onPermissionsGranted() {
+                showToast("权限申请成功");
+            }
+
+            @Override
+            public void onPermissionsDenied(String... deniedPermissions) {
+                StringBuilder sb = new StringBuilder();
+                for (String permission : deniedPermissions) {
+                    sb.append(permission).append("\n");
+                }
+                sb.deleteCharAt(sb.length() - 1);
+                showToast("您拒绝了以下权限:\n" + sb.toString());
+                LogUtil.e("deniedPermissions: " + sb.toString());
+            }
+        }, permissions);
     }
 }
