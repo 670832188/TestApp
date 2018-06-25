@@ -50,6 +50,7 @@ public class CustomIndicator extends View {
     private int width;
     private int height;
     private Path arcPath;
+    private Path splitArcPath;
     private float translationFactor;
     private CommonPagerAdapter adapter;
     private DataSetObserver dataSetObserver;
@@ -96,6 +97,7 @@ public class CustomIndicator extends View {
             }
         }
         arcPath = new Path();
+        splitArcPath = new Path();
         relativeControlPoints = new ArrayList<>();
         // 初始化绘制 1/4 圆弧的三阶贝塞尔曲线控制点相对坐标(相对圆心)
         for (int i = 0; i < 8; i++) {
@@ -234,7 +236,8 @@ public class CustomIndicator extends View {
             float endX;
             float endY;
             for (int i = 0; i < pointCount; i++) {
-                centerX = (i * 2 + 1) * normalPointRadius + i * pointInterval + selectedPointRadius - normalPointRadius;
+                float centerXOffset = selectedPointRadius - normalPointRadius;
+                centerX = (i * 2 + 1) * normalPointRadius + i * pointInterval + centerXOffset;
                 // 根据ViewPager滑动动态调整当前选中点和目标点半径
                 if (i == selectedPointIndex) {
                     pointRadius = normalPointRadius + (1 - translationFactor) * (selectedPointRadius - normalPointRadius);
@@ -312,87 +315,56 @@ public class CustomIndicator extends View {
     }
 
     private void drawSplitTypeIndicator(Canvas canvas) {
-        float pointRadius;
         float centerX;
         float centerY = height / 2;
         float endX;
         float endY;
         for (int i = 0; i < pointCount; i++) {
-            centerX = (i * 2 + 1) * normalPointRadius + i * pointInterval + selectedPointRadius - normalPointRadius;
-            if (i == selectedPointIndex) {
-                pointRadius = normalPointRadius + (1 - translationFactor) * (selectedPointRadius - normalPointRadius);
-            } else if (i == targetPointIndex) {
-                pointRadius = normalPointRadius + (translationFactor) * (selectedPointRadius - normalPointRadius);
-            } else {
-                pointRadius = normalPointRadius;
-            }
+            float centerXOffset = selectedPointRadius - normalPointRadius;
+            centerX = (i * 2 + 1) * normalPointRadius + i * pointInterval + centerXOffset;
             arcPath.reset();
-            arcPath.moveTo(centerX + pointRadius, centerY);
+            splitArcPath.reset();
+            arcPath.moveTo(centerX + normalPointRadius, centerY);
             for (int k = 0; k < relativeControlPoints.size() / 2; k++) {
                 switch (k) {
                     case 0: {
                         endX = centerX;
-                        endY = centerY + pointRadius;
+                        endY = centerY + normalPointRadius;
                         break;
                     }
                     case 1: {
-                        endX = centerX - pointRadius;
+                        endX = centerX - normalPointRadius;
                         endY = centerY;
                         break;
                     }
                     case 2: {
                         endX = centerX;
-                        endY = centerY - pointRadius;
+                        endY = centerY - normalPointRadius;
                         break;
                     }
                     default: {
-                        endX = centerX + pointRadius;
+                        endX = centerX + normalPointRadius;
                         endY = centerY;
                         break;
                     }
                 }
-                float controlPointX1;
-                float controlPointY1;
-                float controlPointX2;
-                float controlPointY2;
-                if (i == selectedPointIndex) {
-                    float stretchFactor = pointRadius / normalPointRadius;
-                    controlPointX1 = centerX + relativeControlPoints.get(k * 2).x * stretchFactor;
-                    controlPointY1 = centerY + relativeControlPoints.get(k * 2).y * stretchFactor;
-                    controlPointX2 = centerX + relativeControlPoints.get(k * 2 + 1).x * stretchFactor;
-                    controlPointY2 = centerY + relativeControlPoints.get(k * 2 + 1).y * stretchFactor;
-                } else if (i == targetPointIndex) {
-                    float stretchFactor = pointRadius / normalPointRadius;
-                    controlPointX1 = centerX + relativeControlPoints.get(k * 2).x * stretchFactor;
-                    controlPointY1 = centerY + relativeControlPoints.get(k * 2).y * stretchFactor;
-                    controlPointX2 = centerX + relativeControlPoints.get(k * 2 + 1).x * stretchFactor;
-                    controlPointY2 = centerY + relativeControlPoints.get(k * 2 + 1).y * stretchFactor;
-                } else {
-                    controlPointX1 = centerX + relativeControlPoints.get(k * 2).x;
-                    controlPointY1 = centerY + relativeControlPoints.get(k * 2).y;
-                    controlPointX2 = centerX + relativeControlPoints.get(k * 2 + 1).x;
-                    controlPointY2 = centerY + relativeControlPoints.get(k * 2 + 1).y;
-                }
+                float controlPointX1 = centerX + relativeControlPoints.get(k * 2).x;
+                float controlPointY1 = centerY + relativeControlPoints.get(k * 2).y;
+                float controlPointX2 = centerX + relativeControlPoints.get(k * 2 + 1).x;
+                float controlPointY2 = centerY + relativeControlPoints.get(k * 2 + 1).y;
                 arcPath.cubicTo(controlPointX1, controlPointY1, controlPointX2, controlPointY2, endX, endY);
-                if (indicatorType == INDICATOR_TYPE_GRADUAL || indicatorType == INDICATOR_TYPE_SCALE_AND_GRADUAL) {
-                    int alpha = (int) (translationFactor * 255);
-                    if (i == selectedPointIndex) {
-                        selectedPointPaint.setAlpha(255 - alpha);
-                        normalPointPaint.setAlpha(alpha);
-                        canvas.drawPath(arcPath, normalPointPaint);
-                        canvas.drawPath(arcPath, selectedPointPaint);
-                    } else if (i == targetPointIndex) {
-                        targetPointPaint.setAlpha(alpha);
-                        normalPointPaint.setAlpha(255 - alpha);
-                        canvas.drawPath(arcPath, normalPointPaint);
-                        canvas.drawPath(arcPath, targetPointPaint);
-                    } else {
-                        normalPointPaint.setAlpha(255);
-                        canvas.drawPath(arcPath, normalPointPaint);
-                    }
-                } else {
-                    canvas.drawPath(arcPath, normalPointPaint);
-                }
+                canvas.drawPath(arcPath, normalPointPaint);
+
+//                if (i == selectedPointIndex) {
+//                    float stretchFactor = localSelectedPointRadius / normalPointRadius;
+//                    float localSelectedControlPointX1 = localSelectedCenterX + relativeControlPoints.get(k * 2).x * stretchFactor;
+//                    float localSelectedControlPointY1 = localSelectedCenterY + relativeControlPoints.get(k * 2).y * stretchFactor;
+//                    float localSelectedControlPointX2 = localSelectedCenterX + relativeControlPoints.get(k * 2 + 1).x * stretchFactor;
+//                    float localSelectedControlPointY2 = localSelectedCenterY + relativeControlPoints.get(k * 2 + 1).y * stretchFactor;
+//                    splitArcPath.moveTo(localSelectedCenterX + localSelectedPointRadius, localSelectedCenterY);
+//                    splitArcPath.cubicTo(localSelectedControlPointX1, localSelectedControlPointY1, localSelectedControlPointX2, localSelectedControlPointY2, localSelectedEndX, localSelectedEndY);
+//                    canvas.drawPath(splitArcPath, normalPointPaint);
+//                }
             }
         }
     }

@@ -10,7 +10,7 @@
         android:layout_height="match_parent" />
 
     <com.dev.kit.basemodule.View.CustomIndicator
-        app:indicatorType="split"
+        app:indicatorType="scaleAndGradual"
         app:normalPointRadius="3dp"
         app:selectedPointRadius="4dp"
         app:normalPointColor="@color/color_common_white"
