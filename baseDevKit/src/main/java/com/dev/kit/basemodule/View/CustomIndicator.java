@@ -235,8 +235,8 @@ public class CustomIndicator extends View {
             float centerY = height / 2;
             float endX;
             float endY;
+            float centerXOffset = selectedPointRadius - normalPointRadius;
             for (int i = 0; i < pointCount; i++) {
-                float centerXOffset = selectedPointRadius - normalPointRadius;
                 centerX = (i * 2 + 1) * normalPointRadius + i * pointInterval + centerXOffset;
                 // 根据ViewPager滑动动态调整当前选中点和目标点半径
                 if (i == selectedPointIndex) {
@@ -319,32 +319,48 @@ public class CustomIndicator extends View {
         float centerY = height / 2;
         float endX;
         float endY;
+        float centerXOffset = selectedPointRadius - normalPointRadius;
+
+        float selectedSplitEndX;
+        float selectedSplitEndY;
+        float selectedSplitPointRadius = normalPointRadius + (1 - translationFactor) * (selectedPointRadius - normalPointRadius);
+        float selectedSplitPointCenterXOffset = translationFactor * (pointInterval + 2 * normalPointRadius);
+        LogUtil.e("selectedSplitPointCenterXOffset: " + selectedSplitPointCenterXOffset + " " + pointInterval);
+
         for (int i = 0; i < pointCount; i++) {
-            float centerXOffset = selectedPointRadius - normalPointRadius;
             centerX = (i * 2 + 1) * normalPointRadius + i * pointInterval + centerXOffset;
             arcPath.reset();
-            splitArcPath.reset();
             arcPath.moveTo(centerX + normalPointRadius, centerY);
+            splitArcPath.reset();
+            splitArcPath.moveTo(centerX + selectedSplitPointCenterXOffset + selectedSplitPointRadius, centerY);
             for (int k = 0; k < relativeControlPoints.size() / 2; k++) {
                 switch (k) {
                     case 0: {
                         endX = centerX;
                         endY = centerY + normalPointRadius;
+                        selectedSplitEndX = centerX + selectedSplitPointCenterXOffset;
+                        selectedSplitEndY = centerY + selectedSplitPointRadius;
                         break;
                     }
                     case 1: {
                         endX = centerX - normalPointRadius;
                         endY = centerY;
+                        selectedSplitEndX = centerX + selectedSplitPointCenterXOffset - selectedSplitPointRadius;
+                        selectedSplitEndY = centerY;
                         break;
                     }
                     case 2: {
                         endX = centerX;
                         endY = centerY - normalPointRadius;
+                        selectedSplitEndX = centerX + selectedSplitPointCenterXOffset;
+                        selectedSplitEndY = centerY - selectedSplitPointRadius;
                         break;
                     }
                     default: {
                         endX = centerX + normalPointRadius;
                         endY = centerY;
+                        selectedSplitEndX = centerX + selectedSplitPointCenterXOffset + selectedSplitPointRadius;
+                        selectedSplitEndY = centerY;
                         break;
                     }
                 }
@@ -355,16 +371,15 @@ public class CustomIndicator extends View {
                 arcPath.cubicTo(controlPointX1, controlPointY1, controlPointX2, controlPointY2, endX, endY);
                 canvas.drawPath(arcPath, normalPointPaint);
 
-//                if (i == selectedPointIndex) {
-//                    float stretchFactor = localSelectedPointRadius / normalPointRadius;
-//                    float localSelectedControlPointX1 = localSelectedCenterX + relativeControlPoints.get(k * 2).x * stretchFactor;
-//                    float localSelectedControlPointY1 = localSelectedCenterY + relativeControlPoints.get(k * 2).y * stretchFactor;
-//                    float localSelectedControlPointX2 = localSelectedCenterX + relativeControlPoints.get(k * 2 + 1).x * stretchFactor;
-//                    float localSelectedControlPointY2 = localSelectedCenterY + relativeControlPoints.get(k * 2 + 1).y * stretchFactor;
-//                    splitArcPath.moveTo(localSelectedCenterX + localSelectedPointRadius, localSelectedCenterY);
-//                    splitArcPath.cubicTo(localSelectedControlPointX1, localSelectedControlPointY1, localSelectedControlPointX2, localSelectedControlPointY2, localSelectedEndX, localSelectedEndY);
-//                    canvas.drawPath(splitArcPath, normalPointPaint);
-//                }
+                if (i == selectedPointIndex) {
+                    float stretchFactor = selectedSplitPointRadius / normalPointRadius;
+                    controlPointX1 = centerX + selectedSplitPointCenterXOffset + relativeControlPoints.get(k * 2).x * stretchFactor;
+                    controlPointY1 = centerY + relativeControlPoints.get(k * 2).y * stretchFactor;
+                    controlPointX2 = centerX + selectedSplitPointCenterXOffset + relativeControlPoints.get(k * 2 + 1).x * stretchFactor;
+                    controlPointY2 = centerY + relativeControlPoints.get(k * 2 + 1).y * stretchFactor;
+                    splitArcPath.cubicTo(controlPointX1, controlPointY1, controlPointX2, controlPointY2, selectedSplitEndX, selectedSplitEndY);
+                    canvas.drawPath(splitArcPath, normalPointPaint);
+                }
             }
         }
     }
