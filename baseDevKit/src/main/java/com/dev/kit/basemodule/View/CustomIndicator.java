@@ -88,8 +88,11 @@ public class CustomIndicator extends View {
             targetPointPaint.setStyle(Paint.Style.FILL);
             targetPointPaint.setColor(selectedPointColor);
         } else if (indicatorType == INDICATOR_TYPE_SPLIT) {
-            if (selectedPointRadius <= normalPointColor * 1.4) {
+            if (selectedPointRadius < normalPointColor * 1.4) {
                 selectedPointRadius = (int) (normalPointRadius * 1.4);
+            }
+            if (pointInterval < 4 * normalPointRadius) {
+                pointInterval = (int) (4 * normalPointRadius);
             }
         }
         arcPath = new Path();
@@ -244,22 +247,22 @@ public class CustomIndicator extends View {
                 arcPath.moveTo(centerX + pointRadius, centerY);
                 for (int k = 0; k < relativeControlPoints.size() / 2; k++) {
                     switch (k) {
-                        case 0: {
+                        case 0: { // 相对于圆心，第一象限
                             endX = centerX;
                             endY = centerY + pointRadius;
                             break;
                         }
-                        case 1: {
+                        case 1: { // 相对于圆心，第二象限
                             endX = centerX - pointRadius;
                             endY = centerY;
                             break;
                         }
-                        case 2: {
+                        case 2: { // 相对于圆心，第三象限
                             endX = centerX;
                             endY = centerY - pointRadius;
                             break;
                         }
-                        default: {
+                        default: { // 相对于圆心，第四象限
                             endX = centerX + pointRadius;
                             endY = centerY;
                             break;
@@ -352,7 +355,13 @@ public class CustomIndicator extends View {
                 float controlPointY1;
                 float controlPointX2;
                 float controlPointY2;
-                if (i == selectedPointIndex || i == targetPointIndex) {
+                if (i == selectedPointIndex) {
+                    float stretchFactor = pointRadius / normalPointRadius;
+                    controlPointX1 = centerX + relativeControlPoints.get(k * 2).x * stretchFactor;
+                    controlPointY1 = centerY + relativeControlPoints.get(k * 2).y * stretchFactor;
+                    controlPointX2 = centerX + relativeControlPoints.get(k * 2 + 1).x * stretchFactor;
+                    controlPointY2 = centerY + relativeControlPoints.get(k * 2 + 1).y * stretchFactor;
+                } else if (i == targetPointIndex) {
                     float stretchFactor = pointRadius / normalPointRadius;
                     controlPointX1 = centerX + relativeControlPoints.get(k * 2).x * stretchFactor;
                     controlPointY1 = centerY + relativeControlPoints.get(k * 2).y * stretchFactor;
