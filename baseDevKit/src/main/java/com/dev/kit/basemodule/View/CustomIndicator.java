@@ -36,7 +36,7 @@ public class CustomIndicator extends View {
     private int heightMeasureSpec;
     private Paint normalPointPaint;
     private Paint selectedPointPaint;
-    private Paint nextPointPaint;
+    private Paint targetPointPaint;
     private float normalPointRadius;
     private float selectedPointRadius;
     private int pointInterval;
@@ -46,7 +46,7 @@ public class CustomIndicator extends View {
     private int pointCount;
     private List<PointF> relativeControlPoints;
     private int selectedPointIndex;
-    private int nextPointIndex = INVALID_INDEX;
+    private int targetPointIndex = INVALID_INDEX;
     private int width;
     private int height;
     private Path arcPath;
@@ -84,52 +84,57 @@ public class CustomIndicator extends View {
             selectedPointPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
             selectedPointPaint.setStyle(Paint.Style.FILL);
             selectedPointPaint.setColor(selectedPointColor);
-            nextPointPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-            nextPointPaint.setStyle(Paint.Style.FILL);
-            nextPointPaint.setColor(selectedPointColor);
+            targetPointPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            targetPointPaint.setStyle(Paint.Style.FILL);
+            targetPointPaint.setColor(selectedPointColor);
+        } else if (indicatorType == INDICATOR_TYPE_SPLIT) {
+            if (selectedPointRadius <= normalPointColor * 1.4) {
+                selectedPointRadius = (int) (normalPointRadius * 1.4);
+            }
         }
         arcPath = new Path();
         relativeControlPoints = new ArrayList<>();
+        // 初始化绘制 1/4 圆弧的三阶贝塞尔曲线控制点相对坐标(相对圆心)
         for (int i = 0; i < 8; i++) {
             float x;
             float y;
             switch (i) {
-                case 0: {
+                case 0: { // 右下P0
                     x = normalPointRadius;
                     y = (float) (normalPointRadius * factor);
                     break;
                 }
-                case 1: {
+                case 1: { // 右下P1
                     x = (float) (normalPointRadius * factor);
                     y = normalPointRadius;
                     break;
                 }
-                case 2: {
+                case 2: { // 左下P2
                     x = -(float) (normalPointRadius * factor);
                     y = normalPointRadius;
                     break;
                 }
-                case 3: {
+                case 3: { // 左下P3
                     x = -normalPointRadius;
                     y = (float) (normalPointRadius * factor);
                     break;
                 }
-                case 4: {
+                case 4: { // 左上P4
                     x = -normalPointRadius;
                     y = -(float) (normalPointRadius * factor);
                     break;
                 }
-                case 5: {
+                case 5: { // 左上P5
                     x = -(float) (normalPointRadius * factor);
                     y = -normalPointRadius;
                     break;
                 }
-                case 6: {
+                case 6: { // 右上P6
                     x = (float) (normalPointRadius * factor);
                     y = -normalPointRadius;
                     break;
                 }
-                default: {
+                default: { // 右上P7
                     x = normalPointRadius;
                     y = -(float) (normalPointRadius * factor);
                     break;
@@ -149,13 +154,13 @@ public class CustomIndicator extends View {
                     LogUtil.w("posInfo: " + selectedPointIndex + " " + position + " " + positionOffset + " " + positionOffsetPixels);
                     if (selectedPointIndex == position) {
                         if ((selectedPointIndex == 0 || selectedPointIndex == adapter.getRealCount()) && positionOffsetPixels <= 0) {
-                            nextPointIndex = INVALID_INDEX;
+                            targetPointIndex = INVALID_INDEX;
                         } else {
-                            nextPointIndex = position + 1;
+                            targetPointIndex = position + 1;
                         }
                         translationFactor = positionOffset;
                     } else {
-                        nextPointIndex = position;
+                        targetPointIndex = position;
                         translationFactor = 1 - positionOffset;
                     }
                     postInvalidate();
@@ -227,9 +232,10 @@ public class CustomIndicator extends View {
             float endY;
             for (int i = 0; i < pointCount; i++) {
                 centerX = (i * 2 + 1) * normalPointRadius + i * pointInterval + selectedPointRadius - normalPointRadius;
+                // 根据ViewPager滑动动态调整当前选中点和目标点半径
                 if (i == selectedPointIndex) {
                     pointRadius = normalPointRadius + (1 - translationFactor) * (selectedPointRadius - normalPointRadius);
-                } else if (i == nextPointIndex) {
+                } else if (i == targetPointIndex) {
                     pointRadius = normalPointRadius + (translationFactor) * (selectedPointRadius - normalPointRadius);
                 } else {
                     pointRadius = normalPointRadius;
@@ -263,7 +269,8 @@ public class CustomIndicator extends View {
                     float controlPointY1;
                     float controlPointX2;
                     float controlPointY2;
-                    if (i == selectedPointIndex || i == nextPointIndex) {
+                    if (i == selectedPointIndex || i == targetPointIndex) {
+                        // 控制点坐标根据ViewPager滑动做相应缩放
                         float stretchFactor = pointRadius / normalPointRadius;
                         controlPointX1 = centerX + relativeControlPoints.get(k * 2).x * stretchFactor;
                         controlPointY1 = centerY + relativeControlPoints.get(k * 2).y * stretchFactor;
@@ -284,11 +291,11 @@ public class CustomIndicator extends View {
                             normalPointPaint.setAlpha(alpha);
                             canvas.drawPath(arcPath, normalPointPaint);
                             canvas.drawPath(arcPath, selectedPointPaint);
-                        } else if (i == nextPointIndex) {
-                            nextPointPaint.setAlpha(alpha);
+                        } else if (i == targetPointIndex) {
+                            targetPointPaint.setAlpha(alpha);
                             normalPointPaint.setAlpha(255 - alpha);
                             canvas.drawPath(arcPath, normalPointPaint);
-                            canvas.drawPath(arcPath, nextPointPaint);
+                            canvas.drawPath(arcPath, targetPointPaint);
                         } else {
                             normalPointPaint.setAlpha(255);
                             canvas.drawPath(arcPath, normalPointPaint);
@@ -311,7 +318,7 @@ public class CustomIndicator extends View {
             centerX = (i * 2 + 1) * normalPointRadius + i * pointInterval + selectedPointRadius - normalPointRadius;
             if (i == selectedPointIndex) {
                 pointRadius = normalPointRadius + (1 - translationFactor) * (selectedPointRadius - normalPointRadius);
-            } else if (i == nextPointIndex) {
+            } else if (i == targetPointIndex) {
                 pointRadius = normalPointRadius + (translationFactor) * (selectedPointRadius - normalPointRadius);
             } else {
                 pointRadius = normalPointRadius;
@@ -345,7 +352,7 @@ public class CustomIndicator extends View {
                 float controlPointY1;
                 float controlPointX2;
                 float controlPointY2;
-                if (i == selectedPointIndex || i == nextPointIndex) {
+                if (i == selectedPointIndex || i == targetPointIndex) {
                     float stretchFactor = pointRadius / normalPointRadius;
                     controlPointX1 = centerX + relativeControlPoints.get(k * 2).x * stretchFactor;
                     controlPointY1 = centerY + relativeControlPoints.get(k * 2).y * stretchFactor;
@@ -365,11 +372,11 @@ public class CustomIndicator extends View {
                         normalPointPaint.setAlpha(alpha);
                         canvas.drawPath(arcPath, normalPointPaint);
                         canvas.drawPath(arcPath, selectedPointPaint);
-                    } else if (i == nextPointIndex) {
-                        nextPointPaint.setAlpha(alpha);
+                    } else if (i == targetPointIndex) {
+                        targetPointPaint.setAlpha(alpha);
                         normalPointPaint.setAlpha(255 - alpha);
                         canvas.drawPath(arcPath, normalPointPaint);
-                        canvas.drawPath(arcPath, nextPointPaint);
+                        canvas.drawPath(arcPath, targetPointPaint);
                     } else {
                         normalPointPaint.setAlpha(255);
                         canvas.drawPath(arcPath, normalPointPaint);
