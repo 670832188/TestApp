@@ -205,7 +205,7 @@ public class CustomIndicator extends View {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         this.heightMeasureSpec = heightMeasureSpec;
         if (pointCount > 0) {
-            width = (int) (pointCount * normalPointRadius * 2 + pointCount * pointInterval) + 2;
+            width = (pointCount - 1) * pointInterval + 2 + 2 * (int) selectedPointRadius;
         } else {
             width = 0;
         }
@@ -235,9 +235,9 @@ public class CustomIndicator extends View {
             float centerY = height / 2;
             float endX;
             float endY;
-            float centerXOffset = selectedPointRadius - normalPointRadius;
+            float centerXOffset = selectedPointRadius;
             for (int i = 0; i < pointCount; i++) {
-                centerX = (i * 2 + 1) * normalPointRadius + i * pointInterval + centerXOffset;
+                centerX = i * pointInterval + centerXOffset;
                 // 根据ViewPager滑动动态调整当前选中点和目标点半径
                 if (i == selectedPointIndex) {
                     pointRadius = normalPointRadius + (1 - translationFactor) * (selectedPointRadius - normalPointRadius);
@@ -319,16 +319,16 @@ public class CustomIndicator extends View {
         float centerY = height / 2;
         float endX;
         float endY;
-        float centerXOffset = selectedPointRadius - normalPointRadius;
+        float centerXOffset = selectedPointRadius;
 
         float selectedSplitEndX;
         float selectedSplitEndY;
         float selectedSplitPointRadius = normalPointRadius + (1 - translationFactor) * (selectedPointRadius - normalPointRadius);
-        float selectedSplitPointCenterXOffset = translationFactor * (pointInterval + 2 * normalPointRadius);
+        float selectedSplitPointCenterXOffset = translationFactor * (pointInterval);
         LogUtil.e("selectedSplitPointCenterXOffset: " + selectedSplitPointCenterXOffset + " " + pointInterval);
 
         for (int i = 0; i < pointCount; i++) {
-            centerX = (i * 2 + 1) * normalPointRadius + i * pointInterval + centerXOffset;
+            centerX = i * pointInterval + centerXOffset;
             arcPath.reset();
             arcPath.moveTo(centerX + normalPointRadius, centerY);
             splitArcPath.reset();
