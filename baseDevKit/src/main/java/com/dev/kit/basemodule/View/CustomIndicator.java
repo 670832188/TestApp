@@ -157,14 +157,20 @@ public class CustomIndicator extends View {
                 @Override
                 public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                     LogUtil.w("posInfo: " + currentPagePosition + " " + position + " " + positionOffset + " " + positionOffsetPixels);
-                    if (position < currentPagePosition) {
-                        translationFactor = 1 - positionOffset;
-                        currentPagePosition = position + 1;
-                        targetPagePosition = position;
+                    if (positionOffsetPixels > 0) {
+                        if (position < currentPagePosition) {
+                            translationFactor = 1 - positionOffset;
+                            currentPagePosition = position + 1;
+                            targetPagePosition = position;
+                        } else {
+                            translationFactor = positionOffset;
+                            currentPagePosition = position;
+                            targetPagePosition = position + 1;
+                        }
                     } else {
                         translationFactor = positionOffset;
                         currentPagePosition = position;
-                        targetPagePosition = position + 1;
+                        targetPagePosition = position;
                     }
                     postInvalidate();
                 }
@@ -321,7 +327,7 @@ public class CustomIndicator extends View {
         float selectedSplitEndX;
         float selectedSplitEndY;
         float selectedSplitPointRadius = normalPointRadius + (1 - translationFactor) * (selectedPointRadius - normalPointRadius);
-        float selectedSplitPointCenterXOffset = translationFactor * (pointInterval);
+        float selectedSplitPointCenterXOffset = currentPagePosition < targetPagePosition ? translationFactor * (pointInterval) : -translationFactor * (pointInterval);
         LogUtil.e("selectedSplitPointCenterXOffset: " + selectedSplitPointCenterXOffset + " " + pointInterval);
 
         for (int i = 0; i < pointCount; i++) {
