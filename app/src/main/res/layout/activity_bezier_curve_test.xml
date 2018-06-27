@@ -15,7 +15,7 @@
         app:selectedPointRadius="4dp"
         app:normalPointColor="@color/color_common_white"
         app:selectedPointColor="#11EEEE"
-        app:pointInterval="7dp"
+        app:pointInterval="15dp"
         android:id="@+id/CustomIndicator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
