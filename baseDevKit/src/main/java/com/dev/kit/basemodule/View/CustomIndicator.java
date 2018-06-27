@@ -45,9 +45,8 @@ public class CustomIndicator extends View {
     private int pointCount;
     private List<PointF> relativeControlPoints;
     //    private int selectedPagePosition;
-//    private int targetPointIndex = INVALID_INDEX;
-    private int leftPagePosition;
-    private int rightPagePosition;
+    private int currentPagePosition;
+    private int targetPagePosition;
     private int width;
     private int height;
     private Path arcPath;
@@ -55,10 +54,6 @@ public class CustomIndicator extends View {
     private float translationFactor;
     private CommonPagerAdapter adapter;
     private DataSetObserver dataSetObserver;
-
-//    private enum State {IDLE, TO_LEFT, TO_RIGHT}
-//
-//    private State currentState = State.IDLE;
 
     public CustomIndicator(Context context) {
         this(context, null);
@@ -161,10 +156,16 @@ public class CustomIndicator extends View {
             viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                 @Override
                 public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                    LogUtil.w("posInfo: " + viewPager.getCurrentItem() + " " + position + " " + positionOffset + " " + positionOffsetPixels);
-                    leftPagePosition = position;
-                    rightPagePosition = position + 1;
-                    translationFactor = positionOffset;
+                    LogUtil.w("posInfo: " + currentPagePosition + " " + position + " " + positionOffset + " " + positionOffsetPixels);
+                    if (position < currentPagePosition) {
+                        translationFactor = 1 - positionOffset;
+                        currentPagePosition = position + 1;
+                        targetPagePosition = position;
+                    } else {
+                        translationFactor = positionOffset;
+                        currentPagePosition = position;
+                        targetPagePosition = position + 1;
+                    }
                     postInvalidate();
                 }
 
@@ -235,9 +236,9 @@ public class CustomIndicator extends View {
             for (int i = 0; i < pointCount; i++) {
                 centerX = i * pointInterval + centerXOffset;
                 // 根据ViewPager滑动动态调整当前选中点和目标点半径
-                if (i == leftPagePosition) {
+                if (i == currentPagePosition) {
                     pointRadius = normalPointRadius + (1 - translationFactor) * (selectedPointRadius - normalPointRadius);
-                } else if (i == rightPagePosition) {
+                } else if (i == targetPagePosition) {
                     pointRadius = normalPointRadius + (translationFactor) * (selectedPointRadius - normalPointRadius);
                 } else {
                     pointRadius = normalPointRadius;
@@ -271,7 +272,7 @@ public class CustomIndicator extends View {
                     float controlPointY1;
                     float controlPointX2;
                     float controlPointY2;
-                    if (i == leftPagePosition || i == rightPagePosition) {
+                    if (i == currentPagePosition || i == targetPagePosition) {
                         // 控制点坐标根据ViewPager滑动做相应缩放
                         float stretchFactor = pointRadius / normalPointRadius;
                         controlPointX1 = centerX + relativeControlPoints.get(k * 2).x * stretchFactor;
@@ -288,12 +289,12 @@ public class CustomIndicator extends View {
 //                    canvas.drawPath(arcPath, normalPointPaint);
                     if (indicatorType == INDICATOR_TYPE_GRADUAL || indicatorType == INDICATOR_TYPE_SCALE_AND_GRADUAL) {
                         int alpha = (int) (translationFactor * 255);
-                        if (i == leftPagePosition) {
+                        if (i == currentPagePosition) {
                             selectedPointPaint.setAlpha(255 - alpha);
                             normalPointPaint.setAlpha(alpha);
                             canvas.drawPath(arcPath, normalPointPaint);
                             canvas.drawPath(arcPath, selectedPointPaint);
-                        } else if (i == rightPagePosition) {
+                        } else if (i == targetPagePosition) {
                             targetPointPaint.setAlpha(alpha);
                             normalPointPaint.setAlpha(255 - alpha);
                             canvas.drawPath(arcPath, normalPointPaint);
@@ -367,7 +368,7 @@ public class CustomIndicator extends View {
                 arcPath.cubicTo(controlPointX1, controlPointY1, controlPointX2, controlPointY2, endX, endY);
                 canvas.drawPath(arcPath, normalPointPaint);
 
-                if (i == leftPagePosition) {
+                if (i == currentPagePosition) {
                     float stretchFactor = selectedSplitPointRadius / normalPointRadius;
                     controlPointX1 = centerX + selectedSplitPointCenterXOffset + relativeControlPoints.get(k * 2).x * stretchFactor;
                     controlPointY1 = centerY + relativeControlPoints.get(k * 2).y * stretchFactor;
