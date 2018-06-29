@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.dev.kit.basemodule.View.CustomIndicator;
+import com.dev.kit.basemodule.view.CustomIndicator;
 import com.dev.kit.basemodule.activity.BaseStateViewActivity;
 import com.dev.kit.basemodule.surpport.CommonPagerAdapter;
 import com.dev.kit.basemodule.util.DisplayUtil;

@@ -8,7 +8,7 @@ import android.support.annotation.NonNull;
 
 import com.dev.kit.basemodule.BuildConfig;
 import com.dev.kit.basemodule.R;
-import com.dev.kit.basemodule.View.NetProgressDialog;
+import com.dev.kit.basemodule.view.NetProgressDialog;
 import com.dev.kit.basemodule.netRequest.Configs.Config;
 import com.dev.kit.basemodule.netRequest.util.OnNetProgressCancelListener;
 import com.dev.kit.basemodule.result.BaseResult;

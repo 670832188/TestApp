@@ -9,8 +9,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <com.dev.kit.basemodule.View.CustomIndicator
-        app:indicatorType="scaleAndGradual"
+    <com.dev.kit.basemodule.view.CustomIndicator
+        app:indicatorType="split"
         app:normalPointRadius="3dp"
         app:selectedPointRadius="4dp"
         app:normalPointColor="@color/color_common_white"
