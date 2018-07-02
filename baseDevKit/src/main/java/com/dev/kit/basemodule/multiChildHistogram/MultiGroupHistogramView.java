@@ -264,6 +264,7 @@ public class MultiGroupHistogramView extends View {
             }
         }
         histogramContentWidth += -groupInterval;
+        postInvalidate();
     }
 
     /**
