@@ -19,6 +19,7 @@ import com.dev.kit.basemodule.netRequest.util.CommonInterceptor;
 import com.dev.kit.basemodule.util.FileUtil;
 import com.dev.kit.basemodule.util.LogUtil;
 import com.dev.kit.basemodule.util.PermissionRequestUtil;
+import com.dev.kit.basemodule.view.AudioSignalView;
 import com.dev.kit.testapp.R;
 import com.dev.kit.testapp.animation.PropertyAnimationEntryActivity;
 import com.dev.kit.testapp.bezierCurve.BezierCurveTestActivity;
@@ -38,6 +39,7 @@ import okhttp3.RequestBody;
 
 public class MainActivity extends BaseStateViewActivity implements View.OnClickListener {
 
+    private AudioSignalView audioSignalView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,9 +73,10 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
         setOnClickListener(R.id.tv_MultiGroupHistogramView, this);
         setOnClickListener(R.id.tv_set_font, this);
         setOnClickListener(R.id.tv_bezier_curve, this);
+        setOnClickListener(R.id.tv_audio_animation, this);
+        audioSignalView = findViewById(R.id.audio_signal_view);
         setContentState(STATE_DATA_CONTENT);
     }
-
 
     private void uploadFile() {
         CommonInterceptor.updateOrInsertCommonParam("key1", "value1");
@@ -152,6 +155,13 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
             }
             case R.id.tv_bezier_curve: {
                 startActivity(new Intent(this, BezierCurveTestActivity.class));
+                break;
+            }case R.id.tv_audio_animation:{
+                if (audioSignalView.isAudioSignalStarted()) {
+                    audioSignalView.stopAudioSignal();
+                } else {
+                    audioSignalView.startAudioSignal();
+                }
                 break;
             }
         }

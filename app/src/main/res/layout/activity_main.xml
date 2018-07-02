@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -83,4 +84,26 @@
         android:padding="@dimen/margin_normal"
         android:text="贝塞尔曲线"
         android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/tv_audio_animation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_large"
+        android:background="@color/color_light_grey"
+        android:gravity="center"
+        android:padding="@dimen/margin_normal"
+        android:text="音频动画"
+        android:textSize="14sp" />
+
+    <com.dev.kit.basemodule.view.AudioSignalView
+        android:id="@+id/audio_signal_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/margin_large"
+        app:asv_groupCount="3"
+        app:asv_groupInterval="5dp"
+        app:asv_lineInterval="2dp"
+        app:asv_lineWidth="2dp" />
 </LinearLayout>

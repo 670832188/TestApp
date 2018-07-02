@@ -87,15 +87,26 @@
 
     <declare-styleable name="CustomIndicator">
         <attr name="indicatorType" format="enum">
-            <enum name="scale" value="0"/>
-            <enum name="gradual" value="1"/>
-            <enum name="split" value="2"/>
-            <enum name="scaleAndGradual" value="3"/>
+            <enum name="scale" value="0" />
+            <enum name="gradual" value="1" />
+            <enum name="split" value="2" />
+            <enum name="scaleAndGradual" value="3" />
         </attr>
-        <attr name="normalPointRadius" format="dimension"/>
-        <attr name="selectedPointRadius" format="dimension"/>
-        <attr name="normalPointColor" format="color"/>
-        <attr name="selectedPointColor" format="color"/>
-        <attr name="pointInterval" format="dimension"/>
+        <attr name="normalPointRadius" format="dimension" />
+        <attr name="selectedPointRadius" format="dimension" />
+        <attr name="normalPointColor" format="color" />
+        <attr name="selectedPointColor" format="color" />
+        <attr name="pointInterval" format="dimension" />
+    </declare-styleable>
+
+    <declare-styleable name="AudioSignalView">
+        <attr name="asv_groupCount" format="integer" />
+        <attr name="asv_groupInterval" format="dimension" />
+        <attr name="asv_lineColor" format="color" />
+        <attr name="asv_lineWidth" format="dimension" />
+        <attr name="asv_lineInterval" format="dimension" />
+        <attr name="asv_maxDynamicLineHeight" format="dimension" />
+        <attr name="asv_maxStaticLineHeight" format="dimension" />
+        <attr name="asv_minStaticLineHeight" format="dimension"/>
     </declare-styleable>
 </resources>
