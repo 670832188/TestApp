@@ -55,6 +55,8 @@ public class CustomIndicator extends View {
     private float translationFactor;
     private CommonPagerAdapter adapter;
     private DataSetObserver dataSetObserver;
+    private static final int SPLIT_OFFSET = DisplayUtil.dp2px(5);
+    private static final float SPLIT_RADIUS_FACTOR = 1.2f;
 
     public CustomIndicator(Context context) {
         this(context, null);
@@ -93,8 +95,8 @@ public class CustomIndicator extends View {
             if (selectedPointRadius < normalPointColor * 1.4) {
                 selectedPointRadius = (int) (normalPointRadius * 1.4);
             }
-            if (pointInterval < 4 * normalPointRadius) {
-                pointInterval = (int) (4 * normalPointRadius);
+            if (pointInterval < SPLIT_RADIUS_FACTOR * normalPointRadius * 2 + SPLIT_OFFSET) {
+                pointInterval = (int) (SPLIT_RADIUS_FACTOR * normalPointRadius * 2 + SPLIT_OFFSET);
             }
         }
         arcPath = new Path();
@@ -318,7 +320,6 @@ public class CustomIndicator extends View {
         }
     }
 
-    private static final float SPLIT_FACTOR = 1.2f;
 
     private void drawSplitTypeIndicator(Canvas canvas) {
         float centerX;
@@ -329,8 +330,15 @@ public class CustomIndicator extends View {
 
         float selectedSplitEndX = 0;
         float selectedSplitEndY = 0;
-        float splitFactor = Math.min(translationFactor * pointInterval / (normalPointRadius * 2), 1);
-        float selectedSplitPointRadius = normalPointRadius + (1 - splitFactor) * (selectedPointRadius - normalPointRadius);
+        float splitRadiusFactor;
+        if (translationFactor * pointInterval <= 2 * normalPointRadius) {
+            splitRadiusFactor = translationFactor * pointInterval / (normalPointRadius * 2);
+        } else if (translationFactor * pointInterval > pointInterval - 2 * normalPointRadius) {
+            splitRadiusFactor = (pointInterval - translationFactor * pointInterval) / (2 * normalPointRadius);
+        } else {
+            splitRadiusFactor = 1;
+        }
+        float selectedSplitPointRadius = normalPointRadius + (1 - splitRadiusFactor) * (selectedPointRadius - normalPointRadius);
         float selectedSplitPointCenterXOffset = currentPagePosition < targetPagePosition ? translationFactor * (pointInterval) : -translationFactor * (pointInterval);
         LogUtil.e("selectedSplitPointCenterXOffset: " + selectedSplitPointCenterXOffset + " " + pointInterval);
 
@@ -340,7 +348,11 @@ public class CustomIndicator extends View {
             arcPath.moveTo(centerX + normalPointRadius, centerY);
             splitArcPath.reset();
             if (i == currentPagePosition) {
-                float offsetFactor = currentPagePosition > targetPagePosition ? SPLIT_FACTOR - Math.min(translationFactor * pointInterval / (normalPointRadius * 2), SPLIT_FACTOR) : 0;
+                float participantX = translationFactor * pointInterval;
+                if (participantX > SPLIT_RADIUS_FACTOR * normalPointRadius * 2) {
+                    participantX = 0;
+                }
+                float offsetFactor = currentPagePosition > targetPagePosition ? SPLIT_RADIUS_FACTOR - participantX / (2 * normalPointRadius) : 0;
                 if (offsetFactor > 0.5f) {
                     offsetFactor = 0;
                 }
@@ -363,7 +375,7 @@ public class CustomIndicator extends View {
                         endX = centerX - normalPointRadius;
                         endY = centerY;
                         if (i == currentPagePosition) {
-                            float offsetFactor = currentPagePosition < targetPagePosition ? SPLIT_FACTOR - Math.min(translationFactor * pointInterval / (normalPointRadius * 2), SPLIT_FACTOR) : 0;
+                            float offsetFactor = currentPagePosition < targetPagePosition ? SPLIT_RADIUS_FACTOR - Math.min(translationFactor * pointInterval / (normalPointRadius * 2), SPLIT_RADIUS_FACTOR) : 0;
                             if (offsetFactor > 0.5f) {
                                 offsetFactor = 0;
                             }
