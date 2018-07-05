@@ -347,32 +347,30 @@ public class CustomIndicator extends View {
             arcPath.reset();
             arcPath.moveTo(centerX + normalPointRadius, centerY);
             splitArcPath.reset();
+
             if (i == currentPagePosition) {
                 float participantX = translationFactor * pointInterval;
                 if (participantX > SPLIT_RADIUS_FACTOR * normalPointRadius * 2) {
                     participantX = 0;
                 }
-                float offset = 0;
-                float offsetFactor = 0;
-                if (currentPagePosition > targetPagePosition) {
-                    offsetFactor = SPLIT_RADIUS_FACTOR - participantX / (2 * normalPointRadius);
-                    offsetFactor = offsetFactor > 0.5 ? 0 : offsetFactor;
-                    offset = offsetFactor * DisplayUtil.dp2px(25);
-                    if (offset > translationFactor * pointInterval) {
-                        offset = translationFactor * pointInterval;
-                    }
+                float offset;
+                float offsetFactor;
+                offsetFactor = SPLIT_RADIUS_FACTOR - participantX / (2 * normalPointRadius);
+                offsetFactor = offsetFactor > 0.5 ? 0 : offsetFactor;
+                offset = offsetFactor * DisplayUtil.dp2px(25);
+                if (offset > translationFactor * pointInterval) {
+                    offset = translationFactor * pointInterval;
                 }
-                splitArcPath.moveTo(centerX + selectedSplitPointCenterXOffset + selectedSplitPointRadius + offset, centerY);
-                if (currentPagePosition < targetPagePosition) {
-                    offsetFactor = SPLIT_RADIUS_FACTOR - participantX / (2 * normalPointRadius);
-                    offsetFactor = offsetFactor > 0.5 ? 0 : offsetFactor;
-                    offset = offsetFactor * DisplayUtil.dp2px(25);
-                    if (offset > translationFactor * pointInterval) {
-                        offset = translationFactor * pointInterval;
-                    }
+                if (currentPagePosition == targetPagePosition) {
+                    splitArcPath.moveTo(centerX + selectedSplitPointCenterXOffset + selectedSplitPointRadius, centerY);
+                } else if (currentPagePosition > targetPagePosition) {
+                    splitArcPath.moveTo(centerX + selectedSplitPointCenterXOffset + selectedSplitPointRadius + offset, centerY);
+                } else {
+                    splitArcPath.moveTo(centerX + selectedSplitPointCenterXOffset + selectedSplitPointRadius, centerY);
                     arcPath.moveTo(centerX + normalPointRadius + offset, centerY);
                 }
             }
+
             for (int k = 0; k < relativeControlPoints.size() / 2; k++) {
                 switch (k) {
                     case 0: {
