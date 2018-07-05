@@ -414,8 +414,8 @@ public class CustomIndicator extends View {
                             if (participantX > SPLIT_RADIUS_FACTOR * normalPointRadius * 2) {
                                 participantX = 0;
                             }
-                            float offset = 0;
-                            float offsetFactor = 0;
+                            float offset;
+                            float offsetFactor;
                             if (currentPagePosition < targetPagePosition) {
                                 offsetFactor = SPLIT_RADIUS_FACTOR - participantX / (2 * normalPointRadius);
                                 offsetFactor = offsetFactor > 0.5 ? 0 : offsetFactor;
@@ -423,8 +423,8 @@ public class CustomIndicator extends View {
                                 if (offset > translationFactor * pointInterval) {
                                     offset = translationFactor * pointInterval;
                                 }
+                                endX += offset;
                             }
-                            endX += offset;
                         }
                         selectedSplitEndX = centerX + selectedSplitPointCenterXOffset + selectedSplitPointRadius;
                         selectedSplitEndY = centerY;
