@@ -409,6 +409,8 @@ public class CustomIndicator extends View {
                     default: {
                         endX = centerX + normalPointRadius;
                         endY = centerY;
+                        selectedSplitEndX = centerX + selectedSplitPointCenterXOffset + selectedSplitPointRadius;
+                        selectedSplitEndY = centerY;
                         if (i == currentPagePosition) {
                             float participantX = translationFactor * pointInterval;
                             if (participantX > SPLIT_RADIUS_FACTOR * normalPointRadius * 2) {
@@ -416,18 +418,20 @@ public class CustomIndicator extends View {
                             }
                             float offset;
                             float offsetFactor;
-                            if (currentPagePosition < targetPagePosition) {
+                            if (currentPagePosition != targetPagePosition) {
                                 offsetFactor = SPLIT_RADIUS_FACTOR - participantX / (2 * normalPointRadius);
                                 offsetFactor = offsetFactor > 0.5 ? 0 : offsetFactor;
                                 offset = offsetFactor * DisplayUtil.dp2px(25);
                                 if (offset > translationFactor * pointInterval) {
                                     offset = translationFactor * pointInterval;
                                 }
-                                endX += offset;
+                                if (currentPagePosition < targetPagePosition) {
+                                    endX += offset;
+                                } else {
+                                    selectedSplitEndX += offset;
+                                }
                             }
                         }
-                        selectedSplitEndX = centerX + selectedSplitPointCenterXOffset + selectedSplitPointRadius;
-                        selectedSplitEndY = centerY;
                         break;
                     }
                 }
