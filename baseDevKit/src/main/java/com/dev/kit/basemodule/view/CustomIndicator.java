@@ -55,8 +55,8 @@ public class CustomIndicator extends View {
     private float translationFactor;
     private CommonPagerAdapter adapter;
     private DataSetObserver dataSetObserver;
-    private static final int SPLIT_OFFSET = DisplayUtil.dp2px(5);
-    private static final float SPLIT_RADIUS_FACTOR = 1.2f;
+    private static final int SPLIT_OFFSET = DisplayUtil.dp2px(10);
+    private static final float SPLIT_RADIUS_FACTOR = 1.3f;
 
     public CustomIndicator(Context context) {
         this(context, null);
@@ -425,6 +425,34 @@ public class CustomIndicator extends View {
                     controlPointY1 = centerY + relativeControlPoints.get(k * 2).y * stretchFactor;
                     controlPointX2 = centerX + selectedSplitPointCenterXOffset + relativeControlPoints.get(k * 2 + 1).x * stretchFactor;
                     controlPointY2 = centerY + relativeControlPoints.get(k * 2 + 1).y * stretchFactor;
+
+////////////////////////////////////////////////////////////////////////////
+                    // ToDo 平滑度待处理
+//                    float splitOffset;
+//                    float offsetFactor;
+//                    float participantX = translationFactor * pointInterval;
+//                    if (participantX > normalPointRadius * 2) {
+//                        participantX = 2 * normalPointRadius;
+//                    }
+//                    offsetFactor = 1 - participantX / (2 * normalPointRadius);
+//                    splitOffset = offsetFactor * DisplayUtil.dp2px(25);
+//                    if (splitOffset > translationFactor * pointInterval) {
+//                        splitOffset = translationFactor * pointInterval;
+//                    }
+//                    if (currentPagePosition < targetPagePosition) {
+//                        if (k == 1) {
+//                            controlPointX2 -= splitOffset;
+//                        } else if (k == 2) {
+//                            controlPointX1 -= splitOffset;
+//                        }
+//                    } else if (currentPagePosition > targetPagePosition) {
+//                        if (k == 0) {
+//                            controlPointX1 += splitOffset;
+//                        } else if (k == 3) {
+//                            controlPointX2 += splitOffset;
+//                        }
+//                    }
+/////////////////////////////////////////////////////////////////////////////////////
                     splitArcPath.cubicTo(controlPointX1, controlPointY1, controlPointX2, controlPointY2, selectedSplitEndX, selectedSplitEndY);
                     canvas.drawPath(splitArcPath, normalPointPaint);
                 }
