@@ -471,11 +471,8 @@ public class CustomIndicator extends View {
         float offset;
         float offsetFactor;
         offsetFactor = SPLIT_RADIUS_FACTOR - participantX / (2 * normalPointRadius);
-        offsetFactor = offsetFactor > 0.5 ? 0 : offsetFactor;
-        offset = offsetFactor * DisplayUtil.dp2px(25);
-        if (offset > translationFactor * pointInterval) {
-            offset = translationFactor * pointInterval;
-        }
+        offsetFactor = offsetFactor > 2 * (SPLIT_RADIUS_FACTOR - 1) ? 0 : offsetFactor;
+        offset = offsetFactor * participantX;
         return offset;
     }
 
@@ -488,9 +485,6 @@ public class CustomIndicator extends View {
         float offsetFactor;
         offsetFactor = SPLIT_RADIUS_FACTOR - participantX / (2 * normalPointRadius);
         offset = offsetFactor * participantX;
-        if (offset > participantX) {
-            offset = participantX;
-        }
         return offset;
     }
 
