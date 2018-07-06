@@ -352,7 +352,8 @@ public class CustomIndicator extends View {
                 } else if (currentPagePosition > targetPagePosition) {
                     splitArcPath.moveTo(centerX + selectedSplitPointCenterXOffset + selectedSplitPointRadius + splitOffset, centerY);
                 } else {
-                    splitArcPath.moveTo(centerX + selectedSplitPointCenterXOffset + selectedSplitPointRadius , centerY);
+                    float currentX = centerX + selectedSplitPointCenterXOffset + selectedSplitPointRadius;
+                    splitArcPath.moveTo(currentX + getCurrentBondingOffset(currentX - centerX), centerY);
                     arcPath.moveTo(centerX + normalPointRadius + splitOffset, centerY);
                 }
             }
@@ -411,7 +412,7 @@ public class CustomIndicator extends View {
                                 float offset = getSplitOffset();
                                 if (currentPagePosition < targetPagePosition) {
                                     endX += offset;
-//                                    selectedSplitEndX += getCurrentBondingOffset(selectedSplitEndX);
+                                    selectedSplitEndX += getCurrentBondingOffset(selectedSplitEndX - centerX);
                                 } else {
                                     selectedSplitEndX += offset;
                                 }
@@ -496,7 +497,7 @@ public class CustomIndicator extends View {
         return offset;
     }
 
-    private float getCurrentBondingOffset(float currentPageCenterX) {
+    private float getCurrentBondingOffset(float currentOffsetX) {
         float participantX = translationFactor * pointInterval - (pointInterval - SPLIT_RADIUS_FACTOR * normalPointRadius * 2);
         if (participantX < 0) {
             return 0;
@@ -505,6 +506,9 @@ public class CustomIndicator extends View {
         float offsetFactor;
         offsetFactor = SPLIT_RADIUS_FACTOR - participantX / (2 * normalPointRadius);
         offset = offsetFactor * participantX;
+        if (offset + currentOffsetX > pointInterval + selectedPointRadius) {
+            offset -= offset + currentOffsetX - pointInterval - selectedPointRadius;
+        }
         return offset;
     }
 
