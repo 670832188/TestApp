@@ -352,9 +352,15 @@ public class CustomIndicator extends View {
                 } else if (currentPagePosition > targetPagePosition) {
                     splitArcPath.moveTo(centerX + selectedSplitPointCenterXOffset + selectedSplitPointRadius + splitOffset, centerY);
                 } else {
-                    splitArcPath.moveTo(centerX + selectedSplitPointCenterXOffset + selectedSplitPointRadius, centerY);
+                    float xxx = getBondingOffset();
+                    LogUtil.e("xxx: " + xxx);
+                    splitArcPath.moveTo(centerX + selectedSplitPointCenterXOffset + selectedSplitPointRadius + xxx, centerY);
                     arcPath.moveTo(centerX + normalPointRadius + splitOffset, centerY);
                 }
+            }
+
+            if (i == targetPagePosition && currentPagePosition > targetPagePosition) {
+                arcPath.moveTo(centerX + normalPointRadius + getBondingOffset(), centerY);
             }
 
             for (int k = 0; k < relativeControlPoints.size() / 2; k++) {
@@ -411,6 +417,9 @@ public class CustomIndicator extends View {
                                     selectedSplitEndX += offset;
                                 }
                             }
+                        }
+                        if (i == targetPagePosition && currentPagePosition > targetPagePosition) {
+                            endX += getBondingOffset();
                         }
                         break;
                     }
