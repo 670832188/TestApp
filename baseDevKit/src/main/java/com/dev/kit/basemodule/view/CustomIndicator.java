@@ -56,7 +56,7 @@ public class CustomIndicator extends View {
     private CommonPagerAdapter adapter;
     private DataSetObserver dataSetObserver;
     private static final int SPLIT_OFFSET = DisplayUtil.dp2px(10);
-    private static final float SPLIT_RADIUS_FACTOR = 1.3f;
+    private static final float SPLIT_RADIUS_FACTOR = 1.4f;
 
     public CustomIndicator(Context context) {
         this(context, null);
@@ -352,15 +352,13 @@ public class CustomIndicator extends View {
                 } else if (currentPagePosition > targetPagePosition) {
                     splitArcPath.moveTo(centerX + selectedSplitPointCenterXOffset + selectedSplitPointRadius + splitOffset, centerY);
                 } else {
-                    float xxx = getBondingOffset();
-                    LogUtil.e("xxx: " + xxx);
-                    splitArcPath.moveTo(centerX + selectedSplitPointCenterXOffset + selectedSplitPointRadius + xxx, centerY);
+                    splitArcPath.moveTo(centerX + selectedSplitPointCenterXOffset + selectedSplitPointRadius , centerY);
                     arcPath.moveTo(centerX + normalPointRadius + splitOffset, centerY);
                 }
             }
 
             if (i == targetPagePosition && currentPagePosition > targetPagePosition) {
-                arcPath.moveTo(centerX + normalPointRadius + getBondingOffset(), centerY);
+                arcPath.moveTo(centerX + normalPointRadius + getTargetBondingOffset(), centerY);
             }
 
             for (int k = 0; k < relativeControlPoints.size() / 2; k++) {
@@ -390,7 +388,7 @@ public class CustomIndicator extends View {
                             }
                         }
                         if (i == targetPagePosition && currentPagePosition < targetPagePosition) {
-                            endX -= getBondingOffset();
+                            endX -= getTargetBondingOffset();
                         }
                         break;
                     }
@@ -413,13 +411,14 @@ public class CustomIndicator extends View {
                                 float offset = getSplitOffset();
                                 if (currentPagePosition < targetPagePosition) {
                                     endX += offset;
+//                                    selectedSplitEndX += getCurrentBondingOffset(selectedSplitEndX);
                                 } else {
                                     selectedSplitEndX += offset;
                                 }
                             }
                         }
                         if (i == targetPagePosition && currentPagePosition > targetPagePosition) {
-                            endX += getBondingOffset();
+                            endX += getTargetBondingOffset();
                         }
                         break;
                     }
@@ -485,7 +484,19 @@ public class CustomIndicator extends View {
         return offset;
     }
 
-    private float getBondingOffset() {
+    private float getTargetBondingOffset() {
+        float participantX = translationFactor * pointInterval - (pointInterval - SPLIT_RADIUS_FACTOR * normalPointRadius * 2);
+        if (participantX < 0) {
+            return 0;
+        }
+        float offset;
+        float offsetFactor;
+        offsetFactor = SPLIT_RADIUS_FACTOR - participantX / (2 * normalPointRadius);
+        offset = offsetFactor * participantX;
+        return offset;
+    }
+
+    private float getCurrentBondingOffset(float currentPageCenterX) {
         float participantX = translationFactor * pointInterval - (pointInterval - SPLIT_RADIUS_FACTOR * normalPointRadius * 2);
         if (participantX < 0) {
             return 0;
