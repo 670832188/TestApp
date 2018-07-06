@@ -383,6 +383,9 @@ public class CustomIndicator extends View {
                                 }
                             }
                         }
+                        if (i == targetPagePosition && currentPagePosition < targetPagePosition) {
+                            endX -= getBondingOffset();
+                        }
                         break;
                     }
                     case 2: {
@@ -472,6 +475,21 @@ public class CustomIndicator extends View {
         offset = offsetFactor * DisplayUtil.dp2px(25);
         if (offset > translationFactor * pointInterval) {
             offset = translationFactor * pointInterval;
+        }
+        return offset;
+    }
+
+    private float getBondingOffset() {
+        float participantX = translationFactor * pointInterval - (pointInterval - SPLIT_RADIUS_FACTOR * normalPointRadius * 2);
+        if (participantX < 0) {
+            return 0;
+        }
+        float offset;
+        float offsetFactor;
+        offsetFactor = SPLIT_RADIUS_FACTOR - participantX / (2 * normalPointRadius);
+        offset = offsetFactor * participantX;
+        if (offset > participantX) {
+            offset = participantX;
         }
         return offset;
     }
