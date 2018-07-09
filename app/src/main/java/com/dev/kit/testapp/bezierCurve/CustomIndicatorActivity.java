@@ -21,14 +21,14 @@ import java.util.List;
 /**
  * Created by cuiyan on 2018/6/4.
  */
-public class BezierCurveTestActivity extends BaseStateViewActivity {
+public class CustomIndicatorActivity extends BaseStateViewActivity {
 
     private CustomIndicator customIndicator;
     private List<Integer> colorsRes = Arrays.asList(R.color.colorPrimary, R.color.colorPrimaryDark, R.color.color_breakfast_tip_normal,  R.color.bg_lunch_selected, R.color.color_light_red);
 
     @Override
     public View createContentView(LayoutInflater inflater, ViewGroup contentRoot) {
-        return inflater.inflate(R.layout.activity_bezier_curve_test, contentRoot, false);
+        return inflater.inflate(R.layout.activity_custom_indicator, contentRoot, false);
     }
 
     @Override
@@ -59,15 +59,15 @@ public class BezierCurveTestActivity extends BaseStateViewActivity {
                     drawable = new GradientDrawable();
                     itemView.setBackground(drawable);
                 }
-                drawable.setCornerRadius(DisplayUtil.dp2px(5));
-                drawable.setStroke(DisplayUtil.dp2px(5), getResources().getColor(R.color.color_light_grey));
+//                drawable.setCornerRadius(DisplayUtil.dp2px(5));
+                drawable.setStroke(DisplayUtil.dp2px(1), getResources().getColor(R.color.color_light_grey));
                 drawable.setColor(color);
             }
 
             @NonNull
             @Override
             public View getPageItemView(@NonNull ViewGroup container, int position) {
-                View view = LayoutInflater.from(BezierCurveTestActivity.this).inflate(R.layout.item_vp_test, container, false);
+                View view = LayoutInflater.from(CustomIndicatorActivity.this).inflate(R.layout.item_vp_test, container, false);
                 view.setTag(String.valueOf(position));
                 return view;
             }

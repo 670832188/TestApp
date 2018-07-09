@@ -331,8 +331,10 @@ public class CustomIndicator extends View {
         float splitRadiusFactor;
         if (translationFactor * pointInterval <= 2 * normalPointRadius) {
             splitRadiusFactor = translationFactor * pointInterval / (normalPointRadius * 2);
+            splitRadiusFactor = (float) Math.log(1 + (Math.E - 1) * splitRadiusFactor);
         } else if (translationFactor * pointInterval > pointInterval - 2 * normalPointRadius) {
             splitRadiusFactor = (pointInterval - translationFactor * pointInterval) / (2 * normalPointRadius);
+            splitRadiusFactor = (float) Math.log((Math.E - 1) * splitRadiusFactor + 1);
         } else {
             splitRadiusFactor = 1;
         }
@@ -383,6 +385,7 @@ public class CustomIndicator extends View {
                                 float offset = getSplitOffset();
                                 if (currentPagePosition > targetPagePosition) {
                                     endX -= offset;
+                                    selectedSplitEndX -= getCurrentBondingOffset(centerX - selectedSplitEndX);
                                 } else {
                                     selectedSplitEndX -= offset;
                                 }
@@ -437,34 +440,6 @@ public class CustomIndicator extends View {
                     controlPointY1 = centerY + relativeControlPoints.get(k * 2).y * stretchFactor;
                     controlPointX2 = centerX + selectedSplitPointCenterXOffset + relativeControlPoints.get(k * 2 + 1).x * stretchFactor;
                     controlPointY2 = centerY + relativeControlPoints.get(k * 2 + 1).y * stretchFactor;
-
-////////////////////////////////////////////////////////////////////////////
-                    // ToDo 平滑度待处理
-//                    float splitOffset;
-//                    float offsetFactor;
-//                    float participantX = translationFactor * pointInterval;
-//                    if (participantX > normalPointRadius * 2) {
-//                        participantX = 2 * normalPointRadius;
-//                    }
-//                    offsetFactor = 1 - participantX / (2 * normalPointRadius);
-//                    splitOffset = offsetFactor * DisplayUtil.dp2px(25);
-//                    if (splitOffset > translationFactor * pointInterval) {
-//                        splitOffset = translationFactor * pointInterval;
-//                    }
-//                    if (currentPagePosition < targetPagePosition) {
-//                        if (k == 1) {
-//                            controlPointX2 -= splitOffset;
-//                        } else if (k == 2) {
-//                            controlPointX1 -= splitOffset;
-//                        }
-//                    } else if (currentPagePosition > targetPagePosition) {
-//                        if (k == 0) {
-//                            controlPointX1 += splitOffset;
-//                        } else if (k == 3) {
-//                            controlPointX2 += splitOffset;
-//                        }
-//                    }
-/////////////////////////////////////////////////////////////////////////////////////
                     splitArcPath.cubicTo(controlPointX1, controlPointY1, controlPointX2, controlPointY2, selectedSplitEndX, selectedSplitEndY);
                     canvas.drawPath(splitArcPath, normalPointPaint);
                 }
@@ -506,8 +481,11 @@ public class CustomIndicator extends View {
         float offsetFactor;
         offsetFactor = SPLIT_RADIUS_FACTOR - participantX / (2 * normalPointRadius);
         offset = offsetFactor * participantX;
-        if (offset + currentOffsetX > pointInterval + selectedPointRadius) {
-            offset -= offset + currentOffsetX - pointInterval - selectedPointRadius;
+        if (offset + currentOffsetX > pointInterval + normalPointRadius) {
+            offset -= offset + currentOffsetX - pointInterval - normalPointRadius;
+        }
+        if (offset < 0) {
+            offset = 0;
         }
         return offset;
     }

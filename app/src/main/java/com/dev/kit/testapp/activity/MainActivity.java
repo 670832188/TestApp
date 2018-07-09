@@ -22,7 +22,7 @@ import com.dev.kit.basemodule.util.PermissionRequestUtil;
 import com.dev.kit.basemodule.view.AudioSignalView;
 import com.dev.kit.testapp.R;
 import com.dev.kit.testapp.animation.PropertyAnimationEntryActivity;
-import com.dev.kit.testapp.bezierCurve.BezierCurveTestActivity;
+import com.dev.kit.testapp.bezierCurve.CustomIndicatorActivity;
 import com.dev.kit.testapp.multiGroupHistogram.MultiGroupHistogramActivity;
 import com.dev.kit.testapp.pagerTest.PagerTestActivity;
 import com.dev.kit.testapp.rxJavaAndRetrofitTest.ApiService;
@@ -154,7 +154,7 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
                 break;
             }
             case R.id.tv_bezier_curve: {
-                startActivity(new Intent(this, BezierCurveTestActivity.class));
+                startActivity(new Intent(this, CustomIndicatorActivity.class));
                 break;
             }case R.id.tv_audio_animation:{
                 if (audioSignalView.isAudioSignalStarted()) {
