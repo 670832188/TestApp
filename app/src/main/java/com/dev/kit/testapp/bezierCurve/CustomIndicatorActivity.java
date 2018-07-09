@@ -7,12 +7,13 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
-import com.dev.kit.basemodule.view.CustomIndicator;
 import com.dev.kit.basemodule.activity.BaseStateViewActivity;
 import com.dev.kit.basemodule.surpport.CommonPagerAdapter;
 import com.dev.kit.basemodule.util.DisplayUtil;
+import com.dev.kit.basemodule.view.CustomIndicator;
 import com.dev.kit.testapp.R;
 
 import java.util.Arrays;
@@ -21,7 +22,7 @@ import java.util.List;
 /**
  * Created by cuiyan on 2018/6/4.
  */
-public class CustomIndicatorActivity extends BaseStateViewActivity implements View.OnClickListener {
+public class CustomIndicatorActivity extends BaseStateViewActivity implements RadioGroup.OnCheckedChangeListener {
 
     private CustomIndicator customIndicator;
     private List<Integer> colorsRes = Arrays.asList(R.color.colorPrimary, R.color.colorPrimaryDark, R.color.color_breakfast_tip_normal, R.color.bg_lunch_selected, R.color.color_light_red);
@@ -80,34 +81,32 @@ public class CustomIndicatorActivity extends BaseStateViewActivity implements Vi
         });
         viewPager.setAdapter(adapter);
         customIndicator.bindViewPager(viewPager);
-        setOnClickListener(R.id.tv_type1, this);
-        setOnClickListener(R.id.tv_type2, this);
-        setOnClickListener(R.id.tv_type3, this);
-        setOnClickListener(R.id.tv_type4, this);
+        RadioGroup rgType = findViewById(R.id.rg_type);
+        rgType.setOnCheckedChangeListener(this);
     }
 
     @Override
-    public void onClick(View v) {
+    public void onCheckedChanged(RadioGroup group, int checkedId) {
         int type = -1;
-        switch (v.getId()) {
-            case R.id.tv_type1: {
+        switch (checkedId) {
+            case R.id.rb_type1: {
                 type = CustomIndicator.INDICATOR_TYPE_SCALE;
                 break;
             }
-            case R.id.tv_type2: {
+            case R.id.rb_type2: {
                 type = CustomIndicator.INDICATOR_TYPE_GRADUAL;
                 break;
             }
-            case R.id.tv_type3: {
+            case R.id.rb_type3: {
                 type = CustomIndicator.INDICATOR_TYPE_SPLIT;
                 break;
             }
-            case R.id.tv_type4: {
+            case R.id.rb_type4: {
                 type = CustomIndicator.INDICATOR_TYPE_SCALE_AND_GRADUAL;
                 break;
             }
         }
-        if (type != -1) {
+        if (checkedId != -1) {
             customIndicator.setIndicatorType(type);
         }
     }

@@ -5,7 +5,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <LinearLayout
+    <RadioGroup
+        android:id="@+id/rg_type"
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_marginBottom="@dimen/margin_large"
@@ -14,40 +15,42 @@
         android:layout_marginTop="@dimen/margin_large"
         android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/tv_type1"
+        <RadioButton
+            android:id="@+id/rb_type1"
+            style="@style/rbStyle"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_marginEnd="@dimen/margin_normal"
             android:layout_weight="1.0"
-            android:gravity="center"
             android:text="SCALE" />
 
-        <TextView
-            android:id="@+id/tv_type2"
+        <RadioButton
+            android:id="@+id/rb_type2"
+            style="@style/rbStyle"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_marginEnd="@dimen/margin_normal"
             android:layout_weight="1.0"
-            android:gravity="center"
             android:text="GRADUAL" />
 
-        <TextView
-            android:id="@+id/tv_type3"
+        <RadioButton
+            android:id="@+id/rb_type3"
+            style="@style/rbStyle"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_marginEnd="@dimen/margin_normal"
             android:layout_weight="1.0"
-            android:gravity="center"
+            android:checked="true"
             android:text="SPLIT" />
 
-        <TextView
-            android:id="@+id/tv_type4"
+        <RadioButton
+            android:id="@+id/rb_type4"
+            style="@style/rbStyle"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1.0"
             android:text="SCALE_GRADUAL" />
-    </LinearLayout>
+    </RadioGroup>
 
     <RelativeLayout
         android:layout_width="match_parent"
