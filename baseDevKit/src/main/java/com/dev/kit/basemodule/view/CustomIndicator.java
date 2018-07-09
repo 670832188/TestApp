@@ -10,12 +10,13 @@ import android.graphics.Path;
 import android.graphics.PointF;
 import android.support.annotation.IntDef;
 import android.support.annotation.Nullable;
+import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.View;
 
 import com.dev.kit.basemodule.R;
-import com.dev.kit.basemodule.surpport.CommonPagerAdapter;
+import com.dev.kit.basemodule.surpport.RealPagerAdapterImp;
 import com.dev.kit.basemodule.util.DisplayUtil;
 import com.dev.kit.basemodule.util.LogUtil;
 
@@ -56,14 +57,14 @@ public class CustomIndicator extends View {
     private Path arcPath;
     private Path splitArcPath;
     private float translationFactor;
-    private CommonPagerAdapter adapter;
+    private PagerAdapter adapter;
     private DataSetObserver dataSetObserver;
     private static final int SPLIT_OFFSET = DisplayUtil.dp2px(10);
     private static final float SPLIT_RADIUS_FACTOR = 1.4f;
 
     @IntDef({INDICATOR_TYPE_SCALE, INDICATOR_TYPE_GRADUAL, INDICATOR_TYPE_SCALE_AND_GRADUAL, INDICATOR_TYPE_SPLIT})
     @Retention(RetentionPolicy.SOURCE)
-    public @interface IndicatorType {
+    private  @interface IndicatorType {
     }
 
     public CustomIndicator(Context context) {
@@ -224,14 +225,14 @@ public class CustomIndicator extends View {
                 }
             });
 
-            adapter = (CommonPagerAdapter) viewPager.getAdapter();
-            if (adapter != null) {
-                pointCount = adapter.getRealCount();
+            adapter = viewPager.getAdapter();
+            if (adapter != null && adapter instanceof RealPagerAdapterImp) {
+                pointCount = ((RealPagerAdapterImp) adapter).getRealCount();
                 measure(0, heightMeasureSpec);
                 dataSetObserver = new DataSetObserver() {
                     @Override
                     public void onChanged() {
-                        pointCount = adapter.getRealCount();
+                        pointCount = ((RealPagerAdapterImp) adapter).getRealCount();
                         postInvalidate();
                     }
                 };

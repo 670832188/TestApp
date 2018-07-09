@@ -14,7 +14,7 @@ import java.util.List;
  * Created by cy on 2018/4/10.
  */
 
-public abstract class CommonPagerAdapter<T> extends PagerAdapter {
+public abstract class CommonPagerAdapter<T> extends RealPagerAdapterImp {
 
     private SparseArray<View> viewCache = new SparseArray<>();
     private List<T> dataList;
@@ -38,6 +38,7 @@ public abstract class CommonPagerAdapter<T> extends PagerAdapter {
         return dataList == null ? 0 : dataList.size();
     }
 
+    @Override
     public final int getRealCount() {
         return dataList == null ? 0 : dataList.size();
     }
@@ -92,6 +93,7 @@ public abstract class CommonPagerAdapter<T> extends PagerAdapter {
 
     /**
      * 获取itemView
+     *
      * @see #getItemView(ViewGroup, int)
      */
     @NonNull
