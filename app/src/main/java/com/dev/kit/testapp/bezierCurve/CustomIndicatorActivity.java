@@ -21,10 +21,10 @@ import java.util.List;
 /**
  * Created by cuiyan on 2018/6/4.
  */
-public class CustomIndicatorActivity extends BaseStateViewActivity {
+public class CustomIndicatorActivity extends BaseStateViewActivity implements View.OnClickListener {
 
     private CustomIndicator customIndicator;
-    private List<Integer> colorsRes = Arrays.asList(R.color.colorPrimary, R.color.colorPrimaryDark, R.color.color_breakfast_tip_normal,  R.color.bg_lunch_selected, R.color.color_light_red);
+    private List<Integer> colorsRes = Arrays.asList(R.color.colorPrimary, R.color.colorPrimaryDark, R.color.color_breakfast_tip_normal, R.color.bg_lunch_selected, R.color.color_light_red);
 
     @Override
     public View createContentView(LayoutInflater inflater, ViewGroup contentRoot) {
@@ -45,7 +45,7 @@ public class CustomIndicatorActivity extends BaseStateViewActivity {
                 finish();
             }
         });
-        setText(R.id.tv_title, "贝塞尔曲线");
+        setText(R.id.tv_title, "自定义Indicator");
         customIndicator = findViewById(R.id.CustomIndicator);
         ViewPager viewPager = findViewById(R.id.viewPager);
         viewPager.setOffscreenPageLimit(3);
@@ -80,5 +80,35 @@ public class CustomIndicatorActivity extends BaseStateViewActivity {
         });
         viewPager.setAdapter(adapter);
         customIndicator.bindViewPager(viewPager);
+        setOnClickListener(R.id.tv_type1, this);
+        setOnClickListener(R.id.tv_type2, this);
+        setOnClickListener(R.id.tv_type3, this);
+        setOnClickListener(R.id.tv_type4, this);
+    }
+
+    @Override
+    public void onClick(View v) {
+        int type = -1;
+        switch (v.getId()) {
+            case R.id.tv_type1: {
+                type = CustomIndicator.INDICATOR_TYPE_SCALE;
+                break;
+            }
+            case R.id.tv_type2: {
+                type = CustomIndicator.INDICATOR_TYPE_GRADUAL;
+                break;
+            }
+            case R.id.tv_type3: {
+                type = CustomIndicator.INDICATOR_TYPE_SPLIT;
+                break;
+            }
+            case R.id.tv_type4: {
+                type = CustomIndicator.INDICATOR_TYPE_SCALE_AND_GRADUAL;
+                break;
+            }
+        }
+        if (type != -1) {
+            customIndicator.setIndicatorType(type);
+        }
     }
 }

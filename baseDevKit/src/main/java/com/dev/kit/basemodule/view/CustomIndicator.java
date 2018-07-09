@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PointF;
+import android.support.annotation.IntDef;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
@@ -18,6 +19,8 @@ import com.dev.kit.basemodule.surpport.CommonPagerAdapter;
 import com.dev.kit.basemodule.util.DisplayUtil;
 import com.dev.kit.basemodule.util.LogUtil;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,10 +29,10 @@ import java.util.List;
  */
 public class CustomIndicator extends View {
     private static final double factor = 0.55191502449;
-    private static final int INDICATOR_TYPE_SCALE = 0;
-    private static final int INDICATOR_TYPE_GRADUAL = 1;
-    private static final int INDICATOR_TYPE_SPLIT = 2;
-    private static final int INDICATOR_TYPE_SCALE_AND_GRADUAL = 3;
+    public static final int INDICATOR_TYPE_SCALE = 0;
+    public static final int INDICATOR_TYPE_GRADUAL = 1;
+    public static final int INDICATOR_TYPE_SPLIT = 2;
+    public static final int INDICATOR_TYPE_SCALE_AND_GRADUAL = 3;
     private static final int DEFAULT_NORMAL_POINT_RADIUS = 8;
     private static final int DEFAULT_SELECTED_POINT_RADIUS = 12;
 
@@ -40,8 +43,8 @@ public class CustomIndicator extends View {
     private float normalPointRadius;
     private float selectedPointRadius;
     private int pointInterval;
-    //    private int normalPointColor;
-//    private int selectedPointColor;
+    private int normalPointColor;
+    private int selectedPointColor;
     private int indicatorType;
     private int pointCount;
     private List<PointF> relativeControlPoints;
@@ -57,6 +60,11 @@ public class CustomIndicator extends View {
     private DataSetObserver dataSetObserver;
     private static final int SPLIT_OFFSET = DisplayUtil.dp2px(10);
     private static final float SPLIT_RADIUS_FACTOR = 1.4f;
+
+    @IntDef({INDICATOR_TYPE_SCALE, INDICATOR_TYPE_GRADUAL, INDICATOR_TYPE_SCALE_AND_GRADUAL, INDICATOR_TYPE_SPLIT})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface IndicatorType {
+    }
 
     public CustomIndicator(Context context) {
         this(context, null);
@@ -77,8 +85,8 @@ public class CustomIndicator extends View {
         normalPointRadius = typedArray.getDimensionPixelSize(R.styleable.CustomIndicator_normalPointRadius, DEFAULT_NORMAL_POINT_RADIUS);
         selectedPointRadius = typedArray.getDimensionPixelSize(R.styleable.CustomIndicator_selectedPointRadius, indicatorType == INDICATOR_TYPE_GRADUAL ? DEFAULT_NORMAL_POINT_RADIUS : DEFAULT_SELECTED_POINT_RADIUS);
         pointInterval = typedArray.getDimensionPixelSize(R.styleable.CustomIndicator_pointInterval, 20);
-        int normalPointColor = typedArray.getColor(R.styleable.CustomIndicator_normalPointColor, Color.parseColor("#FFFFFF"));
-        int selectedPointColor = typedArray.getColor(R.styleable.CustomIndicator_selectedPointColor, Color.parseColor("#11EEEE"));
+        normalPointColor = typedArray.getColor(R.styleable.CustomIndicator_normalPointColor, Color.parseColor("#FFFFFF"));
+        selectedPointColor = typedArray.getColor(R.styleable.CustomIndicator_selectedPointColor, Color.parseColor("#11EEEE"));
         typedArray.recycle();
 
         normalPointPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -92,8 +100,8 @@ public class CustomIndicator extends View {
             targetPointPaint.setStyle(Paint.Style.FILL);
             targetPointPaint.setColor(selectedPointColor);
         } else if (indicatorType == INDICATOR_TYPE_SPLIT) {
-            if (selectedPointRadius < normalPointColor * 1.4) {
-                selectedPointRadius = (int) (normalPointRadius * 1.4);
+            if (selectedPointRadius < normalPointRadius * SPLIT_RADIUS_FACTOR) {
+                selectedPointRadius = (int) (normalPointRadius * SPLIT_RADIUS_FACTOR);
             }
             if (pointInterval < SPLIT_RADIUS_FACTOR * normalPointRadius * 2 + SPLIT_OFFSET) {
                 pointInterval = (int) (SPLIT_RADIUS_FACTOR * normalPointRadius * 2 + SPLIT_OFFSET);
@@ -152,6 +160,33 @@ public class CustomIndicator extends View {
             relativeControlPoints.add(pointF);
         }
 
+    }
+
+    public void setIndicatorType(@IndicatorType int type) {
+        if (type == indicatorType) {
+            return;
+        }
+        indicatorType = type;
+        if (indicatorType == INDICATOR_TYPE_GRADUAL || indicatorType == INDICATOR_TYPE_SCALE_AND_GRADUAL) {
+            if (selectedPointPaint == null) {
+                selectedPointPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+                selectedPointPaint.setStyle(Paint.Style.FILL);
+                selectedPointPaint.setColor(selectedPointColor);
+            }
+            if (targetPointPaint == null) {
+                targetPointPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+                targetPointPaint.setStyle(Paint.Style.FILL);
+                targetPointPaint.setColor(selectedPointColor);
+            }
+        } else if (indicatorType == INDICATOR_TYPE_SPLIT) {
+            if (selectedPointRadius < normalPointRadius * SPLIT_RADIUS_FACTOR) {
+                selectedPointRadius = (int) (normalPointRadius * SPLIT_RADIUS_FACTOR);
+            }
+            if (pointInterval < SPLIT_RADIUS_FACTOR * normalPointRadius * 2 + SPLIT_OFFSET) {
+                pointInterval = (int) (SPLIT_RADIUS_FACTOR * normalPointRadius * 2 + SPLIT_OFFSET);
+            }
+        }
+        postInvalidate();
     }
 
     public void bindViewPager(final ViewPager viewPager) {

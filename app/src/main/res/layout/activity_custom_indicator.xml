@@ -1,26 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:orientation="vertical">
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/viewPager"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="40dp"
+        android:layout_marginBottom="@dimen/margin_large"
+        android:layout_marginEnd="@dimen/margin_large"
+        android:layout_marginStart="@dimen/margin_large"
+        android:layout_marginTop="@dimen/margin_large"
+        android:orientation="horizontal">
 
-    <com.dev.kit.basemodule.view.CustomIndicator
-        app:indicatorType="split"
-        app:normalPointRadius="3dp"
-        app:selectedPointRadius="4dp"
-        app:normalPointColor="@color/color_common_white"
-        app:selectedPointColor="#11EEEE"
-        app:pointInterval="15dp"
-        android:id="@+id/CustomIndicator"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="@dimen/margin_large" />
+        <TextView
+            android:id="@+id/tv_type1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="@dimen/margin_normal"
+            android:layout_weight="1.0"
+            android:gravity="center"
+            android:text="SCALE" />
 
-</RelativeLayout>
+        <TextView
+            android:id="@+id/tv_type2"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="@dimen/margin_normal"
+            android:layout_weight="1.0"
+            android:gravity="center"
+            android:text="GRADUAL" />
+
+        <TextView
+            android:id="@+id/tv_type3"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="@dimen/margin_normal"
+            android:layout_weight="1.0"
+            android:gravity="center"
+            android:text="SPLIT" />
+
+        <TextView
+            android:id="@+id/tv_type4"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1.0"
+            android:text="SCALE_GRADUAL" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/viewPager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <com.dev.kit.basemodule.view.CustomIndicator
+            android:id="@+id/CustomIndicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="@dimen/margin_large"
+            app:indicatorType="split"
+            app:normalPointColor="@color/color_common_white"
+            app:normalPointRadius="2.5dp"
+            app:pointInterval="15dp"
+            app:selectedPointColor="#11EEEE"
+            app:selectedPointRadius="3.5dp" />
+    </RelativeLayout>
+</LinearLayout>
