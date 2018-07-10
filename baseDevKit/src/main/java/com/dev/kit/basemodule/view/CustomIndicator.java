@@ -64,7 +64,7 @@ public class CustomIndicator extends View {
 
     @IntDef({INDICATOR_TYPE_SCALE, INDICATOR_TYPE_GRADUAL, INDICATOR_TYPE_SCALE_AND_GRADUAL, INDICATOR_TYPE_SPLIT})
     @Retention(RetentionPolicy.SOURCE)
-    private  @interface IndicatorType {
+    private @interface IndicatorType {
     }
 
     public CustomIndicator(Context context) {
@@ -233,6 +233,10 @@ public class CustomIndicator extends View {
                     @Override
                     public void onChanged() {
                         pointCount = ((RealPagerAdapterImp) adapter).getRealCount();
+                        if (currentPagePosition >= pointCount) {
+                            currentPagePosition = pointCount - 1;
+                            targetPagePosition = currentPagePosition;
+                        }
                         postInvalidate();
                     }
                 };
