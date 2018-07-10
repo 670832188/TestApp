@@ -196,6 +196,7 @@ public class CustomIndicator extends View {
                 @Override
                 public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                     LogUtil.w("posInfo: " + currentPagePosition + " " + position + " " + positionOffset + " " + positionOffsetPixels);
+                    // 动态计算当前页与目标页位置
                     if (positionOffsetPixels > 0) {
                         if (position < currentPagePosition) {
                             translationFactor = 1 - positionOffset;
@@ -229,6 +230,7 @@ public class CustomIndicator extends View {
             if (adapter != null && adapter instanceof RealPagerAdapterImp) {
                 pointCount = ((RealPagerAdapterImp) adapter).getRealCount();
                 measure(0, heightMeasureSpec);
+                // 监听数据源变化
                 dataSetObserver = new DataSetObserver() {
                     @Override
                     public void onChanged() {
@@ -368,6 +370,7 @@ public class CustomIndicator extends View {
         float centerXOffset = selectedPointRadius;
         float selectedSplitEndX = 0;
         float selectedSplitEndY = 0;
+        // 控制分裂圆形半径的系数
         float splitRadiusFactor;
         if (translationFactor * pointInterval <= 2 * normalPointRadius) {
             splitRadiusFactor = translationFactor * pointInterval / (normalPointRadius * 2);
@@ -378,7 +381,9 @@ public class CustomIndicator extends View {
         } else {
             splitRadiusFactor = 1;
         }
+        // 动态调整分裂圆形的半径
         float selectedSplitPointRadius = normalPointRadius + (1 - splitRadiusFactor) * (selectedPointRadius - normalPointRadius);
+        // 分裂圆形的滑动偏移量
         float selectedSplitPointCenterXOffset = currentPagePosition < targetPagePosition ? translationFactor * (pointInterval) : -translationFactor * (pointInterval);
 
         for (int i = 0; i < pointCount; i++) {
@@ -395,7 +400,9 @@ public class CustomIndicator extends View {
                     splitArcPath.moveTo(centerX + selectedSplitPointCenterXOffset + selectedSplitPointRadius + splitOffset, centerY);
                 } else {
                     float currentX = centerX + selectedSplitPointCenterXOffset + selectedSplitPointRadius;
+                    // 根据粘合偏移量控制分裂圆形的起点(初始滑动分裂阶段为零，后半段粘合时有效)
                     splitArcPath.moveTo(currentX + getCurrentBondingOffset(currentX - centerX), centerY);
+                    // 根据滑动分裂偏移量调整当前圆形的起点
                     arcPath.moveTo(centerX + normalPointRadius + splitOffset, centerY);
                 }
             }
