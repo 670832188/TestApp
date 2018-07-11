@@ -35,10 +35,11 @@
             android:name=".multiGroupHistogram.MultiGroupHistogramActivity"
             android:configChanges="orientation|keyboard"
             android:theme="@style/rankTheme" />
-        <activity android:name=".activity.SettingActivity"/>
+        <activity android:name=".activity.SettingActivity" />
 
-        <activity android:name=".animation.PropertyAnimationBasics_1"/>
-        <activity android:name=".bezierCurve.CustomIndicatorActivity"/>
+        <activity android:name=".animation.PropertyAnimationBasics_1" />
+        <activity android:name=".indicator.CustomIndicatorActivity" />
+        <activity android:name=".recordingAnimation.RecordingAnimationActivity" />
     </application>
 
 </manifest>

@@ -108,5 +108,6 @@
         <attr name="asv_maxDynamicLineHeight" format="dimension" />
         <attr name="asv_maxStaticLineHeight" format="dimension" />
         <attr name="asv_minStaticLineHeight" format="dimension"/>
+        <attr name="asv_lineCountInGroup" format="integer"/>
     </declare-styleable>
 </resources>

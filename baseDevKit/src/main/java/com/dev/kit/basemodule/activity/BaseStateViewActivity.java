@@ -3,6 +3,7 @@ package com.dev.kit.basemodule.activity;
 import android.animation.ObjectAnimator;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.support.annotation.CallSuper;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
@@ -51,6 +52,7 @@ public abstract class BaseStateViewActivity extends BaseActivity {
     public @interface ContentState {
     }
 
+    @CallSuper
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);

@@ -19,12 +19,12 @@ import com.dev.kit.basemodule.netRequest.util.CommonInterceptor;
 import com.dev.kit.basemodule.util.FileUtil;
 import com.dev.kit.basemodule.util.LogUtil;
 import com.dev.kit.basemodule.util.PermissionRequestUtil;
-import com.dev.kit.basemodule.view.AudioSignalView;
 import com.dev.kit.testapp.R;
 import com.dev.kit.testapp.animation.PropertyAnimationEntryActivity;
-import com.dev.kit.testapp.bezierCurve.CustomIndicatorActivity;
+import com.dev.kit.testapp.indicator.CustomIndicatorActivity;
 import com.dev.kit.testapp.multiGroupHistogram.MultiGroupHistogramActivity;
 import com.dev.kit.testapp.pagerTest.PagerTestActivity;
+import com.dev.kit.testapp.recordingAnimation.RecordingAnimationActivity;
 import com.dev.kit.testapp.rxJavaAndRetrofitTest.ApiService;
 import com.dev.kit.testapp.rxJavaAndRetrofitTest.NetRequestDemoActivity;
 
@@ -38,8 +38,6 @@ import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 
 public class MainActivity extends BaseStateViewActivity implements View.OnClickListener {
-
-    private AudioSignalView audioSignalView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,9 +70,8 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
         setOnClickListener(R.id.tv_property_animation, this);
         setOnClickListener(R.id.tv_MultiGroupHistogramView, this);
         setOnClickListener(R.id.tv_set_font, this);
-        setOnClickListener(R.id.tv_bezier_curve, this);
+        setOnClickListener(R.id.tv_indicator, this);
         setOnClickListener(R.id.tv_audio_animation, this);
-        audioSignalView = findViewById(R.id.audio_signal_view);
         setContentState(STATE_DATA_CONTENT);
     }
 
@@ -153,15 +150,12 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
                 startActivity(new Intent(this, SettingActivity.class));
                 break;
             }
-            case R.id.tv_bezier_curve: {
+            case R.id.tv_indicator: {
                 startActivity(new Intent(this, CustomIndicatorActivity.class));
                 break;
-            }case R.id.tv_audio_animation:{
-                if (audioSignalView.isAudioSignalStarted()) {
-                    audioSignalView.stopAudioSignal();
-                } else {
-                    audioSignalView.startAudioSignal();
-                }
+            }
+            case R.id.tv_audio_animation: {
+                startActivity(new Intent(this, RecordingAnimationActivity.class));
                 break;
             }
         }

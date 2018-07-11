@@ -33,7 +33,7 @@ public class AudioSignalView extends View {
     private int lineWidth;
     private int width;
     private int height;
-    private static final int lineCountInGroup = 5;
+    private int lineCountInGroup;
     private List<LineCoordinates> staticCoordinates;
     private Paint linePaint;
     private Rect lineRect;
@@ -56,6 +56,7 @@ public class AudioSignalView extends View {
 
     private void init(AttributeSet attrs) {
         TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.AudioSignalView);
+        lineCountInGroup = typedArray.getInt(R.styleable.AudioSignalView_asv_lineCountInGroup, 5);
         maxDynamicLineHeight = typedArray.getDimensionPixelSize(R.styleable.AudioSignalView_asv_maxDynamicLineHeight, DisplayUtil.dp2px(20));
         maxStaticLineHeight = typedArray.getDimensionPixelSize(R.styleable.AudioSignalView_asv_maxStaticLineHeight, DisplayUtil.dp2px(14));
         if (maxStaticLineHeight > maxDynamicLineHeight * 0.8) {
@@ -99,6 +100,11 @@ public class AudioSignalView extends View {
         for (int i = 0; i < lineCount; i++) {
             lineRight = lineLeft + lineWidth;
             remainder = i % lineCountInGroup;
+            if (lineCountInGroup % 2 == 0) {
+                if (mean - 1 >= remainder) {
+                    remainder++;
+                }
+            }
             lineHeight = maxStaticLineHeight - lineDif * (Math.abs(mean - remainder));
             lineTop = (height - lineHeight) / 2;
             lineBottom = lineTop + lineHeight;

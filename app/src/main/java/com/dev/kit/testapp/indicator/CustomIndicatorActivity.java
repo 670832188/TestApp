@@ -1,4 +1,4 @@
-package com.dev.kit.testapp.bezierCurve;
+package com.dev.kit.testapp.indicator;
 
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
