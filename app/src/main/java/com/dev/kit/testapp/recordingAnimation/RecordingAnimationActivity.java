@@ -8,12 +8,14 @@ import android.view.ViewGroup;
 
 import com.dev.kit.basemodule.activity.BaseStateViewActivity;
 import com.dev.kit.basemodule.view.AudioSignalView;
+import com.dev.kit.basemodule.view.WaveView;
 import com.dev.kit.testapp.R;
 
 /**
  * Created by cuiyan on 2018/7/11.
  */
 public class RecordingAnimationActivity extends BaseStateViewActivity {
+    private WaveView waveView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,6 +35,7 @@ public class RecordingAnimationActivity extends BaseStateViewActivity {
                 finish();
             }
         });
+        waveView = findViewById(R.id.wave_view);
         final AudioSignalView audioSignalView1 = findViewById(R.id.audio_signal_view_1);
         final AudioSignalView audioSignalView2 = findViewById(R.id.audio_signal_view_2);
         final AudioSignalView audioSignalView3 = findViewById(R.id.audio_signal_view_3);
@@ -45,6 +48,7 @@ public class RecordingAnimationActivity extends BaseStateViewActivity {
                         audioSignalView1.startAudioSignal();
                         audioSignalView2.startAudioSignal();
                         audioSignalView3.startAudioSignal();
+                        waveView.start();
                         break;
                     }
                     case MotionEvent.ACTION_UP:
@@ -52,6 +56,7 @@ public class RecordingAnimationActivity extends BaseStateViewActivity {
                         audioSignalView1.stopAudioSignal();
                         audioSignalView2.stopAudioSignal();
                         audioSignalView3.stopAudioSignal();
+                        waveView.stop();
                         break;
                     }
                 }
