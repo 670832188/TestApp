@@ -8,9 +8,8 @@
     <com.dev.kit.basemodule.view.WaveView
         android:id="@+id/wave_view"
         android:layout_width="match_parent"
-        android:layout_height="120dp"
-        android:layout_marginTop="@dimen/margin_large"
-        android:background="@color/color_red" />
+        android:layout_height="30dp"
+        android:layout_marginTop="@dimen/margin_large" />
 
     <com.dev.kit.basemodule.view.AudioSignalView
         android:id="@+id/audio_signal_view_1"
