@@ -107,30 +107,32 @@ public class WaveView extends View {
         float tempAmplitude = amplitude;
         wavePath1.moveTo(0, (float) (Math.sin(offsetAngle1) * tempAmplitude + height / 2));
         for (float i = 0; i < width; i++) {
-            float angle = (float) (i / width * Math.PI * 3) + offsetAngle1;
+            float angle = (float) (i / width * Math.PI * 4) + offsetAngle1;
             float y = (float) (Math.sin(angle) * tempAmplitude + height / 2);
             wavePath1.lineTo(i, y);
         }
         tempAmplitude = amplitude - Math.min(DisplayUtil.dp2px(5), height / 5);
         wavePath2.moveTo(0, (float) (Math.sin(offsetAngle2) * tempAmplitude + height / 2));
         for (float i = 0; i < width; i++) {
-            float angle = (float) (i / width * Math.PI * 3) + offsetAngle2;
+            float angle = (float) (i / width * Math.PI * 4) + offsetAngle2;
             float y = (float) (Math.sin(angle) * tempAmplitude + height / 2);
             wavePath2.lineTo(i, y);
         }
         tempAmplitude = amplitude - 2 * Math.min(DisplayUtil.dp2px(5), height / 5);
         wavePath3.moveTo(0, (float) (Math.sin(offsetAngle3) * tempAmplitude + height / 2));
         for (float i = 0; i < width; i++) {
-            float angle = (float) (i / width * Math.PI * 3) + offsetAngle3;
+            float angle = (float) (i / width * Math.PI * 4) + offsetAngle3;
             float y = (float) (Math.sin(angle) * tempAmplitude + height / 2);
             wavePath3.lineTo(i, y);
         }
         if (isRunning) {
-            offsetAngle1 -= Math.PI * 0.03;
-            offsetAngle2 -= Math.PI * 0.02;
-            offsetAngle3 -= Math.PI * 0.01;
-            postDelayed(refreshRunnable, 10);
+            offsetAngle1 -= Math.PI * 0.05;
+            offsetAngle2 -= Math.PI * 0.04;
+            offsetAngle3 -= Math.PI * 0.03;
+//            postDelayed(refreshRunnable, 10);
+            invalidate();
         }
+
         canvas.drawPath(wavePath1, wavePaint1);
         canvas.drawPath(wavePath2, wavePaint2);
         canvas.drawPath(wavePath3, wavePaint3);
