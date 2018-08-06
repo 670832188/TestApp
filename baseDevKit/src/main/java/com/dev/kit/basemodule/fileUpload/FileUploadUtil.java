@@ -32,7 +32,7 @@ public class FileUploadUtil {
         ImageUtil.compressImgByPaths(context, imgPaths, Luban.CUSTOM_GEAR, new ImageUtil.CompressImgListener() {
             @Override
             public void onSuccess(List<File> compressedImgFileList) {
-                actualUploadImg(context, compressedImgFileList, strParams);
+                actualUploadFiles(context, compressedImgFileList, strParams);
             }
 
             @Override
@@ -42,7 +42,7 @@ public class FileUploadUtil {
         });
     }
 
-    private static void actualUploadImg(Context context, @NonNull List<File> imgFileList, Map<String, String> strParams) {
+    private static void actualUploadFiles(Context context, @NonNull List<File> fileList, Map<String, String> strParams) {
         List<MultipartBody.Part> filePartList = new ArrayList<>();
         if (strParams != null) {
             for (String key : strParams.keySet()) {
@@ -50,11 +50,11 @@ public class FileUploadUtil {
                 filePartList.add(strParamPart);
             }
         }
-        for (File file : imgFileList) {
+        for (File file : fileList) {
             String fileType = FileUtil.getMimeType(file.getAbsolutePath());
             MediaType mediaType = MediaType.parse(fileType);
             RequestBody fileParamBody = RequestBody.create(mediaType, file);
-            MultipartBody.Part filePart = MultipartBody.Part.createFormData("userAvatar", file.getName(), fileParamBody);
+            MultipartBody.Part filePart = MultipartBody.Part.createFormData("file", file.getName(), fileParamBody);
             filePartList.add(filePart);
         }
         NetRequestSubscriber<BaseResult> subscriber = new NetRequestSubscriber<>(new NetRequestCallback<BaseResult>() {
