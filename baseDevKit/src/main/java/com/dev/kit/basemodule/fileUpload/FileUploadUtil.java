@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 
 import io.reactivex.Observable;
-import me.shaohui.advancedluban.Luban;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -29,7 +28,7 @@ import okhttp3.RequestBody;
  */
 public class FileUploadUtil {
     public static void uploadImg(final Context context, List<String> imgPaths, final Map<String, String> strParams) {
-        ImageUtil.compressImgByPaths(context, imgPaths, Luban.CUSTOM_GEAR, new ImageUtil.CompressImgListener() {
+        ImageUtil.compressImgByPaths(context, imgPaths, new ImageUtil.CompressImgListener() {
             @Override
             public void onSuccess(List<File> compressedImgFileList) {
                 actualUploadFiles(context, compressedImgFileList, strParams);

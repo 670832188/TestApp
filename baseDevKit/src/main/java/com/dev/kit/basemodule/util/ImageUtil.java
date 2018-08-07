@@ -3,6 +3,7 @@ package com.dev.kit.basemodule.util;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.os.Environment;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
@@ -110,13 +111,20 @@ public class ImageUtil {
                 });
     }
 
-    public static synchronized void compressImgByPaths(Context context, List<String> imgPathList, int compressMode, @NonNull final CompressImgListener listener) {
+    public static synchronized void compressImgByPaths(Context context, List<String> imgPathList, @NonNull final CompressImgListener listener) {
         List<File> imgFileList = new ArrayList<>();
-        for (String path: imgPathList) {
+        for (String path : imgPathList) {
             imgFileList.add(new File(path));
         }
-        Luban.compress(context, imgFileList)           // 加载多张图片
-                .putGear(compressMode)
+        Luban luban;
+        File cacheFile = getCacheDir();
+        if (cacheFile != null) {
+            luban = Luban.compress(imgFileList, cacheFile);
+        } else {
+            luban = Luban.compress(context, imgFileList);
+        }
+
+        luban.putGear(Luban.THIRD_GEAR)
                 .asListObservable()
                 .subscribe(new Consumer<List<File>>() {
                     @Override
@@ -129,6 +137,19 @@ public class ImageUtil {
                         listener.onFailed();
                     }
                 });
+    }
+
+    private static File getCacheDir() {
+        String cacheDirName = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "testCache";
+        File cacheDirFile = new File(cacheDirName);
+        if (cacheDirFile.exists()) {
+            return cacheDirFile;
+        } else {
+            if (cacheDirFile.mkdir()) {
+                return cacheDirFile;
+            }
+        }
+        return null;
     }
 
     public interface CompressImgListener {

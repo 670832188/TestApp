@@ -1,15 +1,26 @@
 package com.dev.kit.testapp.mediaSelectorTest;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.dev.kit.basemodule.activity.BaseStateViewActivity;
+import com.dev.kit.basemodule.util.ImageUtil;
+import com.dev.kit.basemodule.util.LogUtil;
 import com.dev.kit.testapp.R;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.config.PictureMimeType;
+import com.luck.picture.lib.entity.LocalMedia;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+import me.shaohui.advancedluban.Luban;
 
 /**
  * Created by cuiyan on 2018/8/7.
@@ -78,5 +89,48 @@ public class MediaSelectorTestActivity extends BaseStateViewActivity {
                 .recordVideoSecond(60)//视频秒数录制 默认60s int
                 .isDragFrame(false)// 是否可拖动裁剪框(固定)
                 .forResult(PictureConfig.CHOOSE_REQUEST);
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case PictureConfig.CHOOSE_REQUEST:
+                    // 图片选择结果回调
+                    List<LocalMedia> selectList = PictureSelector.obtainMultipleResult(data);
+                    List<String> pathList = new ArrayList<>();
+                    if (selectList != null && selectList.size() > 0) {
+                        for (LocalMedia localMedia : selectList) {
+                            pathList.add(localMedia.getPath());
+                            LogUtil.e("mytag", "path: " + localMedia.getPath());
+                        }
+                    }
+                    if (pathList.size() > 0) {
+                        ImageUtil.compressImgByPaths(MediaSelectorTestActivity.this, pathList, new ImageUtil.CompressImgListener() {
+                            @Override
+                            public void onSuccess(List<File> compressedImgFileList) {
+                                if (compressedImgFileList != null && compressedImgFileList.size() > 0) {
+                                    for (File file : compressedImgFileList) {
+                                        LogUtil.e("mytag", "compressedImgFilePath: " + file.getAbsolutePath());
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onFailed() {
+
+                            }
+                        });
+                    }
+                    // 例如 LocalMedia 里面返回三种path
+                    // 1.media.getPath(); 为原图path
+                    // 2.media.getCutPath();为裁剪后path，需判断media.isCut();是否为true
+                    // 3.media.getCompressPath();为压缩后path，需判断media.isCompressed();是否为true
+                    // 如果裁剪并压缩了，已取压缩路径为准，因为是先裁剪后压缩的
+                    break;
+            }
+        }
     }
 }
