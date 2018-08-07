@@ -5,7 +5,7 @@
         <item name="android:windowNoTitle">true</item>
     </style>
 
-    <style name="BaseTheme.AppTheme">
+    <style name="BaseTheme.BaseAppTheme">
         <item name="android:windowSoftInputMode">adjustResize</item>
     </style>
 

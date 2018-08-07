@@ -1,19 +1,5 @@
 <resources>
 
-    <style name="BaseTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:typeface">serif</item>
-        <item name="android:windowNoTitle">true</item>
-    </style>
-
-    <style name="BaseTheme.AppTheme">
-        <item name="android:windowSoftInputMode">adjustResize</item>
-    </style>
-
-    <style name="BaseTheme.TranslucentStatusTheme">
-        <item name="android:windowNoTitle">true</item>
-        <item name="android:windowTranslucentStatus">true</item>
-    </style>
-
     <style name="text_style_large_white">
         <item name="android:textSize">@dimen/text_size_large</item>
         <item name="android:textColor">@color/color_white</item>
