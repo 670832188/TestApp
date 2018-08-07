@@ -22,6 +22,7 @@ import com.dev.kit.basemodule.util.PermissionRequestUtil;
 import com.dev.kit.testapp.R;
 import com.dev.kit.testapp.animation.PropertyAnimationEntryActivity;
 import com.dev.kit.testapp.indicator.CustomIndicatorActivity;
+import com.dev.kit.testapp.mediaSelectorTest.MediaSelectorTestActivity;
 import com.dev.kit.testapp.multiGroupHistogram.MultiGroupHistogramActivity;
 import com.dev.kit.testapp.pagerTest.PagerTestActivity;
 import com.dev.kit.testapp.recordingAnimation.RecordingAnimationActivity;
@@ -72,6 +73,7 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
         setOnClickListener(R.id.tv_set_font, this);
         setOnClickListener(R.id.tv_indicator, this);
         setOnClickListener(R.id.tv_audio_animation, this);
+        setOnClickListener(R.id.tv_media_selector, this);
         setContentState(STATE_DATA_CONTENT);
     }
 
@@ -156,6 +158,10 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
             }
             case R.id.tv_audio_animation: {
                 startActivity(new Intent(this, RecordingAnimationActivity.class));
+                break;
+            }
+            case R.id.tv_media_selector:{
+                startActivity(new Intent(this, MediaSelectorTestActivity.class));
                 break;
             }
         }

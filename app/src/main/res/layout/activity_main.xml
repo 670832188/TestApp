@@ -96,4 +96,15 @@
         android:text="音频动画"
         android:textSize="14sp" />
 
+    <TextView
+        android:id="@+id/tv_media_selector"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_large"
+        android:background="@color/color_light_grey"
+        android:gravity="center"
+        android:padding="@dimen/margin_normal"
+        android:text="media选择器"
+        android:textSize="14sp" />
+
 </LinearLayout>
