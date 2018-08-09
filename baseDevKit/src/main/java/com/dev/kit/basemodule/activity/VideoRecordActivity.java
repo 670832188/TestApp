@@ -84,6 +84,7 @@ public class VideoRecordActivity extends BaseStateViewActivity {
     }
 
     private void initView() {
+        setContentState(STATE_DATA_CONTENT);
         SurfaceView surfaceView = findViewById(R.id.record_surface);
         ckbRecordTrigger = findViewById(R.id.ckb_record_trigger);
         ckbPauseTrigger = findViewById(R.id.ckb_pause_trigger);
@@ -123,7 +124,6 @@ public class VideoRecordActivity extends BaseStateViewActivity {
         surfaceHolder.setKeepScreenOn(true);
         //回调接口
         surfaceHolder.addCallback(surfaceCallBack);
-        setContentState(STATE_DATA_CONTENT);
     }
 
 
@@ -226,7 +226,7 @@ public class VideoRecordActivity extends BaseStateViewActivity {
     }
 
     public boolean startRecord() {
-        initCamera();
+//        initCamera();
         //录制视频前必须先解锁Camera
         camera.unlock();
         String videoDirPath = getVideoDirPath();
@@ -263,13 +263,15 @@ public class VideoRecordActivity extends BaseStateViewActivity {
     }
 
     private void pauseRecord() {
-        camera.autoFocus(new Camera.AutoFocusCallback() {
-            @Override
-            public void onAutoFocus(boolean success, Camera camera) {
-                if (success)
-                    camera.cancelAutoFocus();
-            }
-        });
+        if (camera != null) {
+            camera.autoFocus(new Camera.AutoFocusCallback() {
+                @Override
+                public void onAutoFocus(boolean success, Camera camera) {
+                    if (success)
+                        camera.cancelAutoFocus();
+                }
+            });
+        }
         stopRecord();
     }
 
@@ -358,7 +360,17 @@ public class VideoRecordActivity extends BaseStateViewActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        ckbPauseTrigger.setChecked(false);
+        if (isRecording) {
+            ckbPauseTrigger.setChecked(true);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (camera == null) {
+            initCamera();
+        }
     }
 
     @Override
