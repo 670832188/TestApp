@@ -16,7 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.dev.kit.basemodule.R;
@@ -275,12 +274,10 @@ public class VideoRecordActivity extends BaseStateViewActivity {
     }
 
     private void finishRecord() {
-        if (isRecording) {
-            ckbRecordTrigger.setEnabled(false);
-            stopRecord();
-            handleRecord();
-            ckbPauseTrigger.setVisibility(View.GONE);
-        }
+        ckbRecordTrigger.setEnabled(false);
+        stopRecord();
+        handleRecord();
+        ckbPauseTrigger.setVisibility(View.GONE);
     }
 
     private void handleRecord() {
@@ -326,7 +323,7 @@ public class VideoRecordActivity extends BaseStateViewActivity {
                 finish();
             }
         });
-        View resetView = findViewById(R.id.tv_reset);
+        final View resetView = findViewById(R.id.tv_reset);
         resetView.setVisibility(View.VISIBLE);
         resetView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -335,6 +332,7 @@ public class VideoRecordActivity extends BaseStateViewActivity {
                 Log.e(getClass().getSimpleName(), "reset video record and delete recorded video " + file.getAbsolutePath() + " " + file.delete());
                 ckbRecordTrigger.setEnabled(true);
                 completeView.setVisibility(View.GONE);
+                resetView.setVisibility(View.GONE);
             }
         });
 
