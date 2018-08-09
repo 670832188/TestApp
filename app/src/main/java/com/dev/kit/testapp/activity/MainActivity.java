@@ -20,6 +20,7 @@ import com.dev.kit.basemodule.netRequest.util.CommonInterceptor;
 import com.dev.kit.basemodule.util.FileUtil;
 import com.dev.kit.basemodule.util.LogUtil;
 import com.dev.kit.basemodule.util.PermissionRequestUtil;
+import com.dev.kit.basemodule.util.ToastUtil;
 import com.dev.kit.testapp.R;
 import com.dev.kit.testapp.animation.PropertyAnimationEntryActivity;
 import com.dev.kit.testapp.indicator.CustomIndicatorActivity;
@@ -186,7 +187,7 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
     private void startVideoRecord() {
         String[] permissions = {Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
         if (PermissionRequestUtil.isPermissionGranted(this, permissions)) {
-            startActivity(new Intent(this, VideoRecordActivity.class));
+            startActivityForResult(new Intent(this, VideoRecordActivity.class), 101);
             return;
         }
         PermissionRequestUtil.requestPermission(this, new PermissionRequestUtil.OnPermissionRequestListener() {
@@ -206,5 +207,14 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
                 LogUtil.e("deniedPermissions: " + sb.toString());
             }
         }, permissions);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 101 && resultCode == RESULT_OK) {
+            String videoPath = data.getStringExtra(VideoRecordActivity.RECORDED_VIDEO_PATH);
+            ToastUtil.showToast(this,"视频录制完成: " + videoPath.substring(videoPath.lastIndexOf(File.separator)));
+        }
     }
 }

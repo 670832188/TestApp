@@ -1,5 +1,6 @@
 package com.dev.kit.basemodule.activity;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.hardware.Camera;
 import android.media.CamcorderProfile;
@@ -7,6 +8,7 @@ import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -18,7 +20,9 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.dev.kit.basemodule.R;
+import com.dev.kit.basemodule.util.LogUtil;
 import com.dev.kit.basemodule.util.ToastUtil;
+import com.dev.kit.basemodule.util.VideoUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,14 +36,13 @@ import java.util.Locale;
  * Created by cuiyan on 2018/8/8.
  */
 public class VideoRecordActivity extends BaseStateViewActivity {
-
-    public static final int RECORDER_STATE_INIT = 0;
-    public static final int RECORDER_STATE_RECORDING = 1;
-    public static final int RECORDER_STATE_PAUSE = 2;
-    private int recorderState;
+    public static final String RECORDED_VIDEO_PATH = "recordedVideoPath";
+    private boolean isRecording;
     private List<String> videosPathList = new ArrayList<>();
+    private String targetVideoPath;
     private Camera camera;
-    private SurfaceView surfaceView;
+    private CheckBox ckbRecordTrigger;
+    private CheckBox ckbPauseTrigger;
     private SurfaceHolder surfaceHolder;
     private MediaRecorder mediaRecorder;
     private SurfaceHolder.Callback surfaceCallBack = new SurfaceHolder.Callback() {
@@ -82,26 +85,20 @@ public class VideoRecordActivity extends BaseStateViewActivity {
     }
 
     private void initView() {
-        surfaceView = findViewById(R.id.record_surface);
-        final CheckBox ckbRecordTrigger = findViewById(R.id.ckb_record_trigger);
-        final CheckBox ckbPauseTrigger = findViewById(R.id.ckb_pause_trigger);
-        ImageView ivResetRecord = findViewById(R.id.iv_reset_record);
+        SurfaceView surfaceView = findViewById(R.id.record_surface);
+        ckbRecordTrigger = findViewById(R.id.ckb_record_trigger);
+        ckbPauseTrigger = findViewById(R.id.ckb_pause_trigger);
         ckbRecordTrigger.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    recorderState = startRecord() ? RECORDER_STATE_RECORDING : RECORDER_STATE_INIT;
-                    if (recorderState == RECORDER_STATE_INIT) {
+                    if (!(isRecording = startRecord())) {
                         ckbRecordTrigger.setChecked(false);
                     } else {
                         ckbPauseTrigger.setVisibility(View.VISIBLE);
                     }
                 } else {
-                    if (recorderState == RECORDER_STATE_RECORDING) {
-                        ckbRecordTrigger.setEnabled(false);
-                        stopRecord();
-                        // ToDo 录制结束处理
-                    }
+                    finishRecord();
                 }
             }
         });
@@ -112,8 +109,7 @@ public class VideoRecordActivity extends BaseStateViewActivity {
                 if (isChecked) {
                     pauseRecord();
                 } else {
-                    startRecord();
-                    ckbPauseTrigger.setVisibility(View.GONE);
+                    isRecording = startRecord();
                 }
             }
         });
@@ -121,7 +117,7 @@ public class VideoRecordActivity extends BaseStateViewActivity {
         //配置SurfaceHolder
         surfaceHolder = surfaceView.getHolder();
         // 设置Surface不需要维护自己的缓冲区
-        surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+//        surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
         // 设置分辨率
         surfaceHolder.setFixedSize(320, 280);
         // 设置该组件不会让屏幕自动关闭
@@ -236,7 +232,6 @@ public class VideoRecordActivity extends BaseStateViewActivity {
         camera.unlock();
         String videoDirPath = getVideoDirPath();
         if (TextUtils.isEmpty(videoDirPath)) {
-            // ToDo
             ToastUtil.showToast(this, "创建文件夹失败");
             return false;
         }
@@ -248,6 +243,7 @@ public class VideoRecordActivity extends BaseStateViewActivity {
             mediaRecorder.prepare();
             mediaRecorder.start();
         } catch (IOException e) {
+            LogUtil.e(e.getMessage(), e);
             videosPathList.remove(videosPathList.size() - 1);
             return false;
         }
@@ -264,10 +260,10 @@ public class VideoRecordActivity extends BaseStateViewActivity {
         //释放资源
         mediaRecorder.release();
         mediaRecorder = null;
+        isRecording = false;
     }
 
     private void pauseRecord() {
-        recorderState = RECORDER_STATE_PAUSE;
         camera.autoFocus(new Camera.AutoFocusCallback() {
             @Override
             public void onAutoFocus(boolean success, Camera camera) {
@@ -276,6 +272,72 @@ public class VideoRecordActivity extends BaseStateViewActivity {
             }
         });
         stopRecord();
+    }
+
+    private void finishRecord() {
+        if (isRecording) {
+            ckbRecordTrigger.setEnabled(false);
+            stopRecord();
+            handleRecord();
+            ckbPauseTrigger.setVisibility(View.GONE);
+        }
+    }
+
+    private void handleRecord() {
+        if (videosPathList.size() > 1) {
+            VideoUtil.mergeVideos(getVideoDirPath() + File.separator + getVideoName(), videosPathList, new VideoUtil.VideoMergeListener() {
+                @Override
+                public void onMergeStart() {
+
+                }
+
+                @Override
+                public void onMergeSuccess(String mergedVideoPath) {
+                    targetVideoPath = mergedVideoPath;
+                    for (String path : videosPathList) {
+                        File file = new File(path);
+                        Log.e(getClass().getSimpleName(), "delete video clip " + path + " " + file.delete());
+                    }
+                    videosPathList.clear();
+                    showFinishUI();
+                }
+
+                @Override
+                public void onMergeFailed(Exception e) {
+                    LogUtil.e(e.getMessage(), e);
+                }
+            });
+        } else {
+            targetVideoPath = videosPathList.get(0);
+            videosPathList.clear();
+            showFinishUI();
+        }
+    }
+
+    private void showFinishUI() {
+        final View completeView = findViewById(R.id.tv_complete);
+        completeView.setVisibility(View.VISIBLE);
+        completeView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.putExtra(RECORDED_VIDEO_PATH, targetVideoPath);
+                setResult(RESULT_OK, intent);
+                finish();
+            }
+        });
+        View resetView = findViewById(R.id.tv_reset);
+        resetView.setVisibility(View.VISIBLE);
+        resetView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                File file = new File(targetVideoPath);
+                Log.e(getClass().getSimpleName(), "reset video record and delete recorded video " + file.getAbsolutePath() + " " + file.delete());
+                ckbRecordTrigger.setEnabled(true);
+                completeView.setVisibility(View.GONE);
+            }
+        });
+
     }
 
     private String getVideoDirPath() {
@@ -293,5 +355,17 @@ public class VideoRecordActivity extends BaseStateViewActivity {
 
     private String getVideoName() {
         return "suiXue_" + new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault()).format(new Date()) + ".mp4";
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        ckbPauseTrigger.setChecked(false);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        releaseCamera();
     }
 }

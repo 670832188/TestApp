@@ -15,12 +15,15 @@
         android:layout_alignParentBottom="true"
         android:padding="@dimen/margin_large">
 
-        <ImageView
-            android:id="@+id/iv_reset_record"
+        <TextView
+            android:id="@+id/tv_reset"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:src="@mipmap/ic_delete"
+            android:padding="@dimen/margin_normal"
+            android:text="重置"
+            android:textColor="@color/color_common_white"
+            android:textSize="@dimen/text_size_16"
             android:visibility="gone" />
 
         <CheckBox
@@ -41,13 +44,17 @@
             android:button="@null"
             android:checked="false" />
 
-        <ImageView
-            android:id="@+id/iv_complete"
+        <TextView
+            android:id="@+id/tv_complete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:src="@mipmap/ic_orange_arrow_up" />
+            android:padding="@dimen/margin_normal"
+            android:text="完成"
+            android:textColor="@color/color_common_white"
+            android:textSize="@dimen/text_size_16"
+            android:visibility="gone" />
     </RelativeLayout>
 
 </RelativeLayout>
