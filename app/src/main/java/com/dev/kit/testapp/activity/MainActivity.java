@@ -55,7 +55,6 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
 
         String language = locale.getLanguage() + "-" + locale.getCountry();
         LogUtil.e("language: " + language);
-        permissionTest();
     }
 
     @Override
@@ -184,39 +183,16 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
         super.onSaveInstanceState(outState);
     }
 
-    private void permissionTest() {
-        String[] permissions = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.READ_PHONE_STATE, Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
-        PermissionRequestUtil.requestPermission(this, new PermissionRequestUtil.OnPermissionRequestListener() {
-            @Override
-            public void onPermissionsGranted() {
-                showToast("权限申请成功");
-            }
-
-            @Override
-            public void onPermissionsDenied(String... deniedPermissions) {
-                StringBuilder sb = new StringBuilder();
-                for (String permission : deniedPermissions) {
-                    sb.append(permission).append("\n");
-                }
-                sb.deleteCharAt(sb.length() - 1);
-                showToast("您拒绝了以下权限:\n" + sb.toString());
-                LogUtil.e("deniedPermissions: " + sb.toString());
-            }
-        }, permissions);
-    }
-
     private void startVideoRecord() {
-        LogUtil.e("mytag", "kokokokoko");
-        if (PermissionRequestUtil.isPermissionGranted(this, Manifest.permission.CAMERA)) {
-            LogUtil.e("mytag","111111111111");
+        String[] permissions = {Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        if (PermissionRequestUtil.isPermissionGranted(this, permissions)) {
             startActivity(new Intent(this, VideoRecordActivity.class));
             return;
         }
-        String[] permissions = {Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO};
         PermissionRequestUtil.requestPermission(this, new PermissionRequestUtil.OnPermissionRequestListener() {
             @Override
             public void onPermissionsGranted() {
-//                startVideoRecord();
+                startVideoRecord();
             }
 
             @Override

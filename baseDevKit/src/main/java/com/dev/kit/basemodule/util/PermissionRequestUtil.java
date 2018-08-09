@@ -86,7 +86,7 @@ public class PermissionRequestUtil {
     }
 
     public static synchronized boolean isPermissionGranted(Context context, String... permission) {
-        return filterPermissions(context, permission).length > 0;
+        return filterPermissions(context, permission).length <= 0;
     }
 
     public interface OnPermissionRequestListener {
