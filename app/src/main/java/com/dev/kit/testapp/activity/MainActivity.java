@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.dev.kit.basemodule.activity.BaseStateViewActivity;
+import com.dev.kit.basemodule.activity.VideoRecordActivity;
 import com.dev.kit.basemodule.netRequest.model.BaseController;
 import com.dev.kit.basemodule.netRequest.subscribers.NetRequestCallback;
 import com.dev.kit.basemodule.netRequest.subscribers.NetRequestSubscriber;
@@ -74,6 +75,7 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
         setOnClickListener(R.id.tv_indicator, this);
         setOnClickListener(R.id.tv_audio_animation, this);
         setOnClickListener(R.id.tv_media_selector, this);
+        setOnClickListener(R.id.tv_video_record, this);
         setContentState(STATE_DATA_CONTENT);
     }
 
@@ -160,8 +162,12 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
                 startActivity(new Intent(this, RecordingAnimationActivity.class));
                 break;
             }
-            case R.id.tv_media_selector:{
+            case R.id.tv_media_selector: {
                 startActivity(new Intent(this, MediaSelectorTestActivity.class));
+                break;
+            }
+            case R.id.tv_video_record: {
+                startVideoRecord();
                 break;
             }
         }
@@ -184,6 +190,33 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
             @Override
             public void onPermissionsGranted() {
                 showToast("权限申请成功");
+            }
+
+            @Override
+            public void onPermissionsDenied(String... deniedPermissions) {
+                StringBuilder sb = new StringBuilder();
+                for (String permission : deniedPermissions) {
+                    sb.append(permission).append("\n");
+                }
+                sb.deleteCharAt(sb.length() - 1);
+                showToast("您拒绝了以下权限:\n" + sb.toString());
+                LogUtil.e("deniedPermissions: " + sb.toString());
+            }
+        }, permissions);
+    }
+
+    private void startVideoRecord() {
+        LogUtil.e("mytag", "kokokokoko");
+        if (PermissionRequestUtil.isPermissionGranted(this, Manifest.permission.CAMERA)) {
+            LogUtil.e("mytag","111111111111");
+            startActivity(new Intent(this, VideoRecordActivity.class));
+            return;
+        }
+        String[] permissions = {Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO};
+        PermissionRequestUtil.requestPermission(this, new PermissionRequestUtil.OnPermissionRequestListener() {
+            @Override
+            public void onPermissionsGranted() {
+//                startVideoRecord();
             }
 
             @Override
