@@ -1,4 +1,4 @@
-package com.dev.kit.basemodule.View;
+package com.dev.kit.basemodule.view;
 
 import android.app.Dialog;
 import android.content.Context;

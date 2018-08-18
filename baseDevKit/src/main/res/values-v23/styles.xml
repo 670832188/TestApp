@@ -6,13 +6,13 @@
         <item name="android:windowNoTitle">true</item>
     </style>
 
-    <style name="BaseTheme.AppTheme">
+    <style name="BaseTheme.BaseAppTheme">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimary">@color/color_common_white</item>
+        <item name="colorPrimaryDark">@color/color_common_white</item>
+        <item name="colorAccent">@color/color_common_white</item>
         <item name="android:windowSoftInputMode">adjustResize</item>
-        <item name="android:statusBarColor">@color/color_blue</item>
+        <item name="android:statusBarColor">@color/color_common_white</item>
         <item name="android:windowLightStatusBar">true</item>
     </style>
 

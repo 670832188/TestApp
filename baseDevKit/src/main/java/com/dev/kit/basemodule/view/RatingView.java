@@ -1,4 +1,4 @@
-package com.dev.kit.basemodule.View;
+package com.dev.kit.basemodule.view;
 
 import android.content.Context;
 import android.content.res.TypedArray;

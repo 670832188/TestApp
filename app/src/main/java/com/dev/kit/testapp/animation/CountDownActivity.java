@@ -5,7 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.dev.kit.basemodule.View.CircleCountDownView;
+import com.dev.kit.basemodule.view.CircleCountDownView;
 import com.dev.kit.basemodule.activity.BaseStateViewActivity;
 import com.dev.kit.basemodule.util.LogUtil;
 import com.dev.kit.testapp.R;

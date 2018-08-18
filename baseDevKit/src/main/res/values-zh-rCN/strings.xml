@@ -9,5 +9,5 @@
     <string name="colon_separator">:&#160;</string>
     <string name="action_fold">收起</string>
     <string name="action_unfold">全文</string>
-
+    <string name="img_compress_failed">图片压缩失败</string>
 </resources>

@@ -10,4 +10,5 @@
     <string name="colon_separator">:&#160;</string>
     <string name="action_fold">Collapse</string>
     <string name="action_unfold">Full Text</string>
+    <string name="img_compress_failed">Image compress failed</string>
 </resources>

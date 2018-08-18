@@ -1,4 +1,4 @@
-package com.dev.kit.basemodule.View;
+package com.dev.kit.basemodule.view;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;

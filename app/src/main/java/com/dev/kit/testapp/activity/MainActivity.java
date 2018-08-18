@@ -2,19 +2,16 @@ package com.dev.kit.testapp.activity;
 
 import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.LocaleList;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.dev.kit.basemodule.activity.BaseStateViewActivity;
+import com.dev.kit.basemodule.activity.VideoRecordActivity;
 import com.dev.kit.basemodule.netRequest.model.BaseController;
 import com.dev.kit.basemodule.netRequest.subscribers.NetRequestCallback;
 import com.dev.kit.basemodule.netRequest.subscribers.NetRequestSubscriber;
@@ -22,11 +19,15 @@ import com.dev.kit.basemodule.netRequest.util.BaseServiceUtil;
 import com.dev.kit.basemodule.netRequest.util.CommonInterceptor;
 import com.dev.kit.basemodule.util.FileUtil;
 import com.dev.kit.basemodule.util.LogUtil;
+import com.dev.kit.basemodule.util.PermissionRequestUtil;
+import com.dev.kit.basemodule.util.ToastUtil;
 import com.dev.kit.testapp.R;
 import com.dev.kit.testapp.animation.PropertyAnimationEntryActivity;
-import com.dev.kit.testapp.bezierCurve.BezierCurveTestActivity;
+import com.dev.kit.testapp.indicator.CustomIndicatorActivity;
+import com.dev.kit.testapp.mediaSelectorTest.MediaSelectorTestActivity;
 import com.dev.kit.testapp.multiGroupHistogram.MultiGroupHistogramActivity;
 import com.dev.kit.testapp.pagerTest.PagerTestActivity;
+import com.dev.kit.testapp.recordingAnimation.RecordingAnimationActivity;
 import com.dev.kit.testapp.rxJavaAndRetrofitTest.ApiService;
 import com.dev.kit.testapp.rxJavaAndRetrofitTest.NetRequestDemoActivity;
 
@@ -40,7 +41,6 @@ import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 
 public class MainActivity extends BaseStateViewActivity implements View.OnClickListener {
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,10 +72,12 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
         setOnClickListener(R.id.tv_property_animation, this);
         setOnClickListener(R.id.tv_MultiGroupHistogramView, this);
         setOnClickListener(R.id.tv_set_font, this);
-        setOnClickListener(R.id.tv_bezier_curve, this);
+        setOnClickListener(R.id.tv_indicator, this);
+        setOnClickListener(R.id.tv_audio_animation, this);
+        setOnClickListener(R.id.tv_media_selector, this);
+        setOnClickListener(R.id.tv_video_record, this);
         setContentState(STATE_DATA_CONTENT);
     }
-
 
     private void uploadFile() {
         CommonInterceptor.updateOrInsertCommonParam("key1", "value1");
@@ -119,10 +121,20 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
                 break;
             }
             case R.id.tv_upload_file: {
-                if (checkPermission()) {
+                if (PermissionRequestUtil.isPermissionGranted(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
                     uploadFile();
                 } else {
-                    requestPermission();
+                    PermissionRequestUtil.requestPermission(MainActivity.this, new PermissionRequestUtil.OnPermissionRequestListener() {
+                        @Override
+                        public void onPermissionsGranted() {
+                            uploadFile();
+                        }
+
+                        @Override
+                        public void onPermissionsDenied(String... deniedPermissions) {
+                            showToast("您拒绝了存储读取权限，应用无法访问您的文件");
+                        }
+                    }, Manifest.permission.READ_EXTERNAL_STORAGE);
                 }
                 break;
             }
@@ -142,27 +154,23 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
                 startActivity(new Intent(this, SettingActivity.class));
                 break;
             }
-            case R.id.tv_bezier_curve: {
-                startActivity(new Intent(this, BezierCurveTestActivity.class));
+            case R.id.tv_indicator: {
+                startActivity(new Intent(this, CustomIndicatorActivity.class));
+                break;
+            }
+            case R.id.tv_audio_animation: {
+                startActivity(new Intent(this, RecordingAnimationActivity.class));
+                break;
+            }
+            case R.id.tv_media_selector: {
+                startActivity(new Intent(this, MediaSelectorTestActivity.class));
+                break;
+            }
+            case R.id.tv_video_record: {
+                startVideoRecord();
                 break;
             }
         }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == 12360 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            uploadFile();
-        }
-    }
-
-    private boolean checkPermission() {
-        int permissionCheck1 = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE);
-        return permissionCheck1 == PackageManager.PERMISSION_GRANTED;
-    }
-
-    private void requestPermission() {
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 12306);
     }
 
     @Override
@@ -174,5 +182,39 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
     protected void onSaveInstanceState(Bundle outState) {
         outState.putString("saveState", "saveState");
         super.onSaveInstanceState(outState);
+    }
+
+    private void startVideoRecord() {
+        String[] permissions = {Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        if (PermissionRequestUtil.isPermissionGranted(this, permissions)) {
+            startActivityForResult(new Intent(this, VideoRecordActivity.class), 101);
+            return;
+        }
+        PermissionRequestUtil.requestPermission(this, new PermissionRequestUtil.OnPermissionRequestListener() {
+            @Override
+            public void onPermissionsGranted() {
+                startVideoRecord();
+            }
+
+            @Override
+            public void onPermissionsDenied(String... deniedPermissions) {
+                StringBuilder sb = new StringBuilder();
+                for (String permission : deniedPermissions) {
+                    sb.append(permission).append("\n");
+                }
+                sb.deleteCharAt(sb.length() - 1);
+                showToast("您拒绝了以下权限:\n" + sb.toString());
+                LogUtil.e("deniedPermissions: " + sb.toString());
+            }
+        }, permissions);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 101 && resultCode == RESULT_OK) {
+            String videoPath = data.getStringExtra(VideoRecordActivity.RECORDED_VIDEO_PATH);
+            ToastUtil.showToast(this,"视频录制完成: " + videoPath.substring(videoPath.lastIndexOf(File.separator)));
+        }
     }
 }

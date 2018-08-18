@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.dev.kit.basemodule.view.WaveView
+        android:id="@+id/wave_view"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="@dimen/margin_large" />
+
+    <com.dev.kit.basemodule.view.AudioSignalView
+        android:id="@+id/audio_signal_view_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center"
+        app:asv_groupCount="4"
+        app:asv_groupInterval="2dp"
+        app:asv_lineCountInGroup="6"
+        app:asv_lineInterval="2dp"
+        app:asv_lineWidth="1.5dp"
+        app:asv_maxDynamicLineHeight="30dp"
+        app:asv_maxStaticLineHeight="20dp"
+        app:asv_minStaticLineHeight="20dp" />
+
+    <com.dev.kit.basemodule.view.AudioSignalView
+        android:id="@+id/audio_signal_view_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/audio_signal_view_1"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center"
+        android:layout_marginBottom="@dimen/margin_large"
+        app:asv_groupCount="4"
+        app:asv_groupInterval="5dp"
+        app:asv_lineCountInGroup="6"
+        app:asv_lineInterval="2dp"
+        app:asv_lineWidth="1.5dp"
+        app:asv_maxDynamicLineHeight="30dp"
+        app:asv_maxStaticLineHeight="20dp"
+        app:asv_minStaticLineHeight="6dp" />
+
+    <com.dev.kit.basemodule.view.AudioSignalView
+        android:id="@+id/audio_signal_view_3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/audio_signal_view_1"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/margin_large"
+        app:asv_groupCount="4"
+        app:asv_groupInterval="5dp"
+        app:asv_lineCountInGroup="6"
+        app:asv_lineInterval="2dp"
+        app:asv_lineWidth="1.5dp"
+        app:asv_maxDynamicLineHeight="30dp"
+        app:asv_maxStaticLineHeight="20dp"
+        app:asv_minStaticLineHeight="20dp" />
+
+    <Button
+        android:id="@+id/tv_trigger"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/bg_speech_btn"
+        android:gravity="center"
+        android:text="开始录音"
+        android:textSize="18sp" />
+</RelativeLayout>

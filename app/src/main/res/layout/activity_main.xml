@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -74,13 +75,46 @@
         android:textSize="14sp" />
 
     <TextView
-        android:id="@+id/tv_bezier_curve"
+        android:id="@+id/tv_indicator"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_large"
         android:background="@color/color_light_grey"
         android:gravity="center"
         android:padding="@dimen/margin_normal"
-        android:text="贝塞尔曲线"
+        android:text="indicator"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/tv_audio_animation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_large"
+        android:background="@color/color_light_grey"
+        android:gravity="center"
+        android:padding="@dimen/margin_normal"
+        android:text="音频动画"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/tv_media_selector"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_large"
+        android:background="@color/color_light_grey"
+        android:gravity="center"
+        android:padding="@dimen/margin_normal"
+        android:text="media选择器"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/tv_video_record"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_large"
+        android:background="@color/color_light_grey"
+        android:gravity="center"
+        android:padding="@dimen/margin_normal"
+        android:text="video 录制"
         android:textSize="14sp" />
 </LinearLayout>

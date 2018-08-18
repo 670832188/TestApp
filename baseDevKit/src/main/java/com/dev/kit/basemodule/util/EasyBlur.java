@@ -1,7 +1,6 @@
 package com.dev.kit.basemodule.util;
 
 import android.graphics.Bitmap;
-import android.util.Log;
 
 /**
  * 高斯模糊
@@ -9,8 +8,6 @@ import android.util.Log;
  */
 
 public class EasyBlur {
-    private static final String TAG = "EasyBlur";
-    private static final float SCALE = 0.125F;
     private static volatile EasyBlur singleton = null;
     private Bitmap mBitmap;
     private int mRadius = 0;
@@ -18,7 +15,6 @@ public class EasyBlur {
 
     public static EasyBlur getInstance() {
         if (singleton == null) {
-            Class var1 = EasyBlur.class;
             synchronized (EasyBlur.class) {
                 if (singleton == null) {
                     singleton = new EasyBlur();
@@ -34,7 +30,6 @@ public class EasyBlur {
         } else if (this.mRadius == 0) {
             throw new RuntimeException("radius must > 0");
         } else {
-            Log.d("EasyBlur", "blur fast algorithm");
             return fastBlur(this.mBitmap, this.mScale, this.mRadius);
         }
     }
@@ -65,7 +60,7 @@ public class EasyBlur {
             int w = bitmap.getWidth();
             int h = bitmap.getHeight();
             int[] pix = new int[w * h];
-            Log.e("pix", w + " " + h + " " + pix.length);
+            LogUtil.e("pix " + w + " " + h + " " + pix.length);
             bitmap.getPixels(pix, 0, w, 0, 0, w, h);
             int wm = w - 1;
             int hm = h - 1;
@@ -255,7 +250,7 @@ public class EasyBlur {
                 }
             }
 
-            Log.e("pix", w + " " + h + " " + pix.length);
+            LogUtil.e("pix: " + w + " " + h + " " + pix.length);
             bitmap.setPixels(pix, 0, w, 0, 0, w, h);
             return bitmap;
         }
