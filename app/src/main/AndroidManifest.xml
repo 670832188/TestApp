@@ -45,6 +45,9 @@
         <activity android:name=".recordingAnimation.RecordingAnimationActivity" />
         <activity android:name=".mediaSelectorTest.MediaSelectorTestActivity" />
         <activity android:name="com.dev.kit.basemodule.activity.VideoRecordActivity" />
+        <activity
+            android:name=".videoRecord.RecordVideoActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

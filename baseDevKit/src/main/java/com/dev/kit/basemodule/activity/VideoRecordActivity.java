@@ -119,7 +119,7 @@ public class VideoRecordActivity extends BaseStateViewActivity {
         // 设置Surface不需要维护自己的缓冲区
 //        surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
         // 设置分辨率
-        surfaceHolder.setFixedSize(320, 280);
+        surfaceHolder.setFixedSize(1280, 720);
         // 设置该组件不会让屏幕自动关闭
         surfaceHolder.setKeepScreenOn(true);
         //回调接口
@@ -164,6 +164,7 @@ public class VideoRecordActivity extends BaseStateViewActivity {
         params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
         //缩短Recording启动时间
         params.setRecordingHint(true);
+        params.setPreviewSize(1280, 720);
         //影像稳定能力
         if (params.isVideoStabilizationSupported())
             params.setVideoStabilization(true);
@@ -211,22 +212,24 @@ public class VideoRecordActivity extends BaseStateViewActivity {
         //音频一秒钟包含多少数据位
         CamcorderProfile mProfile = CamcorderProfile.get(CamcorderProfile.QUALITY_480P);
         mediaRecorder.setAudioEncodingBitRate(44100);
-        if (mProfile.videoBitRate > 2 * 1024 * 1024)
-            mediaRecorder.setVideoEncodingBitRate(2 * 1024 * 1024);
-        else
-            mediaRecorder.setVideoEncodingBitRate(1024 * 1024);
+        if (mProfile.videoBitRate > 3 * 1024 * 1024) {
+            mediaRecorder.setVideoEncodingBitRate(3 * 1024 * 1024);
+        } else {
+            mediaRecorder.setVideoEncodingBitRate(mProfile.videoBitRate);
+        }
         mediaRecorder.setVideoFrameRate(mProfile.videoFrameRate);
 
         //设置选择角度，顺时针方向，因为默认是逆向90度的，这样图像就是正常显示了,这里设置的是观看保存后的视频的角度
         mediaRecorder.setOrientationHint(90);
         //设置录像的分辨率
-        mediaRecorder.setVideoSize(352, 288);
+        mediaRecorder.setVideoSize(1280, 720);
+//        mediaRecorder.setCaptureRate(60);
+
         //设置录像视频输出地址
         mediaRecorder.setOutputFile(videosPathList.get(videosPathList.size() - 1));
     }
 
     public boolean startRecord() {
-//        initCamera();
         //录制视频前必须先解锁Camera
         camera.unlock();
         String videoDirPath = getVideoDirPath();

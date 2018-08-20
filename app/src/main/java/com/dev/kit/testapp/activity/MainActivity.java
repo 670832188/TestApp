@@ -30,6 +30,7 @@ import com.dev.kit.testapp.pagerTest.PagerTestActivity;
 import com.dev.kit.testapp.recordingAnimation.RecordingAnimationActivity;
 import com.dev.kit.testapp.rxJavaAndRetrofitTest.ApiService;
 import com.dev.kit.testapp.rxJavaAndRetrofitTest.NetRequestDemoActivity;
+import com.dev.kit.testapp.videoRecord.RecordVideoActivity;
 
 import java.io.File;
 import java.util.Locale;
@@ -75,7 +76,8 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
         setOnClickListener(R.id.tv_indicator, this);
         setOnClickListener(R.id.tv_audio_animation, this);
         setOnClickListener(R.id.tv_media_selector, this);
-        setOnClickListener(R.id.tv_video_record, this);
+        setOnClickListener(R.id.tv_video_record1, this);
+        setOnClickListener(R.id.tv_video_record2, this);
         setContentState(STATE_DATA_CONTENT);
     }
 
@@ -166,8 +168,12 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
                 startActivity(new Intent(this, MediaSelectorTestActivity.class));
                 break;
             }
-            case R.id.tv_video_record: {
-                startVideoRecord();
+            case R.id.tv_video_record1: {
+                startVideoRecord(1);
+                break;
+            }
+            case R.id.tv_video_record2: {
+                startVideoRecord(2);
                 break;
             }
         }
@@ -184,16 +190,20 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
         super.onSaveInstanceState(outState);
     }
 
-    private void startVideoRecord() {
+    private void startVideoRecord(final int flag) {
         String[] permissions = {Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
         if (PermissionRequestUtil.isPermissionGranted(this, permissions)) {
-            startActivityForResult(new Intent(this, VideoRecordActivity.class), 101);
+            if (flag == 1) {
+                startActivityForResult(new Intent(this, RecordVideoActivity.class), 101);
+            } else {
+                startActivityForResult(new Intent(this, VideoRecordActivity.class), 101);
+            }
             return;
         }
         PermissionRequestUtil.requestPermission(this, new PermissionRequestUtil.OnPermissionRequestListener() {
             @Override
             public void onPermissionsGranted() {
-                startVideoRecord();
+                startVideoRecord(flag);
             }
 
             @Override
@@ -214,7 +224,7 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 101 && resultCode == RESULT_OK) {
             String videoPath = data.getStringExtra(VideoRecordActivity.RECORDED_VIDEO_PATH);
-            ToastUtil.showToast(this,"视频录制完成: " + videoPath.substring(videoPath.lastIndexOf(File.separator)));
+            ToastUtil.showToast(this, "视频录制完成: " + videoPath.substring(videoPath.lastIndexOf(File.separator)));
         }
     }
 }
