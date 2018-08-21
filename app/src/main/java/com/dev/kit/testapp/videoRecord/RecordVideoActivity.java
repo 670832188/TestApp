@@ -10,8 +10,11 @@ import com.daasuu.camerarecorder.CameraRecorder;
 import com.daasuu.camerarecorder.CameraRecorderBuilder;
 import com.daasuu.camerarecorder.LensFacing;
 import com.dev.kit.basemodule.activity.BaseActivity;
+import com.dev.kit.basemodule.util.LogUtil;
 import com.dev.kit.basemodule.util.ToastUtil;
 import com.dev.kit.testapp.R;
+import com.qiniu.pili.droid.shortvideo.PLShortVideoTranscoder;
+import com.qiniu.pili.droid.shortvideo.PLVideoSaveListener;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -103,6 +106,31 @@ public class RecordVideoActivity extends BaseActivity {
     }
 
     private void compressVideo() {
+        PLShortVideoTranscoder mShortVideoTranscoder = new PLShortVideoTranscoder(RecordVideoActivity.this, recordFilePath, getVideoOutputFilePath());
+        mShortVideoTranscoder.transcode(720, 1280, 1024 * 1024, 0, false, new PLVideoSaveListener() {
+            @Override
+            public void onSaveVideoSuccess(final String s) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
 
+                    }
+                });
+            }
+
+            @Override
+            public void onSaveVideoFailed(final int errorCode) {
+               LogUtil.e("mytag", "compress failed");
+            }
+
+            @Override
+            public void onSaveVideoCanceled() {
+            }
+
+            @Override
+            public void onProgressUpdate(final float percentage) {
+                LogUtil.e("mytag", "compress process: " + percentage);
+            }
+        });
     }
 }
