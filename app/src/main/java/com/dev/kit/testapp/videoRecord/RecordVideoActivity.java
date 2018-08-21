@@ -1,8 +1,10 @@
 package com.dev.kit.testapp.videoRecord;
 
 import android.opengl.GLSurfaceView;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.view.View;
 
 import com.daasuu.camerarecorder.CameraRecordListener;
@@ -12,9 +14,9 @@ import com.daasuu.camerarecorder.LensFacing;
 import com.dev.kit.basemodule.activity.BaseActivity;
 import com.dev.kit.basemodule.util.LogUtil;
 import com.dev.kit.basemodule.util.ToastUtil;
+import com.dev.kit.basemodule.videoconverter.IVideoCompress;
+import com.dev.kit.basemodule.videoconverter.VideoCompressTask;
 import com.dev.kit.testapp.R;
-import com.qiniu.pili.droid.shortvideo.PLShortVideoTranscoder;
-import com.qiniu.pili.droid.shortvideo.PLVideoSaveListener;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -25,12 +27,12 @@ import java.util.Locale;
 /**
  * Created by cuiyan on 2018/8/20.
  */
-public class RecordVideoActivity extends BaseActivity {
+public class RecordVideoActivity extends BaseActivity implements IVideoCompress {
     //    private FilterRecoderView recorderViews;
     private CameraRecorder cameraRecorder;
     private String recordFilePath;
     private String compressFilePath;
-
+Handler handler = new Handler();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,7 +73,13 @@ public class RecordVideoActivity extends BaseActivity {
                     @Override
                     public void onRecordComplete() {
                         ToastUtil.showToast(RecordVideoActivity.this, "视频录制完成");
-                        compressVideo();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                compressVideo();
+                            }
+                        }, 1500);
+
                     }
 
                     @Override
@@ -106,31 +114,32 @@ public class RecordVideoActivity extends BaseActivity {
     }
 
     private void compressVideo() {
-        PLShortVideoTranscoder mShortVideoTranscoder = new PLShortVideoTranscoder(RecordVideoActivity.this, recordFilePath, getVideoOutputFilePath());
-        mShortVideoTranscoder.transcode(720, 1280, 1024 * 1024, 0, false, new PLVideoSaveListener() {
-            @Override
-            public void onSaveVideoSuccess(final String s) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
+        LogUtil.e("mytag", "path: " + recordFilePath);
+        VideoCompressTask task = new VideoCompressTask(recordFilePath, getVideoOutputFilePath(), this);
+        task.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+    }
 
-                    }
-                });
-            }
+    long startTime;
 
-            @Override
-            public void onSaveVideoFailed(final int errorCode) {
-               LogUtil.e("mytag", "compress failed");
-            }
+    @Override
+    public void onPrePared() {
+        LogUtil.e("mytag", "start compress");
+        startTime = System.currentTimeMillis();
+    }
 
-            @Override
-            public void onSaveVideoCanceled() {
-            }
+    @Override
+    public void onSuccess(String sourcePath, String newPath) {
+        LogUtil.e("mytag", "total time: " + (System.currentTimeMillis() - startTime));
+        ToastUtil.showToast(this, "压缩成功: " + (System.currentTimeMillis() - startTime));
+    }
 
-            @Override
-            public void onProgressUpdate(final float percentage) {
-                LogUtil.e("mytag", "compress process: " + percentage);
-            }
-        });
+    @Override
+    public void onFail() {
+        ToastUtil.showToast(this, "压缩失败");
+    }
+
+    @Override
+    public void onProgress(int percent) {
+
     }
 }

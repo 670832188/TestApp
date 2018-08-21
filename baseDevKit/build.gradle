@@ -2,14 +2,14 @@ apply plugin: 'com.android.library'
 def supportVersion = "27.1.1"
 def retrofitVersion = "2.4.0"
 android {
-    compileSdkVersion 27
-    buildToolsVersion "27.0.3"
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
     aaptOptions {
         cruncherEnabled = false
     }
     defaultConfig {
-        minSdkVersion 19
-        targetSdkVersion 21
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
     }
