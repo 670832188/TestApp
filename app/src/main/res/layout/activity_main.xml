@@ -133,5 +133,27 @@
             android:padding="@dimen/margin_normal"
             android:text="video 录制2"
             android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/tv_db_test"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_large"
+            android:background="@color/color_light_grey"
+            android:gravity="center"
+            android:padding="@dimen/margin_normal"
+            android:text="db 初始化"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/tv_provider_test"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_large"
+            android:background="@color/color_light_grey"
+            android:gravity="center"
+            android:padding="@dimen/margin_normal"
+            android:text="provider 查询数据"
+            android:textSize="14sp" />
     </LinearLayout>
 </ScrollView>

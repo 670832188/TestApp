@@ -9,7 +9,7 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
-
+    <permission android:name="com.dev.kit.testapp.PROVIDER" />
     <application
         android:name=".MainApplication"
         android:allowBackup="true"
@@ -48,6 +48,11 @@
         <activity
             android:name=".videoRecord.RecordVideoActivity"
             android:screenOrientation="portrait" />
+        <provider
+            android:authorities="com.dev.kit.testapp.TestProvider"
+            android:name=".dbAndProvider.providerTest.TestProvider"
+            android:permission="com.dev.kit.testapp.PROVIDER"
+            android:exported="true"/>
     </application>
 
 </manifest>

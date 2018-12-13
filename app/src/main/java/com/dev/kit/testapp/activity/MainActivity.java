@@ -2,6 +2,8 @@ package com.dev.kit.testapp.activity;
 
 import android.Manifest;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -23,6 +25,9 @@ import com.dev.kit.basemodule.util.PermissionRequestUtil;
 import com.dev.kit.basemodule.util.ToastUtil;
 import com.dev.kit.testapp.R;
 import com.dev.kit.testapp.animation.PropertyAnimationEntryActivity;
+import com.dev.kit.testapp.dbAndProvider.StudentInfo;
+import com.dev.kit.testapp.dbAndProvider.dbTest.TestDbHelper;
+import com.dev.kit.testapp.dbAndProvider.providerTest.TestProvider;
 import com.dev.kit.testapp.indicator.CustomIndicatorActivity;
 import com.dev.kit.testapp.mediaSelectorTest.MediaSelectorTestActivity;
 import com.dev.kit.testapp.multiGroupHistogram.MultiGroupHistogramActivity;
@@ -33,6 +38,8 @@ import com.dev.kit.testapp.rxJavaAndRetrofitTest.NetRequestDemoActivity;
 import com.dev.kit.testapp.videoRecord.RecordVideoActivity;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
@@ -78,6 +85,8 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
         setOnClickListener(R.id.tv_media_selector, this);
         setOnClickListener(R.id.tv_video_record1, this);
         setOnClickListener(R.id.tv_video_record2, this);
+        setOnClickListener(R.id.tv_db_test, this);
+        setOnClickListener(R.id.tv_provider_test, this);
         setContentState(STATE_DATA_CONTENT);
     }
 
@@ -176,6 +185,14 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
                 startVideoRecord(2);
                 break;
             }
+            case R.id.tv_db_test: {
+                dbTest();
+                break;
+            }
+            case R.id.tv_provider_test: {
+                providerTest();
+                break;
+            }
         }
     }
 
@@ -226,5 +243,59 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
             String videoPath = data.getStringExtra(VideoRecordActivity.RECORDED_VIDEO_PATH);
             ToastUtil.showToast(this, "视频录制完成: " + videoPath.substring(videoPath.lastIndexOf(File.separator)));
         }
+    }
+
+    private void dbTest() {
+        TestDbHelper dbHelper = new TestDbHelper(this);
+        Cursor cursor = dbHelper.queryAllStudent();
+        if (cursor.getCount() > 0) {
+            while (cursor.moveToNext()) {
+                StudentInfo info = new StudentInfo();
+                info.setStudentNumber(cursor.getInt(cursor.getColumnIndex(TestDbHelper.REPORT_COLUMN_NO)));
+                info.setName(cursor.getString(cursor.getColumnIndex(TestDbHelper.REPORT_COLUMN_NAME)));
+                info.setGradeMathematics(cursor.getInt(cursor.getColumnIndex(TestDbHelper.REPORT_COLUMN_MATH)));
+                info.setGradeChinese(cursor.getInt(cursor.getColumnIndex(TestDbHelper.REPORT_COLUMN_CHINESE)));
+                info.setGradePhysics(cursor.getInt(cursor.getColumnIndex(TestDbHelper.REPORT_COLUMN_PHYSICS)));
+                info.setGradeChemistry(cursor.getInt(cursor.getColumnIndex(TestDbHelper.REPORT_COLUMN_CHEMISTRY)));
+                LogUtil.e("mytag", "studentInfo000: " + info.toString());
+            }
+        } else {
+            List<StudentInfo> infoList = new ArrayList<>();
+            Random random = new Random();
+            int size = Math.abs(random.nextInt() % 20) + 1;
+            int studentNo = 2018001;
+            String name = "张三";
+            for (int i = 0; i < size; i++) {
+                StudentInfo info = new StudentInfo();
+                info.setStudentNumber(studentNo);
+                info.setName(name + (i + 1));
+                info.setGradeMathematics(Math.abs(random.nextInt() % 101));
+                info.setGradeChinese(Math.abs(random.nextInt() % 101));
+                info.setGradePhysics(Math.abs(random.nextInt() % 101));
+                info.setGradeChemistry(Math.abs(random.nextInt() % 101));
+                infoList.add(info);
+                studentNo++;
+            }
+            dbHelper.insertOrUpdateStudent(infoList);
+        }
+    }
+
+    private void providerTest() {
+        Cursor cursor = getContentResolver().query(TestProvider.getStudentInfoUri(), null, null, null, null);
+        if (cursor == null) {
+            LogUtil.e("mytag", "1111111111");
+            return;
+        }
+        while (cursor.moveToNext()) {
+            StudentInfo info = new StudentInfo();
+            info.setStudentNumber(cursor.getInt(cursor.getColumnIndex(TestDbHelper.REPORT_COLUMN_NO)));
+            info.setName(cursor.getString(cursor.getColumnIndex(TestDbHelper.REPORT_COLUMN_NAME)));
+            info.setGradeMathematics(cursor.getInt(cursor.getColumnIndex(TestDbHelper.REPORT_COLUMN_MATH)));
+            info.setGradeChinese(cursor.getInt(cursor.getColumnIndex(TestDbHelper.REPORT_COLUMN_CHINESE)));
+            info.setGradePhysics(cursor.getInt(cursor.getColumnIndex(TestDbHelper.REPORT_COLUMN_PHYSICS)));
+            info.setGradeChemistry(cursor.getInt(cursor.getColumnIndex(TestDbHelper.REPORT_COLUMN_CHEMISTRY)));
+            LogUtil.e("mytag", "studentInfo111: " + info.toString());
+        }
+        cursor.close();
     }
 }
