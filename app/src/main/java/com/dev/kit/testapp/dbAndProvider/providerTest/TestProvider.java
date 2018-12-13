@@ -37,7 +37,7 @@ public class TestProvider extends ContentProvider {
         uriMatcher.addURI(AUTHORITY, STUDENT_TABLE_NAME, STUDENT_TABLE_CODE);
         switch (uriMatcher.match(uri)) {
             case STUDENT_TABLE_CODE: {
-                return dbHelper.getReadableDatabase().query(TestDbHelper.STUDENT_TABLE_NAME, projection, selection, selectionArgs, sortOrder, null, null);
+                return dbHelper.getReadableDatabase().query(TestDbHelper.STUDENT_TABLE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
             }
             default: {
                 return null;
