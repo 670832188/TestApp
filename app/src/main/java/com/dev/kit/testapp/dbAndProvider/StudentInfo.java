@@ -13,6 +13,7 @@ public class StudentInfo {
     private int gradeChinese;
     private int gradePhysics;
     private int gradeChemistry ;
+    private String className;
 
     public int getStudentNumber() {
         return studentNumber;
@@ -60,6 +61,14 @@ public class StudentInfo {
 
     public void setGradeChemistry(int gradeChemistry) {
         this.gradeChemistry = gradeChemistry;
+    }
+
+    public String getStudentClassName() {
+        return className;
+    }
+
+    public void setStudentClassName(String className) {
+        this.className = className;
     }
 
     public String toString() {

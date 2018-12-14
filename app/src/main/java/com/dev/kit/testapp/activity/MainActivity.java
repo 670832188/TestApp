@@ -1,13 +1,16 @@
 package com.dev.kit.testapp.activity;
 
 import android.Manifest;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.LocaleList;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -247,6 +250,7 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
 
     private void dbTest() {
         TestDbHelper dbHelper = new TestDbHelper(this);
+//        addColumn();
         Cursor cursor = dbHelper.queryAllStudent();
         if (cursor.getCount() > 0) {
             while (cursor.moveToNext()) {
@@ -257,6 +261,14 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
                 info.setGradeChinese(cursor.getInt(cursor.getColumnIndex(TestDbHelper.REPORT_COLUMN_CHINESE)));
                 info.setGradePhysics(cursor.getInt(cursor.getColumnIndex(TestDbHelper.REPORT_COLUMN_PHYSICS)));
                 info.setGradeChemistry(cursor.getInt(cursor.getColumnIndex(TestDbHelper.REPORT_COLUMN_CHEMISTRY)));
+                String studentClass = cursor.getString(cursor.getColumnIndex("class"));
+                info.setStudentClassName(studentClass);
+                if (TextUtils.isEmpty(studentClass)) {
+                    studentClass = "一班";
+                    ContentValues values = new ContentValues();
+                    values.put("class", studentClass);
+                    dbHelper.getWritableDatabase().update(TestDbHelper.STUDENT_TABLE_NAME, values, null, null);
+                }
                 LogUtil.e("mytag", "studentInfo000: " + info.toString());
             }
         } else {
@@ -297,5 +309,11 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
             LogUtil.e("mytag", "studentInfo111: " + info.toString());
         }
         cursor.close();
+    }
+
+    private void addColumn() {
+        TestDbHelper dbHelper = new TestDbHelper(this);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        db.execSQL("alter table studentInfo add column class varchar");
     }
 }
