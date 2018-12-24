@@ -4,8 +4,6 @@ import android.Manifest;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -56,9 +54,6 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (savedInstanceState != null) {
-            LogUtil.e("getSavedState: " + savedInstanceState.getString("saveState"));
-        }
         init();
         Locale locale;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -250,7 +245,6 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
 
     private void dbTest() {
         TestDbHelper dbHelper = new TestDbHelper(this);
-//        addColumn();
         Cursor cursor = dbHelper.queryAllStudent();
         if (cursor.getCount() > 0) {
             while (cursor.moveToNext()) {
@@ -261,13 +255,17 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
                 info.setGradeChinese(cursor.getInt(cursor.getColumnIndex(TestDbHelper.REPORT_COLUMN_CHINESE)));
                 info.setGradePhysics(cursor.getInt(cursor.getColumnIndex(TestDbHelper.REPORT_COLUMN_PHYSICS)));
                 info.setGradeChemistry(cursor.getInt(cursor.getColumnIndex(TestDbHelper.REPORT_COLUMN_CHEMISTRY)));
-                String studentClass = cursor.getString(cursor.getColumnIndex("class"));
+                int classIndex = cursor.getColumnIndex("class");
+                String studentClass = "";
+                if (classIndex > -1) {
+                    studentClass = cursor.getString(cursor.getColumnIndex("class"));
+                }
                 info.setStudentClassName(studentClass);
-                if (TextUtils.isEmpty(studentClass)) {
+                if (TextUtils.isEmpty(studentClass) && dbHelper.getWritableDatabase().getVersion() >= 2) {
                     studentClass = "一班";
                     ContentValues values = new ContentValues();
                     values.put("class", studentClass);
-                    dbHelper.getWritableDatabase().update(TestDbHelper.STUDENT_TABLE_NAME, values, null, null);
+                    dbHelper.getWritableDatabase().update(TestDbHelper.STUDENT_TABLE_NAME, values, "studentNumber=?", new String[]{String.valueOf(info.getStudentNumber())});
                 }
                 LogUtil.e("mytag", "studentInfo000: " + info.toString());
             }
@@ -293,7 +291,7 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
     }
 
     private void providerTest() {
-        Cursor cursor = getContentResolver().query(TestProvider.getStudentInfoUri(), null, null, null, null);
+        Cursor cursor = getContentResolver().query(TestProvider.getStudentInfoUri(), null, "math >= ?", new String[] {"70"}, null);
         if (cursor == null) {
             LogUtil.e("mytag", "1111111111");
             return;
@@ -309,11 +307,5 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
             LogUtil.e("mytag", "studentInfo111: " + info.toString());
         }
         cursor.close();
-    }
-
-    private void addColumn() {
-        TestDbHelper dbHelper = new TestDbHelper(this);
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        db.execSQL("alter table studentInfo add column class varchar");
     }
 }

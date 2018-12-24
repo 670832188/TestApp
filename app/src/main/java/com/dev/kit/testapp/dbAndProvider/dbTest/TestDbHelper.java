@@ -16,7 +16,7 @@ import java.util.List;
  */
 
 public class TestDbHelper extends SQLiteOpenHelper {
-    private static final int version = 3;
+    private static final int version = 2;
     private static final String DB_NAME = "myTestDb.db";
     public static final String STUDENT_TABLE_NAME = "studentInfo";
     private static final String studentInfoTableStruct = "create table if not exists " +
@@ -42,9 +42,10 @@ public class TestDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // 测试使用，真实不要这样写哦
-        db.execSQL("drop table " + STUDENT_TABLE_NAME);
-        db.execSQL(studentInfoTableStruct);
+        LogUtil.e("mytag", "onUpgrade: " + oldVersion + " " + newVersion);
+        if (newVersion == 2) {
+            db.execSQL("alter table studentInfo add column class varchar");
+        }
     }
 
     public void insertOrUpdateStudent(StudentInfo info) {
