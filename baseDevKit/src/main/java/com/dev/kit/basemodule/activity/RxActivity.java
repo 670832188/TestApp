@@ -48,7 +48,7 @@ public class RxActivity extends AppCompatActivity implements LifecycleProvider<A
     @CallSuper
     protected void onPause() {
         super.onPause();
-        // 防止activity onStop时解除绑定
+        // 防止activity 进入后台时解除绑定
 //        lifecycleSubject.onNext(ActivityEvent.PAUSE);
     }
 
