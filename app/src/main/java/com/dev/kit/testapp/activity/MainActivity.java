@@ -1,12 +1,15 @@
 package com.dev.kit.testapp.activity;
 
 import android.Manifest;
+import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.IBinder;
 import android.os.LocaleList;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -36,6 +39,8 @@ import com.dev.kit.testapp.pagerTest.PagerTestActivity;
 import com.dev.kit.testapp.recordingAnimation.RecordingAnimationActivity;
 import com.dev.kit.testapp.rxJavaAndRetrofitTest.ApiService;
 import com.dev.kit.testapp.rxJavaAndRetrofitTest.NetRequestDemoActivity;
+import com.dev.kit.testapp.serviceTest.TestIntentService;
+import com.dev.kit.testapp.serviceTest.TestService;
 import com.dev.kit.testapp.videoRecord.RecordVideoActivity;
 
 import java.io.File;
@@ -49,7 +54,7 @@ import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 
-public class MainActivity extends BaseStateViewActivity implements View.OnClickListener {
+public class MainActivity extends BaseStateViewActivity implements View.OnClickListener, ServiceConnection {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,7 +127,11 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.iv_left: {
-                finish();
+//                finish();
+                for (int i = 0; i < 10; i++) {
+                    Intent intent = new Intent(this, TestIntentService.class);
+                    startService(intent);
+                }
                 break;
             }
             case R.id.tv_net_test: {
@@ -188,7 +197,10 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
                 break;
             }
             case R.id.tv_provider_test: {
-                providerTest();
+//                providerTest();
+                for (int i = 0; i < 10; i++) {
+                    startService(new Intent(this, TestService.class));
+                }
                 break;
             }
         }
@@ -291,7 +303,7 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
     }
 
     private void providerTest() {
-        Cursor cursor = getContentResolver().query(TestProvider.getStudentInfoUri(), null, "math >= ?", new String[] {"70"}, null);
+        Cursor cursor = getContentResolver().query(TestProvider.getStudentInfoUri(), null, "math >= ?", new String[]{"70"}, null);
         if (cursor == null) {
             LogUtil.e("mytag", "1111111111");
             return;
@@ -307,5 +319,34 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
             LogUtil.e("mytag", "studentInfo111: " + info.toString());
         }
         cursor.close();
+    }
+
+    @Override
+    public void onResume() {
+        bindService(new Intent(this, TestService.class), this, BIND_AUTO_CREATE);
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        unbindService(this);
+        super.onPause();
+    }
+
+    @Override
+    public void onServiceConnected(ComponentName name, final IBinder service) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                TestService.MyBinder binder = (TestService.MyBinder) service;
+                binder.getService().setRunning(true);
+                binder.log();
+            }
+        }).start();
+    }
+
+    @Override
+    public void onServiceDisconnected(ComponentName name) {
+        LogUtil.e("mytag", "onServiceDisconnected");
     }
 }

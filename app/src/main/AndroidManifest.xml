@@ -27,10 +27,13 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".activity.TouchEventTestActivity"/>
         <activity
+            android:taskAffinity=".cuiyan"
             android:name=".rxJavaAndRetrofitTest.NetRequestDemoActivity"
             android:theme="@style/BaseTheme.TranslucentStatusTheme" />
-        <activity android:name=".pagerTest.PagerTestActivity" />
+        <activity android:name=".pagerTest.PagerTestActivity"
+            android:launchMode="singleInstance"/>
         <activity android:name=".animation.PropertyAnimationEntryActivity" />
         <activity android:name=".animation.BallsFallDownSimultaneously" />
         <activity android:name=".animation.CountDownActivity" />
@@ -53,6 +56,9 @@
             android:name=".dbAndProvider.providerTest.TestProvider"
             android:permission="com.dev.kit.testapp.PROVIDER"
             android:exported="true"/>
+
+        <service android:name=".serviceTest.TestIntentService"/>
+        <service android:name=".serviceTest.TestService"/>
     </application>
 
 </manifest>
