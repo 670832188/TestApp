@@ -1,4 +1,4 @@
-package com.dev.kit.testapp.aidlTest;
+package com.dev.kit.testapp.ipcTest.service;
 
 import android.app.Service;
 import android.content.Intent;
@@ -7,6 +7,9 @@ import android.os.RemoteException;
 import android.support.annotation.Nullable;
 
 import java.util.Random;
+
+import ipcDemo.business.AuthLoginInfo;
+import ipcDemo.business.IAuthLoginManager;
 
 /**
  * 授权登录服务(模拟)
@@ -30,11 +33,16 @@ public class AuthLoginService extends Service {
 
         @Override
         public String authLogin() throws RemoteException {
-            return generateAuth();
+            return (String) generateAuth(true);
+        }
+
+        @Override
+        public AuthLoginInfo authLogin1() throws RemoteException {
+            return (AuthLoginInfo) generateAuth(false);
         }
     }
 
-    private String generateAuth() {
+    private Object generateAuth(boolean getString) {
         StringBuilder sb = new StringBuilder();
         Random random = new Random();
         int len = 10 + Math.abs(random.nextInt() % 11);
@@ -63,6 +71,14 @@ public class AuthLoginService extends Service {
         }
         long userId = Math.abs(random.nextLong());
         String userName = "zhangsan" + (1 + random.nextInt(10000));
-        return "{\"auth\":\"" + sb.toString() + "\"," + "\"userId\":" + userId + ",\"userName\":" + "\"" + userName + "\"}";
+        if (getString) {
+            return "{\"auth\":\"" + sb.toString() + "\"," + "\"userId\":" + userId + ",\"userName\":" + "\"" + userName + "\"}";
+        } else {
+            AuthLoginInfo info = new AuthLoginInfo();
+            info.setAuth(sb.toString());
+            info.setUserId(userId);
+            info.setUserName(userName);
+            return info;
+        }
     }
 }

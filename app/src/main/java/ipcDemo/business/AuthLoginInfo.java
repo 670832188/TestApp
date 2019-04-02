@@ -1,4 +1,4 @@
-package com.dev.kit.testapp.aidlTest;
+package ipcDemo.business;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -9,15 +9,15 @@ import android.os.Parcelable;
 
 public class AuthLoginInfo implements Parcelable {
 
-    private String token;
-    private String userId;
+    private String auth;
+    private long userId;
     private String userName;
 
-    public String getToken() {
-        return token;
+    public String getAuth() {
+        return auth;
     }
 
-    public String getUserId() {
+    public long getUserId() {
         return userId;
     }
 
@@ -25,11 +25,11 @@ public class AuthLoginInfo implements Parcelable {
         return userName;
     }
 
-    public void setToken(String token) {
-        this.token = token;
+    public void setAuth(String auth) {
+        this.auth = auth;
     }
 
-    public void setUserId(String userId) {
+    public void setUserId(long userId) {
         this.userId = userId;
     }
 
@@ -44,17 +44,17 @@ public class AuthLoginInfo implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-         dest.writeString(token);
-         dest.writeString(userId);
-         dest.writeString(userName);
+        dest.writeString(auth);
+        dest.writeLong(userId);
+        dest.writeString(userName);
     }
 
     public static Creator<AuthLoginInfo> CREATOR = new Creator<AuthLoginInfo>() {
         @Override
         public AuthLoginInfo createFromParcel(Parcel source) {
             AuthLoginInfo info = new AuthLoginInfo();
-            info.token = source.readString();
-            info.userId = source.readString();
+            info.auth = source.readString();
+            info.userId = source.readLong();
             info.userName = source.readString();
             return null;
         }

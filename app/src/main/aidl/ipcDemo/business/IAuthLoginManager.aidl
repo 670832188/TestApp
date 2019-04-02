@@ -1,6 +1,6 @@
 // IBookManager.aidl
-package com.dev.kit.testapp.aidlTest;
-import com.dev.kit.testapp.aidlTest.AuthLoginInfo;
+package ipcDemo.business;
+import ipcDemo.business.AuthLoginInfo;
 // Declare any non-default types here with import statements
 
 interface IAuthLoginManager {
@@ -10,4 +10,5 @@ interface IAuthLoginManager {
      */
     void basicTypes(int anInt, long aLong, boolean aBoolean, float aFloat, double aDouble, String aString);
     String authLogin();
+    AuthLoginInfo authLogin1();
 }

@@ -63,11 +63,11 @@
         <service android:name=".serviceTest.TestIntentService" />
         <service android:name=".serviceTest.TestService" />
         <service
-            android:name=".aidlTest.AuthLoginService"
+            android:name=".ipcTest.service.AuthLoginService"
             android:exported="true"
             android:process=":com.dev.kit.testapp.authlogin">
             <intent-filter>
-                <action android:name="com.dev.kit.testapp.aidlTest.AuthLoginService"/>
+                <action android:name="com.dev.kit.testapp.ipcTest.service.AuthLoginService"/>
             </intent-filter>
         </service>
 
