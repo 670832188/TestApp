@@ -9,8 +9,10 @@ import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.LocaleList;
+import android.os.Looper;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -335,14 +337,30 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
 
     @Override
     public void onServiceConnected(ComponentName name, final IBinder service) {
-        new Thread(new Runnable() {
+        Runnable runnable = new Runnable() {
             @Override
             public void run() {
+                if (Looper.myLooper() == null) {
+                    Looper.prepare();
+                }
+                new Handler().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Looper myLooper = Looper.myLooper();
+                        if (myLooper != null) {
+                            myLooper.quit();
+                            LogUtil.e("mytag", "looper quit");
+                        }
+                    }
+                });
+                Looper.loop();
+                // ToDo 上述为Handler相关验证测试代码
                 TestService.MyBinder binder = (TestService.MyBinder) service;
                 binder.getService().setRunning(true);
                 binder.log();
             }
-        }).start();
+        };
+        new Thread(runnable).start();
     }
 
     @Override

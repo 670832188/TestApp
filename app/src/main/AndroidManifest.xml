@@ -9,6 +9,7 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
     <permission android:name="com.dev.kit.testapp.PROVIDER" />
     <application
         android:name=".MainApplication"
@@ -27,13 +28,14 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".activity.TouchEventTestActivity"/>
+        <activity android:name=".activity.TouchEventTestActivity" />
         <activity
-            android:taskAffinity=".cuiyan"
             android:name=".rxJavaAndRetrofitTest.NetRequestDemoActivity"
+            android:taskAffinity=".cuiyan"
             android:theme="@style/BaseTheme.TranslucentStatusTheme" />
-        <activity android:name=".pagerTest.PagerTestActivity"
-            android:launchMode="singleInstance"/>
+        <activity
+            android:name=".pagerTest.PagerTestActivity"
+            android:launchMode="singleInstance" />
         <activity android:name=".animation.PropertyAnimationEntryActivity" />
         <activity android:name=".animation.BallsFallDownSimultaneously" />
         <activity android:name=".animation.CountDownActivity" />
@@ -51,14 +53,24 @@
         <activity
             android:name=".videoRecord.RecordVideoActivity"
             android:screenOrientation="portrait" />
-        <provider
-            android:authorities="com.dev.kit.testapp.TestProvider"
-            android:name=".dbAndProvider.providerTest.TestProvider"
-            android:permission="com.dev.kit.testapp.PROVIDER"
-            android:exported="true"/>
 
-        <service android:name=".serviceTest.TestIntentService"/>
-        <service android:name=".serviceTest.TestService"/>
+        <provider
+            android:name=".dbAndProvider.providerTest.TestProvider"
+            android:authorities="com.dev.kit.testapp.TestProvider"
+            android:exported="true"
+            android:permission="com.dev.kit.testapp.PROVIDER" />
+
+        <service android:name=".serviceTest.TestIntentService" />
+        <service android:name=".serviceTest.TestService" />
+        <service
+            android:name=".aidlTest.AuthLoginService"
+            android:exported="true"
+            android:process=":com.dev.kit.testapp.authlogin">
+            <intent-filter>
+                <action android:name="com.dev.kit.testapp.aidlTest.AuthLoginService"/>
+            </intent-filter>
+        </service>
+
     </application>
 
 </manifest>

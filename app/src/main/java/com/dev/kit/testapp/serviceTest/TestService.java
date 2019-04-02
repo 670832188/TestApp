@@ -61,7 +61,7 @@ public class TestService extends Service {
             while (isRunning) {
                 LogUtil.e("mytag", "count: " + (++i) + " " + isRunning);
                 try {
-                    Thread.sleep(500);
+                    Thread.sleep(1000);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
