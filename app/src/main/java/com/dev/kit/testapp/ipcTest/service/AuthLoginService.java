@@ -3,13 +3,15 @@ package com.dev.kit.testapp.ipcTest.service;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
+import android.os.RemoteCallbackList;
 import android.os.RemoteException;
-import android.support.annotation.Nullable;
 
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import ipcDemo.business.AuthLoginInfo;
 import ipcDemo.business.IAuthLoginManager;
+import ipcDemo.business.IOnAuthChangeListener;
 
 /**
  * 授权登录服务(模拟)
@@ -18,14 +20,41 @@ import ipcDemo.business.IAuthLoginManager;
 
 public class AuthLoginService extends Service {
 
+    private static final AtomicBoolean isServiceRunning = new AtomicBoolean(false);
+    private AuthLoginManager authLoginManager = new AuthLoginManager();
+    private RemoteCallbackList<IOnAuthChangeListener> authChangeListenerList = new RemoteCallbackList<>();
 
-    @Nullable
     @Override
-    public IBinder onBind(Intent intent) {
-        return new AuthLoginBinder();
+    public void onCreate() {
+        super.onCreate();
+        isServiceRunning.set(true);
+        startChangeAuth();
     }
 
-    public class AuthLoginBinder extends IAuthLoginManager.Stub {
+    @Override
+    public IBinder onBind(Intent intent) {
+        return authLoginManager;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        isServiceRunning.set(false);
+    }
+
+    private void randomChangeAuth() {
+        int count = authChangeListenerList.beginBroadcast();
+        for (int i = 0; i < count; i++) {
+            try {
+                authChangeListenerList.getBroadcastItem(i).onAuthChanged((String) generateAuth(true));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        authChangeListenerList.finishBroadcast();
+    }
+
+    public class AuthLoginManager extends IAuthLoginManager.Stub {
         @Override
         public void basicTypes(int anInt, long aLong, boolean aBoolean, float aFloat, double aDouble, String aString) throws RemoteException {
 
@@ -39,6 +68,16 @@ public class AuthLoginService extends Service {
         @Override
         public AuthLoginInfo authLogin1() throws RemoteException {
             return (AuthLoginInfo) generateAuth(false);
+        }
+
+        @Override
+        public void registerAuthChangeListener(IOnAuthChangeListener onAuthChangeListener) throws RemoteException {
+            authChangeListenerList.register(onAuthChangeListener);
+        }
+
+        @Override
+        public void unRegisterAuthChangeListener(IOnAuthChangeListener onAuthChangeListener) throws RemoteException {
+            authChangeListenerList.unregister(onAuthChangeListener);
         }
     }
 
@@ -81,4 +120,21 @@ public class AuthLoginService extends Service {
             return info;
         }
     }
+
+    private void startChangeAuth() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (isServiceRunning.get()) {
+                    randomChangeAuth();
+                    try {
+                        Thread.sleep(1000);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }).start();
+    }
+
 }
