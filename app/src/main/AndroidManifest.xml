@@ -34,8 +34,8 @@
             android:taskAffinity=".cuiyan"
             android:theme="@style/BaseTheme.TranslucentStatusTheme" />
         <activity
-            android:name=".pagerTest.PagerTestActivity"
-            android:launchMode="singleInstance" />
+            android:launchMode="singleInstance"
+            android:name=".pagerTest.PagerTestActivity" />
         <activity android:name=".animation.PropertyAnimationEntryActivity" />
         <activity android:name=".animation.BallsFallDownSimultaneously" />
         <activity android:name=".animation.CountDownActivity" />
