@@ -10,7 +10,10 @@ import com.dev.kit.basemodule.util.LogUtil;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Stack;
 
 /**
  * Author: cuiyan
@@ -570,4 +573,232 @@ public class AlgorithmActivity1 extends BaseStateViewActivity {
         return head;
     }
 
+    /**
+     * 有效的括号
+     * 给定一个只包括 '('，')'，'{'，'}'，'['，']' 的字符串，判断字符串是否有效。
+     * <p>
+     * 有效字符串需满足：
+     * <p>
+     * 左括号必须用相同类型的右括号闭合。
+     * 左括号必须以正确的顺序闭合。
+     * 注意空字符串可被认为是有效字符串。
+     * <p>
+     * 示例 1:
+     * <p>
+     * 输入: "()"
+     * 输出: true
+     * 示例 2:
+     * <p>
+     * 输入: "()[]{}"
+     * 输出: true
+     * 示例 3:
+     * <p>
+     * 输入: "(]"
+     * 输出: false
+     * 示例 4:
+     * <p>
+     * 输入: "([)]"
+     * 输出: false
+     * 示例 5:
+     * <p>
+     * 输入: "{[]}"
+     * 输出: true
+     */
+    public boolean isValid(String s) {
+        if (s == null || (s = s.trim()).length() % 2 != 0) {
+            return false;
+        }
+        if (s.length() == 0) {
+            return true;
+        }
+        Map<Character, Character> kvMap = new HashMap<>();
+        kvMap.put(')', '(');
+        kvMap.put('}', '{');
+        kvMap.put(']', '[');
+
+        Stack<Character> stack = new Stack<>();
+        for (int i = 0; i < s.length(); i++) {
+            Character c = s.charAt(i);
+            if (kvMap.containsKey(c)) {
+                if (stack.empty()) {
+                    stack.push(c);
+                } else if (stack.peek() == kvMap.get(c)) {
+                    stack.pop();
+                } else {
+                    stack.push(c);
+                }
+            } else {
+                stack.push(c);
+            }
+        }
+        return stack.empty();
+    }
+
+
+    /**
+     * 两两交换链表中的节点
+     * 给定一个链表，两两交换其中相邻的节点，并返回交换后的链表。
+     * <p>
+     * 你不能只是单纯的改变节点内部的值，而是需要实际的进行节点交换。
+     * <p>
+     * <p>
+     * <p>
+     * 示例:
+     * <p>
+     * 给定 1->2->3->4, 你应该返回 2->1->4->3.
+     */
+    public ListNode swapPairs(ListNode head) {
+
+        if (head == null || head.next == null) {
+            return head;
+        }
+        ListNode root = new ListNode(0);
+        root.next = head;
+        ListNode controlNode = root;
+        ListNode preNode = head;
+        ListNode nextNode;
+        int change = 1;
+        while (head != null) {
+            change ^= 1;
+            if (change == 1) {
+                nextNode = head.next;
+                controlNode.next = head;
+                head.next = preNode;
+                preNode.next = nextNode;
+                controlNode = preNode;
+                head = nextNode;
+            } else {
+                preNode = head;
+                head = head.next;
+            }
+        }
+        return root.next;
+    }
+
+
+    /**
+     * 实现strStr()
+     * 实现 strStr() 函数。
+     * <p>
+     * 给定一个 haystack 字符串和一个 needle 字符串，在 haystack 字符串中找出 needle 字符串出现的第一个位置 (从0开始)。如果不存在，则返回  -1。
+     * <p>
+     * 示例 1:
+     * <p>
+     * 输入: haystack = "hello", needle = "ll"
+     * 输出: 2
+     * 示例 2:
+     * <p>
+     * 输入: haystack = "aaaaa", needle = "bba"
+     * 输出: -1
+     * 说明:
+     * <p>
+     * 当 needle 是空字符串时，我们应当返回什么值呢？这是一个在面试中很好的问题。
+     * <p>
+     * 对于本题而言，当 needle 是空字符串时我们应当返回 0 。这与C语言的 strstr() 以及 Java的 indexOf() 定义相符。
+     * <p>
+     * 在真实的面试中遇到过这道题？
+     */
+    public int strStr(String haystack, String needle) {
+        if (needle == null || needle.length() <= 0) {
+            return 0;
+        }
+        if (haystack == null || haystack.length() == 0 || haystack.length() < needle.length()) {
+            return -1;
+        }
+        char[] t = haystack.toCharArray();
+        char[] p = needle.toCharArray();
+        int i = 0;
+        int j = 0;
+        int[] next = getNext(needle);
+        while (i < t.length && j < p.length) {
+            if (j == -1 || t[i] == p[j]) {
+                i++;
+                j++;
+            } else {
+                j = next[j];
+            }
+        }
+
+        if (j == p.length) {
+            return i - j;
+        } else {
+            return -1;
+        }
+    }
+
+    public int[] getNext(String needle) {
+        char[] p = needle.toCharArray();
+        if (p.length == 1) {
+            return new int[]{-1};
+        }
+        int[] next = new int[p.length];
+        next[0] = -1;
+        int j = 0;
+        int k = -1;
+        while (j < p.length - 1) {
+            if (k == -1 || p[j] == p[k]) {
+                if (p[++j] == p[++k]) {
+                    next[j] = next[k];
+                } else {
+                    next[j] = k;
+                }
+            } else {
+                k = next[k];
+            }
+        }
+        return next;
+    }
+
+
+    /**
+     * 搜索插入位置
+     * 给定一个排序数组和一个目标值，在数组中找到目标值，并返回其索引。如果目标值不存在于数组中，返回它将会被按顺序插入的位置。
+     * <p>
+     * 你可以假设数组中无重复元素。
+     * <p>
+     * 示例 1:
+     * <p>
+     * 输入: [1,3,5,6], 5
+     * 输出: 2
+     * 示例 2:
+     * <p>
+     * 输入: [1,3,5,6], 2
+     * 输出: 1
+     * 示例 3:
+     * <p>
+     * 输入: [1,3,5,6], 7
+     * 输出: 4
+     * 示例 4:
+     * <p>
+     * 输入: [1,3,5,6], 0
+     * 输出: 0
+     */
+    public int searchInsert(int[] nums, int target) {
+        int index = binSearch1(nums, target, 0, nums.length - 1);
+        if (nums[index] == target) {
+            return index;
+        } else if (nums[index] < target) {
+            return index + 1;
+        } else {
+            return index;
+        }
+    }
+
+    public int binSearch1(int[] nums, int target, int left, int right) {
+        int mid = (left + right) / 2;
+        if (nums[mid] == target) {
+            return mid;
+        }
+        if (left >= right) {
+            if (nums[left] < target) {
+                return left + 1;
+            } else {
+                return left;
+            }
+        } else if (nums[mid] < target) {
+            return binSearch(nums, target, mid + 1, right);
+        } else {
+            return binSearch(nums, target, left, mid - 1);
+        }
+    }
 }
