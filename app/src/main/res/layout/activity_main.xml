@@ -13,6 +13,19 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <ImageView
+            android:src="@mipmap/ic_delete"
+            android:id="@+id/iv_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <ImageView
+            android:id="@+id/iv_2"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:scaleType="fitXY"
+            android:src="@mipmap/ic_delete" />
+
         <TextView
             android:id="@+id/tv_net_test"
             android:layout_width="match_parent"

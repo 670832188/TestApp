@@ -9,7 +9,6 @@ import com.dev.kit.basemodule.util.LogUtil;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -530,8 +529,18 @@ public class AlgorithmActivity1 extends BaseStateViewActivity {
      */
 
     public int removeElement(int[] nums, int val) {
-        Arrays.sort(nums);
-        return 1;
+        if (nums == null || nums.length == 0) {
+            return 0;
+        }
+        int len = nums.length;
+        int index = 0;
+        for (int i = 0; i < len; i++) {
+            if (nums[i] != val) {
+                nums[index] = nums[i];
+                index++;
+            }
+        }
+        return index;
     }
 
 

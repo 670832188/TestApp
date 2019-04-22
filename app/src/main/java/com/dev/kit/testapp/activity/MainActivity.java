@@ -6,6 +6,9 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -17,6 +20,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.dev.kit.basemodule.activity.BaseStateViewActivity;
 import com.dev.kit.basemodule.activity.VideoRecordActivity;
@@ -25,6 +29,7 @@ import com.dev.kit.basemodule.netRequest.subscribers.NetRequestCallback;
 import com.dev.kit.basemodule.netRequest.subscribers.NetRequestSubscriber;
 import com.dev.kit.basemodule.netRequest.util.BaseServiceUtil;
 import com.dev.kit.basemodule.netRequest.util.CommonInterceptor;
+import com.dev.kit.basemodule.util.DisplayUtil;
 import com.dev.kit.basemodule.util.FileUtil;
 import com.dev.kit.basemodule.util.LogUtil;
 import com.dev.kit.basemodule.util.PermissionRequestUtil;
@@ -93,6 +98,19 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
         setOnClickListener(R.id.tv_db_test, this);
         setOnClickListener(R.id.tv_provider_test, this);
         setContentState(STATE_DATA_CONTENT);
+        ImageView iv1 = findViewById(R.id.iv_1);
+        ImageView iv2 = findViewById(R.id.iv_2);
+        Bitmap bitmap0 = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_delete);
+        Bitmap bitmap1 = ((BitmapDrawable) iv1.getDrawable()).getBitmap();
+        Bitmap bitmap2 = ((BitmapDrawable) iv2.getDrawable()).getBitmap();
+
+        LogUtil.e("mytag", "bitmapWH: " + bitmap0.getWidth() + "*" + bitmap0.getHeight() + "---" + bitmap1.getWidth() + "*" + bitmap1.getHeight() + "---" + bitmap2.getWidth() + "*" + bitmap2.getHeight());
+        LogUtil.e("mytag", "bitmapSize: " + bitmap0.getByteCount() + " " + bitmap1.getByteCount() + " " + bitmap2.getByteCount());
+        LogUtil.e("mytag", "bitmapMemory: " + bitmap0.getAllocationByteCount() + " " + bitmap1.getAllocationByteCount() + " " + bitmap2.getAllocationByteCount());
+        LogUtil.e("mytag", "density: " + DisplayUtil.getScaleFactor() + " " + DisplayUtil.getDensityDpi() + " " + DisplayUtil.getScreenResolution());
+        float w = DisplayUtil.getScreenWidth() / DisplayUtil.getXDpi();
+        float h = DisplayUtil.getScreenHeight() / DisplayUtil.getYdpi();
+        LogUtil.e("mytag", "pWH: " + w + " " + h + " " + DisplayUtil.getScreenHeight());
     }
 
     private void uploadFile() {
@@ -325,13 +343,13 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
 
     @Override
     public void onResume() {
-        bindService(new Intent(this, TestService.class), this, BIND_AUTO_CREATE);
+//        bindService(new Intent(this, TestService.class), this, BIND_AUTO_CREATE);
         super.onResume();
     }
 
     @Override
     protected void onPause() {
-        unbindService(this);
+//        unbindService(this);
         super.onPause();
     }
 
