@@ -8,9 +8,7 @@ import com.dev.kit.basemodule.activity.BaseStateViewActivity;
 import com.dev.kit.basemodule.util.LogUtil;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
@@ -561,25 +559,31 @@ public class AlgorithmActivity1 extends BaseStateViewActivity {
      * 你能尝试使用一趟扫描实现吗？
      */
     public ListNode removeNthFromEnd(ListNode head, int n) {
-        List<ListNode> nodeList = new ArrayList<>();
+        if (head == null) {
+            return head;
+        }
+        int count = 1;
         ListNode node = head;
-        while (node != null) {
-            nodeList.add(node);
-            node = node.next;
+        while ((node = node.next) != null) {
+            count++;
         }
-        int originalSize = nodeList.size();
-        if (originalSize == 0 || originalSize == 1) {
-            return null;
+        if (count < n || n <= 0) {
+            return head;
         }
-        if (originalSize == n) {
-            head = nodeList.get(1);
-        } else if (n == 1) {
-            nodeList.get(originalSize - 2).next = null;
-        } else {
-            nodeList.remove(nodeList.size() - n);
-            nodeList.get(originalSize - n - 1).next = nodeList.get(originalSize - n);
+        node = new ListNode(0);
+        node.next = head;
+        ListNode pre = node;
+        int index = 0;
+        while (head != null) {
+            if (count - n == index) {
+                pre.next = head.next;
+                return node.next;
+            }
+            index++;
+            pre = head;
+            head = head.next;
         }
-        return head;
+        return node.next;
     }
 
     /**
