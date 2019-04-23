@@ -787,14 +787,7 @@ public class AlgorithmActivity1 extends BaseStateViewActivity {
      * 输出: 0
      */
     public int searchInsert(int[] nums, int target) {
-        int index = binSearch1(nums, target, 0, nums.length - 1);
-        if (nums[index] == target) {
-            return index;
-        } else if (nums[index] < target) {
-            return index + 1;
-        } else {
-            return index;
-        }
+        return binSearch1(nums, target, 0, nums.length - 1);
     }
 
     public int binSearch1(int[] nums, int target, int left, int right) {
@@ -813,5 +806,128 @@ public class AlgorithmActivity1 extends BaseStateViewActivity {
         } else {
             return binSearch(nums, target, left, mid - 1);
         }
+    }
+
+    /**
+     * 反转从位置 m 到 n 的链表。请使用一趟扫描完成反转。
+     * <p>
+     * 说明:
+     * 1 ≤ m ≤ n ≤ 链表长度。
+     * <p>
+     * 示例:
+     * <p>
+     * 输入: 1->2->3->4->5->NULL, m = 2, n = 4
+     * 输出: 1->4->3->2->5->NULL
+     */
+    public ListNode reverseBetween(ListNode head, int m, int n) {
+        if (head == null) {
+            return head;
+        }
+        ListNode node = new ListNode(0);
+        node.next = head;
+        Stack<ListNode> reverseStack = new Stack<>();
+        ListNode sepNodePre = node;
+        ListNode sepNodeLast = null;
+        int index = 1;
+        while (head != null) {
+            if (index >= m && index <= n) {
+                reverseStack.push(head);
+                if (index == n) {
+                    sepNodeLast = head.next;
+                    break;
+                }
+            } else {
+                sepNodePre = head;
+            }
+            head = head.next;
+            index++;
+        }
+        while (!reverseStack.empty()) {
+            sepNodePre.next = reverseStack.pop();
+            sepNodePre = sepNodePre.next;
+        }
+        sepNodePre.next = sepNodeLast;
+        return node.next;
+    }
+
+    /**
+     * 给定两个有序整数数组 nums1 和 nums2，将 nums2 合并到 nums1 中，使得 num1 成为一个有序数组。
+     * <p>
+     * 说明:
+     * <p>
+     * 初始化 nums1 和 nums2 的元素数量分别为 m 和 n。
+     * 你可以假设 nums1 有足够的空间（空间大小大于或等于 m + n）来保存 nums2 中的元素。
+     * 示例:
+     * <p>
+     * 输入:
+     * nums1 = [1,2,3,0,0,0], m = 3
+     * nums2 = [2,5,6],       n = 3
+     * <p>
+     * 输出: [1,2,2,3,5,6]
+     */
+    public void merge(int[] nums1, int m, int[] nums2, int n) {
+        int index1 = 0;
+        int index2 = 0;
+        int index = 0;
+        int[] tmp = new int[nums1.length];
+        while (index1 < m && index2 < n) {
+            if (nums1[index1] < nums2[index2]) {
+                tmp[index] = nums1[index1];
+                index1++;
+            } else {
+                tmp[index] = nums2[index2];
+                index2++;
+            }
+            index++;
+        }
+        if (index1 == m) {
+            for (int i = index2; i < n; i++) {
+                tmp[index] = nums2[i];
+                index++;
+            }
+        } else {
+            for (int i = index1; i < m; i++) {
+                tmp[index] = nums1[i];
+                index++;
+            }
+        }
+        for (int i = 0; i < tmp.length; i++) {
+            nums1[i] = tmp[i];
+        }
+    }
+
+    /**
+     * 给定一个排序链表，删除所有重复的元素，使得每个元素只出现一次。
+     * <p>
+     * 示例 1:
+     * <p>
+     * 输入: 1->1->2
+     * 输出: 1->2
+     * 示例 2:
+     * <p>
+     * 输入: 1->1->2->3->3
+     * 输出: 1->2->3
+     */
+    public ListNode deleteDuplicates(ListNode head) {
+        if (head == null || head.next == null) {
+            return head;
+        }
+
+        ListNode node = new ListNode(0);
+        ListNode pre = head;
+        node.next = head;
+        head = head.next;
+        int val;
+        while (head != null) {
+            val = head.val;
+            if (pre.val != val) {
+                pre.next = head;
+                pre = head;
+            } else {
+                pre.next = null;
+            }
+            head = head.next;
+        }
+        return node.next;
     }
 }
