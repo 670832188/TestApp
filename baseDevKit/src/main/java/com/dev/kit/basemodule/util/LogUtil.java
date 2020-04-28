@@ -19,63 +19,31 @@ public class LogUtil {
     private static boolean logOn = true;
 
     public static void e(String log) {
-        if (logOn) {
-            Log.e(getTag(), log);
-        }
+        Log.e(getTag(), log);
     }
 
     public static void e(String tag, String log) {
-        if (logOn) {
-            Log.e(tag, log);
-        }
+        Log.e(tag, log);
     }
 
     public static void e(Throwable e) {
-        if (logOn) {
-            Log.e(getTag(), e.getMessage(), e);
-        }
+        Log.e(getTag(), e.getMessage(), e);
     }
 
     public static void e(String msg, Throwable e) {
-        if (logOn) {
-            Log.e(getTag(), msg, e);
-        }
+        Log.e(getTag(), msg, e);
     }
 
     public static void w(String log) {
-        if (logOn) {
-            Log.w(getTag(), log);
-        }
+        Log.w(getTag(), log);
     }
 
     public static void w(String tag, String log) {
-        if (logOn) {
-            Log.w(tag, log);
-        }
+        Log.w(tag, log);
     }
 
     public static void w(Throwable e) {
-        if (logOn) {
-            Log.w(getTag(), e.getMessage(), e);
-        }
-    }
-
-    public static void i(String log) {
-        if (logOn) {
-            Log.i(getTag(), log);
-        }
-    }
-
-    public static void i(String tag, String log) {
-        if (logOn) {
-            Log.i(tag, log);
-        }
-    }
-
-    public static void i(Throwable e) {
-        if (logOn) {
-            Log.i(getTag(), e.getMessage(), e);
-        }
+        Log.w(getTag(), e.getMessage(), e);
     }
 
     public static void d(String log) {
@@ -96,22 +64,29 @@ public class LogUtil {
         }
     }
 
+    public static void i(String log) {
+        Log.i(getTag(), log);
+    }
+
+    public static void i(String tag, String log) {
+        Log.i(tag, log);
+    }
+
+    public static void i(Throwable e) {
+        Log.i(getTag(), e.getMessage(), e);
+    }
+
+
     public static void v(String log) {
-        if (logOn) {
-            Log.v(getTag(), log);
-        }
+        Log.v(getTag(), log);
     }
 
     public static void v(String tag, String log) {
-        if (logOn) {
-            Log.v(tag, log);
-        }
+        Log.v(tag, log);
     }
 
     public static void v(Throwable e) {
-        if (logOn) {
-            Log.v(getTag(), e.getMessage(), e);
-        }
+        Log.v(getTag(), e.getMessage(), e);
     }
 
     private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -148,10 +123,6 @@ public class LogUtil {
 
     private static String getTag() {
         StackTraceElement[] sts = Thread.currentThread().getStackTrace();
-
-        if (sts == null) {
-            return "LogUtil";
-        }
 
         for (StackTraceElement st : sts) {
             if (st.isNativeMethod()) {
