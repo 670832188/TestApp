@@ -91,7 +91,7 @@ public class LogUtil {
 
     private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private static final String LOG_FILE_PATH = Environment.getExternalStorageDirectory().getAbsolutePath()
-            + File.separator + "miFamily" + File.separator + "errorLog.txt";
+            + File.separator + "errorLog.txt";
 
     public static synchronized void writeException2File(Throwable ex) {// 新建或打开日志文件
         Date nowTime = new Date();

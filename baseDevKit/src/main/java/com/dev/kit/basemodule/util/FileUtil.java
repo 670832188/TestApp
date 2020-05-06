@@ -3,6 +3,7 @@ package com.dev.kit.basemodule.util;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.text.TextUtils;
@@ -10,6 +11,11 @@ import android.util.Log;
 import android.webkit.MimeTypeMap;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 public class FileUtil {
 
@@ -222,5 +228,39 @@ public class FileUtil {
             return mimeType;
         }
         return "file/*";
+    }
+
+    public static void copy(String srcPath, String dstPath) throws IOException {
+        File src = new File(srcPath);
+        if (!src.exists()) {
+            throw new RuntimeException("source patch does not exist ");
+        }
+        File dst = new File(dstPath);
+        if (!dst.getParentFile().exists()) {
+            dst.getParentFile().mkdirs();
+        }
+        InputStream in = new FileInputStream(src);
+        try {
+            OutputStream out = new FileOutputStream(dst);
+            try {
+                // Transfer bytes from in to out
+                byte[] buf = new byte[1024];
+                int len;
+                while ((len = in.read(buf)) > 0) {
+                    out.write(buf, 0, len);
+                }
+            } finally {
+                out.close();
+            }
+        } finally {
+            in.close();
+        }
+    }
+
+    public static boolean sdCardIsAvailable() {
+        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+            return Environment.getExternalStorageDirectory().canWrite();
+        } else
+            return false;
     }
 }

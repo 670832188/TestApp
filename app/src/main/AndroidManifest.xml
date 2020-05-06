@@ -10,7 +10,10 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
     <permission android:name="com.dev.kit.testapp.PROVIDER" />
+
     <application
         android:name=".MainApplication"
         android:allowBackup="true"
@@ -23,19 +26,19 @@
         <activity android:name=".activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <activity android:name=".activity.TouchEventTestActivity" />
         <activity
             android:name=".rxJavaAndRetrofitTest.NetRequestDemoActivity"
             android:taskAffinity=".cuiyan"
             android:theme="@style/BaseTheme.TranslucentStatusTheme" />
         <activity
-            android:launchMode="singleInstance"
-            android:name=".pagerTest.PagerTestActivity" />
+            android:name=".pagerTest.PagerTestActivity"
+            android:launchMode="singleInstance" />
         <activity android:name=".animation.PropertyAnimationEntryActivity" />
         <activity android:name=".animation.BallsFallDownSimultaneously" />
         <activity android:name=".animation.CountDownActivity" />
@@ -49,7 +52,7 @@
         <activity android:name=".indicator.CustomIndicatorActivity" />
         <activity android:name=".recordingAnimation.RecordingAnimationActivity" />
         <activity android:name=".mediaSelectorTest.MediaSelectorTestActivity" />
-        <activity android:name="com.dev.kit.basemodule.activity.VideoRecordActivity" />
+
         <activity
             android:name=".videoRecord.RecordVideoActivity"
             android:screenOrientation="portrait" />
@@ -67,10 +70,20 @@
             android:exported="true"
             android:process=":com.dev.kit.testapp.authlogin">
             <intent-filter>
-                <action android:name="com.dev.kit.testapp.ipcTest.service.AuthLoginService"/>
+                <action android:name="com.dev.kit.testapp.ipcTest.service.AuthLoginService" />
             </intent-filter>
         </service>
 
+        <receiver android:name=".receiver.BootBroadcastReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MYTEST" />
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </receiver>
+        <service
+            android:name=".TestJobService"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
     </application>
 
 </manifest>
