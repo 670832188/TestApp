@@ -16,10 +16,10 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.dev.kit.basemodule.activity.BaseStateViewActivity;
 import com.dev.kit.basemodule.netRequest.Configs.ApiConstants;
-import com.dev.kit.basemodule.netRequest.model.BaseController;
+import com.dev.kit.basemodule.netRequest.model.RequestSender;
 import com.dev.kit.basemodule.netRequest.subscribers.NetRequestCallback;
 import com.dev.kit.basemodule.netRequest.subscribers.NetRequestSubscriber;
-import com.dev.kit.basemodule.netRequest.util.BaseServiceUtil;
+import com.dev.kit.basemodule.netRequest.util.RequestServiceUtil;
 import com.dev.kit.basemodule.util.EasyBlur;
 import com.dev.kit.basemodule.util.ImageUtil;
 import com.dev.kit.basemodule.util.MIUIHelper;
@@ -133,8 +133,8 @@ public class NetRequestDemoActivity extends BaseStateViewActivity {
                 super.onFinish();
             }
         }, this);
-        Observable<NewsResult> observable = BaseServiceUtil.createService(ApiService.class, ApiConstants.JUHE_BASE_URL).getQQSportNews("69", Constant.JUHE_API_KEY);
-        BaseController.sendRequest(this, subscriber, observable);
+        Observable<NewsResult> observable = RequestServiceUtil.createService(ApiService.class, ApiConstants.JUHE_BASE_URL).getQQSportNews("69", Constant.JUHE_API_KEY);
+        RequestSender.sendRequest(this, subscriber, observable);
     }
 
 }

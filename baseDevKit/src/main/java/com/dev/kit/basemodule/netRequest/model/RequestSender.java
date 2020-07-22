@@ -12,7 +12,7 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
  * Created by cuiyan on 16/6/3 10:36
  */
 
-public class BaseController {
+public class RequestSender {
     /**
      * @param subscriber 订阅者
      */

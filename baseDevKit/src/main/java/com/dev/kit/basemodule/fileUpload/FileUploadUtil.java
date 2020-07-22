@@ -4,10 +4,10 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.dev.kit.basemodule.R;
-import com.dev.kit.basemodule.netRequest.model.BaseController;
+import com.dev.kit.basemodule.netRequest.model.RequestSender;
 import com.dev.kit.basemodule.netRequest.subscribers.NetRequestCallback;
 import com.dev.kit.basemodule.netRequest.subscribers.NetRequestSubscriber;
-import com.dev.kit.basemodule.netRequest.util.BaseServiceUtil;
+import com.dev.kit.basemodule.netRequest.util.RequestServiceUtil;
 import com.dev.kit.basemodule.result.BaseResult;
 import com.dev.kit.basemodule.util.FileUtil;
 import com.dev.kit.basemodule.util.ImageUtil;
@@ -72,7 +72,7 @@ public class FileUploadUtil {
                 super.onError(throwable);
             }
         }, context, true, null);
-        Observable observable = BaseServiceUtil.createService(FileUploadApiService.class).uploadFile(filePartList);
-        BaseController.sendRequest(subscriber, observable);
+        Observable observable = RequestServiceUtil.createService(FileUploadApiService.class).uploadFile(filePartList);
+        RequestSender.sendRequest(subscriber, observable);
     }
 }
