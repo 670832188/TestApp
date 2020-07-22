@@ -63,9 +63,4 @@
         </RelativeLayout>
     </LinearLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/slide_line_height"
-        android:background="@color/color_light_grey" />
-
 </LinearLayout>

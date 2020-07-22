@@ -1,6 +1,7 @@
 package com.dev.kit.basemodule.surpport;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,9 +15,9 @@ import java.util.List;
  * Created by cuiyan on 16-10-20.
  */
 public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<RecyclerViewHolder> {
-    protected List<T> dataList;
+    private List<T> dataList;
     protected Context context;
-    protected int itemViewLayoutId;
+    private int itemViewLayoutId;
     private OnItemClickListener onItemClickListener;
     private OnItemLongClickListener onItemLongClickListener;
 
@@ -26,11 +27,12 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
         this.itemViewLayoutId = itemViewLayoutId;
     }
 
-    public RecyclerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    @NonNull
+    public RecyclerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         return RecyclerViewHolder.getViewHolder(context, parent, itemViewLayoutId);
     }
 
-    public void onBindViewHolder(final RecyclerViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull final RecyclerViewHolder holder, final int position) {
         fillData(holder, position);
         if (onItemClickListener != null) {
             holder.getItemView().setOnClickListener(new View.OnClickListener() {
@@ -62,44 +64,37 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
     public abstract void fillData(RecyclerViewHolder holder, int position);
 
     public void appendData(List<T> expendedData) {
-        synchronized (this) {
-            if (dataList != null) {
-                dataList.addAll(expendedData);
-                notifyDataSetChanged();
-            }
+        if (dataList != null && expendedData != null && !expendedData.isEmpty()) {
+            dataList.addAll(expendedData);
+            notifyDataSetChanged();
         }
     }
 
     public void appendItem(T item, boolean updateSingleItem) {
-        synchronized (this) {
-            if (dataList != null) {
-                dataList.add(item);
-                if (updateSingleItem) {
-                    notifyItemInserted(dataList.size() - 1);
-                } else {
-                    notifyDataSetChanged();
-                }
+        if (dataList != null) {
+            dataList.add(item);
+            if (updateSingleItem) {
+                notifyItemInserted(dataList.size() - 1);
+            } else {
+                notifyDataSetChanged();
             }
         }
     }
 
     public void updateDataList(List<T> dataList) {
-        synchronized (this) {
-            if (dataList != null) {
-                this.dataList.clear();
-                this.dataList.addAll(dataList);
-                notifyDataSetChanged();
-            }
+        if (dataList != null) {
+            this.dataList.clear();
+            this.dataList.addAll(dataList);
+            notifyDataSetChanged();
         }
     }
 
     public void removeItem(T item, boolean updateSingleItem) {
-        synchronized (this) {
-            int itemPos = -1;
-            if (updateSingleItem) {
-                itemPos = dataList.indexOf(item);
-            }
-            dataList.remove(item);
+        int itemPos = -1;
+        if (updateSingleItem) {
+            itemPos = dataList.indexOf(item);
+        }
+        if (dataList.remove(item)) {
             if (itemPos > 0) {
                 notifyItemRemoved(itemPos);
             } else {
@@ -109,21 +104,17 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
     }
 
     public void clearData() {
-        synchronized (this) {
-            if (dataList != null) {
-                dataList.clear();
-                notifyDataSetChanged();
-            }
+        if (dataList != null && !dataList.isEmpty()) {
+            dataList.clear();
+            notifyDataSetChanged();
         }
     }
 
     public void replaceData(int index, T data) {
-        synchronized (this) {
-            if (dataList != null && dataList.size() >= index + 1) {
-                dataList.remove(index);
-                dataList.add(index, data);
-                notifyDataSetChanged();
-            }
+        if (dataList != null && dataList.size() >= index + 1 && data != null) {
+            dataList.remove(index);
+            dataList.add(index, data);
+            notifyDataSetChanged();
         }
     }
 

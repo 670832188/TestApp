@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.annotation.NonNull;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -78,24 +79,20 @@ public abstract class CommonAdapter<T> extends BaseAdapter {
     /**
      * 追加数据
      */
-    public void appendData(List<T> list) {
-        synchronized (this) {
-            if (dataList != null) {
-                dataList.addAll(list);
-                notifyDataSetChanged();
-            }
+    public void appendData(@NonNull List<T> list) {
+        if (dataList != null && !list.isEmpty()) {
+            dataList.addAll(list);
+            notifyDataSetChanged();
         }
     }
 
     /**
      * 追加数据
      */
-    public void appendData(T item) {
-        synchronized (this) {
-            if (dataList != null) {
-                dataList.add(item);
-                notifyDataSetChanged();
-            }
+    public void appendData(@NonNull T item) {
+        if (dataList != null) {
+            dataList.add(item);
+            notifyDataSetChanged();
         }
     }
 
@@ -103,11 +100,9 @@ public abstract class CommonAdapter<T> extends BaseAdapter {
      * 移除数据
      */
     public void removeItem(int index) {
-        synchronized (this) {
-            if (dataList != null) {
-                dataList.remove(index);
-                notifyDataSetChanged();
-            }
+        if (dataList != null) {
+            dataList.remove(index);
+            notifyDataSetChanged();
         }
     }
 
@@ -115,11 +110,9 @@ public abstract class CommonAdapter<T> extends BaseAdapter {
      * 移除数据
      */
     public void removeData(List<T> list) {
-        synchronized (this) {
-            if (dataList != null) {
-                dataList.removeAll(list);
-                notifyDataSetChanged();
-            }
+        if (dataList != null) {
+            dataList.removeAll(list);
+            notifyDataSetChanged();
         }
     }
 
@@ -127,40 +120,32 @@ public abstract class CommonAdapter<T> extends BaseAdapter {
      * 移除数据
      */
     public void removeItem(T item) {
-        synchronized (this) {
-            if (dataList != null) {
-                dataList.remove(item);
-                notifyDataSetChanged();
-            }
+        if (dataList != null) {
+            dataList.remove(item);
+            notifyDataSetChanged();
         }
     }
 
     public void updateDataList(List<T> dataList) {
-        synchronized (this) {
-            if (this.dataList != null) {
-                this.dataList.clear();
-                this.dataList.addAll(dataList);
-                notifyDataSetChanged();
-            }
+        if (this.dataList != null) {
+            this.dataList.clear();
+            this.dataList.addAll(dataList);
+            notifyDataSetChanged();
         }
     }
 
     public void clear() {
-        synchronized (this) {
-            if (dataList != null) {
-                dataList.clear();
-                notifyDataSetChanged();
-            }
+        if (dataList != null) {
+            dataList.clear();
+            notifyDataSetChanged();
         }
     }
 
     public void replaceData(int index, T data) {
-        synchronized (this) {
-            if (dataList != null && dataList.size() >= index + 1) {
-                dataList.remove(index);
-                dataList.add(index, data);
-                notifyDataSetChanged();
-            }
+        if (dataList != null && dataList.size() >= index + 1) {
+            dataList.remove(index);
+            dataList.add(index, data);
+            notifyDataSetChanged();
         }
     }
 
