@@ -45,7 +45,7 @@
             android:background="@color/color_light_grey"
             android:gravity="center"
             android:padding="@dimen/margin_normal"
-            android:text="文件上传示例"
+            android:text="Bitmap测试"
             android:textSize="14sp" />
 
         <TextView

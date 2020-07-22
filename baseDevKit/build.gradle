@@ -1,6 +1,7 @@
 apply plugin: 'com.android.library'
 def supportVersion = "27.1.1"
-def retrofitVersion = "2.4.0"
+def retrofitVersion = "2.9.0"
+def rxJavaVersion = "3.0.4"
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
@@ -36,10 +37,13 @@ dependencies {
     api "com.android.support:cardview-v7:$supportVersion"
     
     api "com.squareup.retrofit2:retrofit:$retrofitVersion"
-    api "com.squareup.retrofit2:adapter-rxjava2:$retrofitVersion"
-    api "com.squareup.retrofit2:retrofit-converters:$retrofitVersion"
+    api "com.squareup.retrofit2:adapter-rxjava3:$retrofitVersion"
     api "com.squareup.retrofit2:converter-gson:$retrofitVersion"
-    api 'com.trello.rxlifecycle2:rxlifecycle-android:2.2.2'
+    api 'com.squareup.retrofit2:retrofit-converters:2.4.0'
+
+
+    api "io.reactivex.rxjava3:rxjava:$rxJavaVersion"
+    api 'com.trello.rxlifecycle4:rxlifecycle-android:4.0.0'
 
     api 'com.google.zxing:core:3.3.0'
 

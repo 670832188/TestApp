@@ -14,8 +14,8 @@ import com.dev.kit.basemodule.netRequest.util.OnNetProgressCancelListener;
 import com.dev.kit.basemodule.result.BaseResult;
 import com.dev.kit.basemodule.util.ToastUtil;
 
-import io.reactivex.Observer;
-import io.reactivex.disposables.Disposable;
+import io.reactivex.rxjava3.core.Observer;
+import io.reactivex.rxjava3.disposables.Disposable;
 import retrofit2.HttpException;
 
 

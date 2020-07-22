@@ -3,7 +3,7 @@ package com.dev.kit.testapp.rxJavaAndRetrofitTest;
 
 import com.dev.kit.basemodule.netRequest.Configs.ApiConstants;
 
-import io.reactivex.Observable;
+import io.reactivex.rxjava3.core.Observable;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.http.GET;

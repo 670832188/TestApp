@@ -4,7 +4,7 @@ import com.dev.kit.basemodule.netRequest.Configs.ApiConstants;
 
 import java.util.List;
 
-import io.reactivex.Observable;
+import io.reactivex.rxjava3.core.Observable;
 import okhttp3.MultipartBody;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;

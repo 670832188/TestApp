@@ -28,7 +28,8 @@ import com.dev.kit.testapp.view.GradualTitleView;
 
 import java.util.ArrayList;
 
-import io.reactivex.Observable;
+import io.reactivex.rxjava3.core.Observable;
+
 
 /**
  * 网络请求组件使用示例
@@ -132,7 +133,6 @@ public class NetRequestDemoActivity extends BaseStateViewActivity {
                 super.onFinish();
             }
         }, this);
-
         Observable<NewsResult> observable = BaseServiceUtil.createService(ApiService.class, ApiConstants.JUHE_BASE_URL).getQQSportNews("69", Constant.JUHE_API_KEY);
         BaseController.sendRequest(this, subscriber, observable);
     }

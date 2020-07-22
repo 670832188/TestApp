@@ -108,6 +108,13 @@ public class DisplayUtil {
         return (int) (mDisplayUtil.mScaleFactor * dpValue + 0.5f);
     }
 
+    public static int px2dp(float pxValue) {
+        if (mDisplayUtil == null) {
+            getInstance();
+        }
+        return (int) (pxValue / mDisplayUtil.mScaleFactor + 0.5f);
+    }
+
     public static float getXDpi() {
         if (mDisplayUtil == null) {
             getInstance();

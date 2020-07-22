@@ -74,16 +74,7 @@
             </intent-filter>
         </service>
 
-        <receiver android:name=".receiver.BootBroadcastReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.MYTEST" />
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
-        </receiver>
-        <service
-            android:name=".TestJobService"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
+        <activity android:name=".activity.BitmapTestActivity" />
     </application>
 
 </manifest>

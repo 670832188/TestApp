@@ -1,36 +1,34 @@
 package com.dev.kit.testapp.activity;
 
 import android.Manifest;
+import android.app.ActivityManager;
+import android.app.AppOpsManager;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.LocaleList;
 import android.os.Looper;
+import android.os.PersistableBundle;
+import android.os.Process;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
+import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import com.dev.kit.basemodule.activity.BaseStateViewActivity;
 import com.dev.kit.basemodule.activity.VideoRecordActivity;
-import com.dev.kit.basemodule.netRequest.model.BaseController;
-import com.dev.kit.basemodule.netRequest.subscribers.NetRequestCallback;
-import com.dev.kit.basemodule.netRequest.subscribers.NetRequestSubscriber;
-import com.dev.kit.basemodule.netRequest.util.BaseServiceUtil;
-import com.dev.kit.basemodule.netRequest.util.CommonInterceptor;
-import com.dev.kit.basemodule.util.DisplayUtil;
-import com.dev.kit.basemodule.util.FileUtil;
 import com.dev.kit.basemodule.util.LogUtil;
 import com.dev.kit.basemodule.util.PermissionRequestUtil;
 import com.dev.kit.basemodule.util.ToastUtil;
@@ -44,36 +42,47 @@ import com.dev.kit.testapp.mediaSelectorTest.MediaSelectorTestActivity;
 import com.dev.kit.testapp.multiGroupHistogram.MultiGroupHistogramActivity;
 import com.dev.kit.testapp.pagerTest.PagerTestActivity;
 import com.dev.kit.testapp.recordingAnimation.RecordingAnimationActivity;
-import com.dev.kit.testapp.rxJavaAndRetrofitTest.ApiService;
 import com.dev.kit.testapp.rxJavaAndRetrofitTest.NetRequestDemoActivity;
-import com.dev.kit.testapp.serviceTest.TestIntentService;
 import com.dev.kit.testapp.serviceTest.TestService;
 import com.dev.kit.testapp.videoRecord.RecordVideoActivity;
+import com.google.gson.Gson;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
-
-import io.reactivex.Observable;
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
 
 public class MainActivity extends BaseStateViewActivity implements View.OnClickListener, ServiceConnection {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            Log.e("mytag", "savedInstanceState: " + new Gson().toJson(savedInstanceState));
+        }
+        LogUtil.e("mytag", "isMIUI: " + isMIUI());
+        LogUtil.e("mytag", "canBackgroundStart " + canBackgroundStart(this));
         init();
         Locale locale;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             locale = LocaleList.getDefault().get(0);
         } else locale = Locale.getDefault();
 
+        try {
+            TypedValue value = new TypedValue();
+            getResources().openRawResource(R.mipmap.iv_ts0, value);
+            Log.e("mytag", "TypedValue000: " + new Gson().toJson(value));
+            value = new TypedValue();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         String language = locale.getLanguage() + "-" + locale.getCountry();
-        LogUtil.e("language: " + language);
+        registerReceiver();
     }
 
     @Override
@@ -98,60 +107,14 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
         setOnClickListener(R.id.tv_db_test, this);
         setOnClickListener(R.id.tv_provider_test, this);
         setContentState(STATE_DATA_CONTENT);
-        ImageView iv1 = findViewById(R.id.iv_1);
-        ImageView iv2 = findViewById(R.id.iv_2);
-        Bitmap bitmap0 = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_delete);
-        Bitmap bitmap1 = ((BitmapDrawable) iv1.getDrawable()).getBitmap();
-        Bitmap bitmap2 = ((BitmapDrawable) iv2.getDrawable()).getBitmap();
-
-        LogUtil.e("mytag", "bitmapWH: " + bitmap0.getWidth() + "*" + bitmap0.getHeight() + "---" + bitmap1.getWidth() + "*" + bitmap1.getHeight() + "---" + bitmap2.getWidth() + "*" + bitmap2.getHeight());
-        LogUtil.e("mytag", "bitmapSize: " + bitmap0.getByteCount() + " " + bitmap1.getByteCount() + " " + bitmap2.getByteCount());
-        LogUtil.e("mytag", "bitmapMemory: " + bitmap0.getAllocationByteCount() + " " + bitmap1.getAllocationByteCount() + " " + bitmap2.getAllocationByteCount());
-        LogUtil.e("mytag", "density: " + DisplayUtil.getScaleFactor() + " " + DisplayUtil.getDensityDpi() + " " + DisplayUtil.getScreenResolution());
-        float w = DisplayUtil.getScreenWidth() / DisplayUtil.getXDpi();
-        float h = DisplayUtil.getScreenHeight() / DisplayUtil.getYdpi();
-        LogUtil.e("mytag", "pWH: " + w + " " + h + " " + DisplayUtil.getScreenHeight());
     }
 
-    private void uploadFile() {
-        CommonInterceptor.updateOrInsertCommonParam("key1", "value1");
-        String dirFilePath = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "123";
-        File file = null;
-        if (FileUtil.isDir(dirFilePath)) {
-            File dirFile = new File(dirFilePath);
-            File[] fileList = dirFile.listFiles();
-            if (fileList != null && fileList.length > 0) {
-                Random random = new Random();
-                int fileIndex = random.nextInt(fileList.length);
-                file = fileList[fileIndex];
-            }
-        } else {
-            return;
-        }
-        if (file == null) {
-            return;
-        }
-        LogUtil.e("fileName: " + file.getName());
-        RequestBody userParamBody = RequestBody.create(null, "zhangsan");
-        String fileType = FileUtil.getMimeType(file.getAbsolutePath());
-        MediaType mediaType = MediaType.parse(fileType);
-        RequestBody fileParamBody = RequestBody.create(mediaType, file);
-        MultipartBody.Part filePart = MultipartBody.Part.createFormData("userAvatar", file.getName(), fileParamBody);
-        NetRequestSubscriber<String> subscriber = new NetRequestSubscriber<>(new NetRequestCallback<String>() {
-        }, this);
-        Observable<String> observable = BaseServiceUtil.createService(ApiService.class).uploadFile(userParamBody, filePart);
-        BaseController.sendRequest(this, subscriber, observable);
-    }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.iv_left: {
-//                finish();
-                for (int i = 0; i < 10; i++) {
-                    Intent intent = new Intent(this, TestIntentService.class);
-                    startService(intent);
-                }
+                finish();
                 break;
             }
             case R.id.tv_net_test: {
@@ -159,21 +122,7 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
                 break;
             }
             case R.id.tv_upload_file: {
-                if (PermissionRequestUtil.isPermissionGranted(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                    uploadFile();
-                } else {
-                    PermissionRequestUtil.requestPermission(MainActivity.this, new PermissionRequestUtil.OnPermissionRequestListener() {
-                        @Override
-                        public void onPermissionsGranted() {
-                            uploadFile();
-                        }
-
-                        @Override
-                        public void onPermissionsDenied(String... deniedPermissions) {
-                            showToast("您拒绝了存储读取权限，应用无法访问您的文件");
-                        }
-                    }, Manifest.permission.READ_EXTERNAL_STORAGE);
-                }
+                startActivity(new Intent(this, BitmapTestActivity.class));
                 break;
             }
             case R.id.tv_vp_test: {
@@ -228,13 +177,21 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
 
     @Override
     protected void onDestroy() {
+
         super.onDestroy();
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
+        Log.e("mytag", "111111111111");
         outState.putString("saveState", "saveState");
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        Log.e("mytag", "22222222222222");
+        super.onRestoreInstanceState(savedInstanceState);
     }
 
     private void startVideoRecord(final int flag) {
@@ -341,10 +298,29 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
         cursor.close();
     }
 
+    Object object;
+
     @Override
     public void onResume() {
-//        bindService(new Intent(this, TestService.class), this, BIND_AUTO_CREATE);
         super.onResume();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState, @NonNull PersistableBundle outPersistentState) {
+        Log.e("mytag", "00000000000000");
+        super.onSaveInstanceState(outState, outPersistentState);
+    }
+
+    private void registerReceiver() {
+        IntentFilter filter = new IntentFilter(getPackageName() + ".qwe");
+        BroadcastReceiver receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+
+            }
+        };
+
+        registerReceiver(receiver, filter);
     }
 
     @Override
@@ -384,5 +360,69 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
     @Override
     public void onServiceDisconnected(ComponentName name) {
         LogUtil.e("mytag", "onServiceDisconnected");
+    }
+
+    private void getMemoryInfo() {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        ActivityManager.MemoryInfo info = new ActivityManager.MemoryInfo();
+        manager.getMemoryInfo(info);
+        Log.e("mytag", "系统总内存:" + (info.totalMem / (1024 * 1024)) + "M");
+        Log.e("mytag", "系统剩余内存:" + (info.availMem / (1024 * 1024)) + "M");
+        Log.e("mytag", "系统是否处于低内存运行：" + info.lowMemory);
+        Log.e("mytag", "系统剩余内存低于" + (info.threshold / (1024 * 1024)) + "M时为低内存运行");
+        Log.e("mytag", "应用内存分配：" + manager.getMemoryClass());
+        Log.e("mytag", "应用内存分配上限：" + manager.getLargeMemoryClass());
+        float maxMemory = (float) (Runtime.getRuntime().maxMemory() * 1.0 / (1024 * 1024));
+        //当前分配的总内存
+        float totalMemory = (float) (Runtime.getRuntime().totalMemory() * 1.0 / (1024 * 1024));
+        //剩余内存
+        float freeMemory = (float) (Runtime.getRuntime().freeMemory() * 1.0 / (1024 * 1024));
+        Log.e("mytag", "应用内存分配上限：" + maxMemory);
+        Log.e("mytag", "当前应用总内存：" + totalMemory);
+        Log.e("mytag", "当前应用空闲内存：" + freeMemory);
+    }
+
+
+    /**
+     * 检测小米手机是否具有后台弹出界面权限
+     */
+    public static boolean canBackgroundStart(Context context) {
+        AppOpsManager ops = (AppOpsManager) context.getSystemService(Context.APP_OPS_SERVICE);
+        if (ops == null) {
+            return false;
+        }
+        try {
+            int op = 10021;
+            Method method = ops.getClass().getMethod("checkOpNoThrow", int.class, int.class, String.class);
+            Integer result = (Integer) method.invoke(ops, op, Process.myUid(), context.getPackageName());
+            return result == AppOpsManager.MODE_ALLOWED;
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e("mytag", e.getMessage(), e);
+        }
+        return false;
+    }
+
+    public static boolean isMIUI() {
+        String line = null;
+        BufferedReader input = null;
+        try {
+            java.lang.Process p = Runtime.getRuntime().exec("getprop " + "ro.miui.ui.version.name");
+            input = new BufferedReader(new InputStreamReader(p.getInputStream()), 1024);
+            line = input.readLine();
+            input.close();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        } finally {
+            if (input != null) {
+                try {
+                    input.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        Log.e("mytag", "version: " + line);
+        return !TextUtils.isEmpty(line);
     }
 }
