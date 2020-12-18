@@ -3,12 +3,13 @@ package com.dev.kit.basemodule.util;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 import android.util.SparseArray;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 
 /**
  * 权限申请工具类

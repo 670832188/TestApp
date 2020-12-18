@@ -2,9 +2,8 @@ package com.dev.kit.basemodule.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.CallSuper;
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
+import androidx.annotation.CallSuper;
+import androidx.annotation.NonNull;
 import android.view.View;
 
 import com.trello.rxlifecycle4.LifecycleProvider;
@@ -13,6 +12,7 @@ import com.trello.rxlifecycle4.RxLifecycle;
 import com.trello.rxlifecycle4.android.FragmentEvent;
 import com.trello.rxlifecycle4.android.RxLifecycleAndroid;
 
+import androidx.fragment.app.Fragment;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.BehaviorSubject;
 

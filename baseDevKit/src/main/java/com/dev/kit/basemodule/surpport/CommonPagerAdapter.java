@@ -1,7 +1,6 @@
 package com.dev.kit.basemodule.surpport;
 
-import android.support.annotation.NonNull;
-import android.support.v4.view.PagerAdapter;
+import androidx.annotation.NonNull;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;

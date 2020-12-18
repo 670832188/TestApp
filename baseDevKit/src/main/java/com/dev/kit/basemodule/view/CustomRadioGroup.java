@@ -52,7 +52,7 @@ public class CustomRadioGroup extends LinearLayout {
         TypedArray attributes = context.obtainStyledAttributes(
                 attrs, R.styleable.CustomRadioGroup);
 
-        int value = attributes.getResourceId(R.styleable.CustomRadioGroup_checkedButton, View.NO_ID);
+        int value = attributes.getResourceId(R.styleable.CustomRadioGroup_checkedBtn, View.NO_ID);
         if (value != View.NO_ID) {
             mCheckedId = value;
         }

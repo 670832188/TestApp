@@ -1,9 +1,9 @@
 package com.dev.kit.basemodule.netRequest.util;
 
-import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.dev.kit.basemodule.util.LogUtil;
+import com.dev.kit.basemodule.util.StringUtil;
 
 import org.json.JSONObject;
 
@@ -17,6 +17,7 @@ import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
 import okhttp3.FormBody;
 import okhttp3.Headers;
 import okhttp3.Interceptor;
@@ -34,7 +35,7 @@ import okio.Buffer;
  */
 public class CommonInterceptor implements Interceptor {
 
-    private static Map<String, String> commonParams;
+    private static Map<String, String> commonParams = new HashMap<>();
 
     public synchronized static void setCommonParam(Map<String, String> commonParams) {
         if (commonParams != null) {
@@ -44,7 +45,10 @@ public class CommonInterceptor implements Interceptor {
                 CommonInterceptor.commonParams = new HashMap<>();
             }
             for (String paramKey : commonParams.keySet()) {
-                CommonInterceptor.commonParams.put(paramKey, commonParams.get(paramKey));
+                String paramValue = commonParams.get(paramKey);
+                if (!StringUtil.isEmpty(paramValue)) {
+                    CommonInterceptor.commonParams.put(paramKey, paramValue);
+                }
             }
         }
     }
@@ -73,12 +77,11 @@ public class CommonInterceptor implements Interceptor {
                 sbJson.append(line);
                 line = reader.readLine();
             } while (line != null);
-            LogUtil.e("response: " + sbJson.toString());
+            LogUtil.d("response: " + sbJson.toString());
         } catch (Exception e) {
-            e.printStackTrace();
-            LogUtil.e(e.getMessage(), e);
+            String msg = String.format("request error for %s", request.url().toString());
+            LogUtil.e(msg, e);
         }
-//        saveCookies(response, request.url().toString());
         return response;
     }
 
@@ -97,25 +100,23 @@ public class CommonInterceptor implements Interceptor {
     }
 
     private Request rebuildRequest(Request request) throws IOException {
-        Request newRequest;
-        if ("POST".equals(request.method())) {
-            newRequest = rebuildPostRequest(request);
-        } else if ("GET".equals(request.method())) {
-            newRequest = rebuildGetRequest(request);
-        } else {
-            newRequest = request;
+        LogUtil.d("requestUrl: " + request.url().toString());
+        if (commonParams.size() == 0) {
+            return request;
         }
-        LogUtil.e("requestUrl: " + newRequest.url().toString());
-        return newRequest;
+        if ("POST".equals(request.method())) {
+            return rebuildPostRequest(request);
+        } else if ("GET".equals(request.method())) {
+            return rebuildGetRequest(request);
+        } else {
+            return request;
+        }
     }
 
     /**
      * 对post请求添加统一参数
      */
     private Request rebuildPostRequest(Request request) {
-//        if (commonParams == null || commonParams.size() == 0) {
-//            return request;
-//        }
         Map<String, String> signParams = new HashMap<>(); // 假设你的项目需要对参数进行签名
         RequestBody originalRequestBody = request.body();
         assert originalRequestBody != null;
@@ -129,13 +130,16 @@ public class CommonInterceptor implements Interceptor {
                 signParams.put(requestBody.name(i), requestBody.value(i));
             }
             if (commonParams != null && commonParams.size() > 0) {
-                signParams.putAll(commonParams);
                 for (String paramKey : commonParams.keySet()) {
-                    builder.add(paramKey, commonParams.get(paramKey));
+                    String paramValue = commonParams.get(paramKey);
+                    if (!StringUtil.isEmpty(paramValue)) {
+                        signParams.put(paramKey, paramValue);
+                        builder.add(paramKey, paramValue);
+                    }
                 }
             }
             // ToDo 此处可对参数做签名处理 signParams
-            /**
+            /*
              * String sign = SignUtil.sign(signParams);
              * builder.add("sign", sign);
              */
@@ -208,19 +212,20 @@ public class CommonInterceptor implements Interceptor {
                     }
                 }
             }
-            if (commonParams != null && commonParams.size() > 0) {
-                signParams.putAll(commonParams);
-                for (String paramKey : commonParams.keySet()) {
+            signParams.putAll(commonParams);
+            for (String paramKey : commonParams.keySet()) {
+                String paramValue = commonParams.get(paramKey);
+                if (!StringUtil.isEmpty(paramValue)) {
                     // 两种方式添加公共参数
                     // method 1
-                    multipartBodybuilder.addFormDataPart(paramKey, commonParams.get(paramKey));
+                    multipartBodybuilder.addFormDataPart(paramKey, paramValue);
                     // method 2
 //                    MultipartBody.Part part = MultipartBody.Part.createFormData(paramKey, commonParams.get(paramKey));
 //                    multipartBodybuilder.addPart(part);
                 }
             }
             // ToDo 此处可对参数做签名处理 signParams
-            /**
+            /*
              * String sign = SignUtil.sign(signParams);
              * multipartBodybuilder.addFormDataPart("sign", sign);
              */
@@ -233,18 +238,19 @@ public class CommonInterceptor implements Interceptor {
                 } else {
                     jsonObject = new JSONObject(getParamContent(originalRequestBody));
                 }
-                if (commonParams != null && commonParams.size() > 0) {
-                    for (String commonParamKey : commonParams.keySet()) {
-                        jsonObject.put(commonParamKey, commonParams.get(commonParamKey));
+                for (String paramKey : commonParams.keySet()) {
+                    String paramValue = commonParams.get(paramKey);
+                    if (!StringUtil.isEmpty(paramValue)) {
+                        jsonObject.put(paramKey, paramValue);
                     }
                 }
                 // ToDo 此处可对参数做签名处理
-                /**
+                /*
                  * String sign = SignUtil.sign(signParams);
                  * jsonObject.put("sign", sign);
                  */
                 newRequestBody = RequestBody.create(originalRequestBody.contentType(), jsonObject.toString());
-                LogUtil.e(getParamContent(newRequestBody));
+                LogUtil.d(getParamContent(newRequestBody));
 
             } catch (Exception e) {
                 newRequestBody = originalRequestBody;
@@ -273,9 +279,6 @@ public class CommonInterceptor implements Interceptor {
      * 对get请求做统一参数处理
      */
     private Request rebuildGetRequest(Request request) {
-        if (commonParams == null || commonParams.size() == 0) {
-            return request;
-        }
         String url = request.url().toString();
         int separatorIndex = url.lastIndexOf("?");
         StringBuilder sb = new StringBuilder(url);

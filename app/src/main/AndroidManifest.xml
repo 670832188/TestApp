@@ -75,6 +75,7 @@
         </service>
 
         <activity android:name=".activity.BitmapTestActivity" />
+        <activity android:name=".activity.DecorationTestActivity"/>
     </application>
 
 </manifest>

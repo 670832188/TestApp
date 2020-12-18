@@ -3,7 +3,7 @@ package com.dev.kit.basemodule.util;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.StringRes;
+import androidx.annotation.StringRes;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.widget.Toast;
@@ -18,6 +18,9 @@ public class ToastUtil {
     private static Toast toast;
 
     public synchronized static void showToast(Context context, @StringRes int msgResId) {
+        if (context == null) {
+            return;
+        }
         String msg = context.getResources().getString(msgResId);
         showToast(context, msg);
     }

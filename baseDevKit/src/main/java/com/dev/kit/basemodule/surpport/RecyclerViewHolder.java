@@ -1,9 +1,10 @@
 package com.dev.kit.basemodule.surpport;
 
 import android.content.Context;
-import android.support.annotation.IdRes;
-import android.support.annotation.StringRes;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.IdRes;
+import androidx.annotation.StringRes;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;

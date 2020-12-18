@@ -3,11 +3,6 @@ package com.dev.kit.basemodule.activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.support.annotation.CallSuper;
-import android.support.annotation.DrawableRes;
-import android.support.annotation.IdRes;
-import android.support.annotation.NonNull;
-import android.support.annotation.StringRes;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
@@ -15,6 +10,12 @@ import android.widget.TextView;
 
 import com.dev.kit.basemodule.util.PermissionRequestUtil;
 import com.dev.kit.basemodule.util.ToastUtil;
+
+import androidx.annotation.CallSuper;
+import androidx.annotation.DrawableRes;
+import androidx.annotation.IdRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
 
 public class BaseActivity extends RxActivity {
 

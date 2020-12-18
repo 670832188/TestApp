@@ -1,138 +1,149 @@
 package com.dev.kit.basemodule.surpport;
 
-import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.dev.kit.basemodule.util.DisplayUtil;
+
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 
 /**
  * Created by cuiyan on 2018/5/15.
  */
 public class RecyclerDividerDecoration extends RecyclerView.ItemDecoration {
-    private boolean useSystemDefaultDivider;
-    private int thickness = DisplayUtil.dp2px(1);
+    private int thickness;
     private Drawable divider;
-    private int dividerType;
-    // 水平分割线
-    public static final int DIVIDER_TYPE_HORIZONTAL = 0;
-    // 垂直分割线
-    public static final int DIVIDER_TYPE_VERTICAL = 1;
-    // Grid类型分割线
-    public static final int DIVIDER_TYPE_GRID = 2;
+    private int layoutType;
+    public static final int LAYOUT_TYPE_HORIZONTAL = 0;
+    public static final int LAYOUT_TYPE_VERTICAL = 1;
+    public static final int LAYOUT_TYPE_GRID = 2;
 
-    //使用系统属性中的listDivider来添加，在app的AppTheme中设置
-    public static final int[] ATRRS = new int[]{
-            android.R.attr.listDivider
-    };
-
-    public RecyclerDividerDecoration(Context context, int layoutType) {
-        useSystemDefaultDivider = true;
-        TypedArray ta = context.obtainStyledAttributes(ATRRS);
-        divider = ta.getDrawable(0);
-        ta.recycle();
-        setLayoutType(layoutType);
+    public RecyclerDividerDecoration(int layoutType) {
+        this(layoutType, Integer.MIN_VALUE, DisplayUtil.dp2px(5));
     }
 
     public RecyclerDividerDecoration(int layoutType, int dividerColor, int thickness) {
-        divider = new ColorDrawable(dividerColor);
+        if (dividerColor != Integer.MIN_VALUE) {
+            divider = new ColorDrawable(dividerColor);
+        }
         this.thickness = thickness;
-        setLayoutType(layoutType);
+        setDividerType(layoutType);
     }
 
-    private void setLayoutType(int dividerType) {
-        switch (dividerType) {
-            case DIVIDER_TYPE_HORIZONTAL: {
-                break;
-            }
-            case DIVIDER_TYPE_VERTICAL: {
-                break;
-            }
-            case DIVIDER_TYPE_GRID: {
-                break;
-            }
-            default: {
-                throw new IllegalArgumentException("invalid orientation");
-            }
+    private void setDividerType(int layoutType) {
+        if (layoutType != LAYOUT_TYPE_HORIZONTAL && layoutType != LAYOUT_TYPE_VERTICAL && layoutType != LAYOUT_TYPE_GRID) {
+            throw new IllegalArgumentException("invalid layout type");
         }
-        this.dividerType = dividerType;
+        this.layoutType = layoutType;
     }
 
     @Override
     public void onDraw(Canvas c, RecyclerView parent, RecyclerView.State state) {
-        switch (dividerType) {
-            case DIVIDER_TYPE_HORIZONTAL: {
-                drawHorizontalLine(c, parent, state);
+        if (divider == null) {
+            return;
+        }
+        switch (layoutType) {
+            case LAYOUT_TYPE_HORIZONTAL: {
+                drawVerticalDivider(c, parent);
                 break;
             }
-            case DIVIDER_TYPE_VERTICAL: {
-                drawVerticalLine(c, parent, state);
+            case LAYOUT_TYPE_VERTICAL: {
+                drawHorizontalDivider(c, parent);
                 break;
             }
-            case DIVIDER_TYPE_GRID: {
+            case LAYOUT_TYPE_GRID: {
+                drawGridDivider(c, parent);
                 break;
             }
         }
     }
 
     //画横线, 这里的parent其实是显示在屏幕显示的这部分
-    public void drawHorizontalLine(Canvas c, RecyclerView parent, RecyclerView.State state) {
-        int left = parent.getPaddingLeft();
-        int right = parent.getWidth() - parent.getPaddingRight();
-        final int childCount = parent.getChildCount();
+    private void drawHorizontalDivider(Canvas c, RecyclerView parent) {
+        int childCount = parent.getChildCount();
         for (int i = 0; i < childCount; i++) {
-            final View child = parent.getChildAt(i);
-
-            //获得child的布局信息
+            View child = parent.getChildAt(i);
             RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) child.getLayoutParams();
+            int left = child.getLeft();
+            int right = child.getWidth() + left;
             int top = child.getBottom() + params.bottomMargin;
-            int thickness = useSystemDefaultDivider ? divider.getIntrinsicHeight() : this.thickness;
             final int bottom = top + thickness;
             divider.setBounds(left, top, right, bottom);
             divider.draw(c);
-            //Log.d("wnw", left + " " + top + " "+right+"   "+bottom+" "+i);
         }
     }
 
     //画竖线
-    public void drawVerticalLine(Canvas c, RecyclerView parent, RecyclerView.State state) {
-        int top = parent.getPaddingTop();
-        int bottom = parent.getHeight() - parent.getPaddingBottom();
+    private void drawVerticalDivider(Canvas c, RecyclerView parent) {
+        int childCount = parent.getChildCount();
+        for (int i = 0; i < childCount; i++) {
+            View child = parent.getChildAt(i);
+            RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) child.getLayoutParams();
+            int top = child.getTop();
+            int bottom = child.getHeight() + top;
+            int left = child.getRight() + params.rightMargin;
+            int right = left + thickness;
+            divider.setBounds(left, top, right, bottom);
+            divider.draw(c);
+
+        }
+    }
+
+    private void drawGridDivider(Canvas c, RecyclerView parent) {
         final int childCount = parent.getChildCount();
         for (int i = 0; i < childCount; i++) {
             final View child = parent.getChildAt(i);
 
-            //获得child的布局信息
-            final RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) child.getLayoutParams();
-            final int left = child.getRight() + params.rightMargin;
-            int thickness = useSystemDefaultDivider ? divider.getIntrinsicWidth() : this.thickness;
-            final int right = left + thickness;
+            int left = child.getLeft();
+            int right = left + child.getWidth() + thickness;
+            int top = child.getBottom();
+            int bottom = top + thickness;
+            divider.setBounds(left, top, right, bottom);
+            divider.draw(c);
+
+            left = child.getRight();
+            right = left + thickness;
+            top = child.getTop();
+            bottom = child.getHeight() + top + thickness;
             divider.setBounds(left, top, right, bottom);
             divider.draw(c);
         }
     }
 
-    //由于Divider也有长宽高，每一个Item需要向下或者向右偏移
     @Override
     public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-        switch (dividerType) {
-            case DIVIDER_TYPE_HORIZONTAL: {
-                int thickness = useSystemDefaultDivider ? divider.getIntrinsicHeight() : this.thickness;
-                outRect.set(0, 0, 0, thickness);
+        RecyclerView.LayoutManager manager = parent.getLayoutManager();
+        int childCount = parent.getAdapter().getItemCount();
+        int position = manager.getPosition(view);
+        switch (layoutType) {
+            case LAYOUT_TYPE_HORIZONTAL: {
+                if (position != childCount - 1) {
+                    outRect.right = thickness;
+                }
                 break;
             }
-            case DIVIDER_TYPE_VERTICAL: {
-                int thickness = useSystemDefaultDivider ? divider.getIntrinsicWidth() : this.thickness;
-                outRect.set(0, 0, thickness, 0);
+            case LAYOUT_TYPE_VERTICAL: {
+                if (position != childCount - 1) {
+                    outRect.bottom = thickness;
+                }
                 break;
             }
-            case DIVIDER_TYPE_GRID: {
+            case LAYOUT_TYPE_GRID: {
+                childCount = parent.getAdapter().getItemCount();
+                int spanCount = ((GridLayoutManager) manager).getSpanCount();
+                int column = position % spanCount;
+                outRect.left = column * thickness / spanCount;
+                outRect.right = thickness - (column + 1) * thickness / spanCount;
+                int totalRow = childCount / spanCount + (childCount % spanCount > 0 ? 1 : 0);
+                int row = position / spanCount + 1;
+                if (row != totalRow) {
+                    outRect.bottom = thickness;
+                }
                 break;
             }
         }

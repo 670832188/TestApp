@@ -31,4 +31,8 @@ public class StringUtil {
         spannableString.setSpan(new ForegroundColorSpan(color), startIndex, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         return spannableString;
     }
+
+    public static boolean isEmpty(CharSequence source) {
+        return source == null || source.toString().trim().length() == 0;
+    }
 }

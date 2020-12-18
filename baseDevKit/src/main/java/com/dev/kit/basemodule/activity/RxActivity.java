@@ -1,9 +1,8 @@
 package com.dev.kit.basemodule.activity;
 
 import android.os.Bundle;
-import android.support.annotation.CallSuper;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.CallSuper;
+import androidx.annotation.NonNull;
 
 
 import com.trello.rxlifecycle4.LifecycleProvider;
@@ -12,6 +11,7 @@ import com.trello.rxlifecycle4.RxLifecycle;
 import com.trello.rxlifecycle4.android.ActivityEvent;
 import com.trello.rxlifecycle4.android.RxLifecycleAndroid;
 
+import androidx.appcompat.app.AppCompatActivity;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.BehaviorSubject;
 

@@ -1,8 +1,9 @@
 package com.dev.kit.basemodule.pageTransformer;
 
-import android.support.annotation.NonNull;
-import android.support.v4.view.ViewCompat;
-import android.support.v4.view.ViewPager;
+import androidx.annotation.NonNull;
+import androidx.core.view.ViewCompat;
+import androidx.viewpager.widget.ViewPager;
+
 import android.view.View;
 
 import com.dev.kit.basemodule.util.DisplayUtil;

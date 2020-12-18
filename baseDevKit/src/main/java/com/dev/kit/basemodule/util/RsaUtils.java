@@ -3,7 +3,7 @@ package com.dev.kit.basemodule.util;
 import android.text.TextUtils;
 import android.util.Base64;
 
-import com.dev.kit.basemodule.netRequest.Configs.Config;
+import com.dev.kit.basemodule.netRequest.configs.Config;
 
 import java.security.KeyFactory;
 import java.security.KeyPair;
@@ -28,7 +28,7 @@ import javax.crypto.Cipher;
  */
 public final class RsaUtils {
     private static String RSA = "RSA";
-
+    private static final String ENCRYPT_MODE = "RSA/None/PKCS1Padding";
 
     /**
      * 随机获得密钥对
@@ -52,7 +52,7 @@ public final class RsaUtils {
      * @return 加密后的byte型数据
      */
     public static byte[] encryptByPublicKey(byte[] data, RSAPublicKey publicKey) throws Exception {
-        Cipher cipher = Cipher.getInstance(RSA);
+        Cipher cipher = Cipher.getInstance(ENCRYPT_MODE);
         cipher.init(Cipher.ENCRYPT_MODE, publicKey);
         return cipher.doFinal(data);
     }
@@ -76,8 +76,7 @@ public final class RsaUtils {
      * @param privateKey 私钥
      */
     public static byte[] encryptByPrivateKey(byte[] data, RSAPrivateKey privateKey) throws Exception {
-
-        Cipher cipher = Cipher.getInstance(RSA);
+        Cipher cipher = Cipher.getInstance(ENCRYPT_MODE);
         cipher.init(Cipher.ENCRYPT_MODE, privateKey);
         return cipher.doFinal(data);
     }
@@ -147,14 +146,7 @@ public final class RsaUtils {
     public static String sign(String signContent, String privateKeyStr, String charset) throws Exception {
         //用私钥对信息生成数字签名
         RSAPrivateKey privateKey = loadPrivateKey(privateKeyStr);
-        Signature signature = Signature.getInstance(Config.SIGN_ALGORITHMS);
-        signature.initSign(privateKey);
-        if (!TextUtils.isEmpty(charset)) {
-            signature.update(signContent.getBytes(charset));
-        } else {
-            signature.update(signContent.getBytes());
-        }
-        return Base64.encodeToString(signature.sign(), Base64.NO_WRAP);
+        return sign(signContent, privateKey, charset);
     }
 
     /**
@@ -184,13 +176,6 @@ public final class RsaUtils {
      */
     public static boolean verify(String signContent, String publicKeyStr, String signedStr, String charset) throws Exception {
         RSAPublicKey publicKey = loadPublicKey(publicKeyStr);
-        Signature signature = Signature.getInstance(Config.SIGN_ALGORITHMS);
-        signature.initVerify(publicKey);
-        if (!TextUtils.isEmpty(charset)) {
-            signature.update(signContent.getBytes(charset));
-        } else {
-            signature.update(signContent.getBytes());
-        }
-        return signature.verify(Base64.decode(signedStr, Base64.NO_WRAP));
+        return verify(signContent, publicKey,signedStr,charset);
     }
 }

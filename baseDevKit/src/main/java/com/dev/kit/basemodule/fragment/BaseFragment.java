@@ -2,13 +2,15 @@ package com.dev.kit.basemodule.fragment;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
 
 import com.dev.kit.basemodule.util.ToastUtil;
 
 import java.lang.ref.WeakReference;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 
 /**
  * BaseFragment
@@ -42,7 +44,7 @@ public class BaseFragment extends RxFragment {
         WeakReference<Fragment> weakReference;
 
         private WeakReferenceHandler(@NonNull Fragment fragment) {
-            super(fragment.getContext().getMainLooper());
+            super(Looper.getMainLooper());
             weakReference = new WeakReference<>(fragment);
         }
 

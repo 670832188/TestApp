@@ -1,7 +1,7 @@
 package com.dev.kit.testapp.rxJavaAndRetrofitTest;
 
 
-import com.dev.kit.basemodule.netRequest.Configs.ApiConstants;
+import com.dev.kit.basemodule.netRequest.configs.ApiConstants;
 
 import io.reactivex.rxjava3.core.Observable;
 import okhttp3.MultipartBody;

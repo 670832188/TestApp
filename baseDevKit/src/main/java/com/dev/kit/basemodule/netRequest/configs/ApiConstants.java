@@ -1,4 +1,4 @@
-package com.dev.kit.basemodule.netRequest.Configs;
+package com.dev.kit.basemodule.netRequest.configs;
 
 /**
  * 网络请求api

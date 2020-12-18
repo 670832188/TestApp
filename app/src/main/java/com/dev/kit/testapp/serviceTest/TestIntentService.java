@@ -3,7 +3,7 @@ package com.dev.kit.testapp.serviceTest;
 import android.app.IntentService;
 import android.content.Intent;
 import android.os.Looper;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.dev.kit.basemodule.util.LogUtil;
 

@@ -4,8 +4,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Environment;
-import android.support.annotation.DrawableRes;
-import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.widget.ImageView;
 
@@ -14,11 +12,9 @@ import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
-import io.reactivex.functions.Consumer;
-import me.shaohui.advancedluban.Luban;
+import androidx.annotation.DrawableRes;
 
 /**
  * image工具类
@@ -72,71 +68,6 @@ public class ImageUtil {
         int h = bitmap.getHeight();
         int cropWidth = Math.min(maxWH, Math.min(w, h));
         return Bitmap.createBitmap(bitmap, (bitmap.getWidth() - cropWidth) / 2, (bitmap.getHeight() - cropWidth) / 2, cropWidth, cropWidth);
-    }
-
-    public static synchronized void compressImg(Context context, File imgFile, int compressMode, @NonNull final CompressImgListener listener) {
-        Luban.compress(context, imgFile)
-                .putGear(compressMode)
-                .asObservable()
-                .subscribe(new Consumer<File>() {
-                    @Override
-                    public void accept(File file) throws Exception {
-                        List<File> fileList = new ArrayList<>();
-                        fileList.add(file);
-                        listener.onSuccess(fileList);
-                    }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) throws Exception {
-                        throwable.printStackTrace();
-                        listener.onFailed();
-                    }
-                });
-    }
-
-    public static synchronized void compressImgByFiles(Context context, List<File> imgFileList, int compressMode, @NonNull final CompressImgListener listener) {
-        Luban.compress(context, imgFileList)           // 加载多张图片
-                .putGear(compressMode)
-                .asListObservable()
-                .subscribe(new Consumer<List<File>>() {
-                    @Override
-                    public void accept(List<File> files) throws Exception {
-                        listener.onSuccess(files);
-                    }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) throws Exception {
-                        listener.onFailed();
-                    }
-                });
-    }
-
-    public static synchronized void compressImgByPaths(Context context, List<String> imgPathList, @NonNull final CompressImgListener listener) {
-        List<File> imgFileList = new ArrayList<>();
-        for (String path : imgPathList) {
-            imgFileList.add(new File(path));
-        }
-        Luban luban;
-        File cacheFile = getCacheDir();
-        if (cacheFile != null) {
-            luban = Luban.compress(imgFileList, cacheFile);
-        } else {
-            luban = Luban.compress(context, imgFileList);
-        }
-
-        luban.putGear(Luban.THIRD_GEAR)
-                .asListObservable()
-                .subscribe(new Consumer<List<File>>() {
-                    @Override
-                    public void accept(List<File> files) throws Exception {
-                        listener.onSuccess(files);
-                    }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) throws Exception {
-                        listener.onFailed();
-                    }
-                });
     }
 
     private static File getCacheDir() {

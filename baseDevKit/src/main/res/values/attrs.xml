@@ -45,7 +45,7 @@
             <enum name="Horizontal" value="0" />
             <enum name="Vertical" value="1" />
         </attr>
-        <attr name="checkedButton" format="integer" />
+        <attr name="checkedBtn" format="integer" />
     </declare-styleable>
 
     <declare-styleable name="CircleCountDownView">

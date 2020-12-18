@@ -1,6 +1,6 @@
 package com.dev.kit.basemodule.netRequest.subscribers;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 /**
  * 网络请求回调

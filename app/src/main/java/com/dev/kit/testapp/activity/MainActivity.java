@@ -1,6 +1,5 @@
 package com.dev.kit.testapp.activity;
 
-import android.Manifest;
 import android.app.ActivityManager;
 import android.app.AppOpsManager;
 import android.content.BroadcastReceiver;
@@ -11,78 +10,72 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.database.Cursor;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.LocaleList;
 import android.os.Looper;
 import android.os.PersistableBundle;
 import android.os.Process;
-import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.PopupWindow;
+import android.widget.TextView;
 
 import com.dev.kit.basemodule.activity.BaseStateViewActivity;
-import com.dev.kit.basemodule.activity.VideoRecordActivity;
 import com.dev.kit.basemodule.util.LogUtil;
-import com.dev.kit.basemodule.util.PermissionRequestUtil;
-import com.dev.kit.basemodule.util.ToastUtil;
 import com.dev.kit.testapp.R;
 import com.dev.kit.testapp.animation.PropertyAnimationEntryActivity;
 import com.dev.kit.testapp.dbAndProvider.StudentInfo;
 import com.dev.kit.testapp.dbAndProvider.dbTest.TestDbHelper;
 import com.dev.kit.testapp.dbAndProvider.providerTest.TestProvider;
 import com.dev.kit.testapp.indicator.CustomIndicatorActivity;
-import com.dev.kit.testapp.mediaSelectorTest.MediaSelectorTestActivity;
 import com.dev.kit.testapp.multiGroupHistogram.MultiGroupHistogramActivity;
 import com.dev.kit.testapp.pagerTest.PagerTestActivity;
-import com.dev.kit.testapp.recordingAnimation.RecordingAnimationActivity;
-import com.dev.kit.testapp.rxJavaAndRetrofitTest.NetRequestDemoActivity;
 import com.dev.kit.testapp.serviceTest.TestService;
-import com.dev.kit.testapp.videoRecord.RecordVideoActivity;
-import com.google.gson.Gson;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Random;
+
+import androidx.annotation.NonNull;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleObserver;
+import androidx.lifecycle.OnLifecycleEvent;
 
 public class MainActivity extends BaseStateViewActivity implements View.OnClickListener, ServiceConnection {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (savedInstanceState != null) {
-            Log.e("mytag", "savedInstanceState: " + new Gson().toJson(savedInstanceState));
-        }
-        LogUtil.e("mytag", "isMIUI: " + isMIUI());
-        LogUtil.e("mytag", "canBackgroundStart " + canBackgroundStart(this));
+//        if (savedInstanceState != null) {
+//            Log.e("mytag", "savedInstanceState: " + new Gson().toJson(savedInstanceState));
+//        }
+//        LogUtil.e("mytag", "isMIUI: " + isMIUI());
+//        LogUtil.e("mytag", "canBackgroundStart " + canBackgroundStart(this));
         init();
-        Locale locale;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            locale = LocaleList.getDefault().get(0);
-        } else locale = Locale.getDefault();
 
-        try {
-            TypedValue value = new TypedValue();
-            getResources().openRawResource(R.mipmap.iv_ts0, value);
-            Log.e("mytag", "TypedValue000: " + new Gson().toJson(value));
-            value = new TypedValue();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        String language = locale.getLanguage() + "-" + locale.getCountry();
+//        try {
+//            TypedValue value = new TypedValue();
+//            getResources().openRawResource(R.mipmap.iv_ts0, value);
+//            Log.e("mytag", "TypedValue000: " + new Gson().toJson(value));
+//            value = new TypedValue();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
         registerReceiver();
+        getLifecycle().addObserver(new LifecycleObserver() {
+            @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+            void ts() {
+                Log.e("mytag", "9999999999999");
+            }
+        });
     }
 
     @Override
@@ -114,11 +107,16 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.iv_left: {
-                finish();
+//                finish();
+                PopupWindow popupWindow = new PopupWindow(this);
+                TextView textView = new TextView(this);
+                textView.setText("hahahahaha");
+                popupWindow.setContentView(textView);
+                popupWindow.showAsDropDown(findViewById(R.id.iv_left));
                 break;
             }
             case R.id.tv_net_test: {
-                startActivity(new Intent(MainActivity.this, NetRequestDemoActivity.class));
+                startActivity(new Intent(MainActivity.this, DecorationTestActivity.class));
                 break;
             }
             case R.id.tv_upload_file: {
@@ -145,31 +143,12 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
                 startActivity(new Intent(this, CustomIndicatorActivity.class));
                 break;
             }
-            case R.id.tv_audio_animation: {
-                startActivity(new Intent(this, RecordingAnimationActivity.class));
-                break;
-            }
-            case R.id.tv_media_selector: {
-                startActivity(new Intent(this, MediaSelectorTestActivity.class));
-                break;
-            }
-            case R.id.tv_video_record1: {
-                startVideoRecord(1);
-                break;
-            }
-            case R.id.tv_video_record2: {
-                startVideoRecord(2);
-                break;
-            }
             case R.id.tv_db_test: {
                 dbTest();
                 break;
             }
             case R.id.tv_provider_test: {
-//                providerTest();
-                for (int i = 0; i < 10; i++) {
-                    startService(new Intent(this, TestService.class));
-                }
+                providerTest();
                 break;
             }
         }
@@ -183,53 +162,15 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        Log.e("mytag", "111111111111");
+        Log.e("mytag", "onSaveInstanceState: " + getClass().getSimpleName());
         outState.putString("saveState", "saveState");
         super.onSaveInstanceState(outState);
     }
 
     @Override
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
-        Log.e("mytag", "22222222222222");
+        Log.e("mytag", "onRestoreInstanceState: " + getClass().getSimpleName());
         super.onRestoreInstanceState(savedInstanceState);
-    }
-
-    private void startVideoRecord(final int flag) {
-        String[] permissions = {Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
-        if (PermissionRequestUtil.isPermissionGranted(this, permissions)) {
-            if (flag == 1) {
-                startActivityForResult(new Intent(this, RecordVideoActivity.class), 101);
-            } else {
-                startActivityForResult(new Intent(this, VideoRecordActivity.class), 101);
-            }
-            return;
-        }
-        PermissionRequestUtil.requestPermission(this, new PermissionRequestUtil.OnPermissionRequestListener() {
-            @Override
-            public void onPermissionsGranted() {
-                startVideoRecord(flag);
-            }
-
-            @Override
-            public void onPermissionsDenied(String... deniedPermissions) {
-                StringBuilder sb = new StringBuilder();
-                for (String permission : deniedPermissions) {
-                    sb.append(permission).append("\n");
-                }
-                sb.deleteCharAt(sb.length() - 1);
-                showToast("您拒绝了以下权限:\n" + sb.toString());
-                LogUtil.e("deniedPermissions: " + sb.toString());
-            }
-        }, permissions);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 101 && resultCode == RESULT_OK) {
-            String videoPath = data.getStringExtra(VideoRecordActivity.RECORDED_VIDEO_PATH);
-            ToastUtil.showToast(this, "视频录制完成: " + videoPath.substring(videoPath.lastIndexOf(File.separator)));
-        }
     }
 
     private void dbTest() {
@@ -347,6 +288,7 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
                         }
                     }
                 });
+
                 Looper.loop();
                 // ToDo 上述为Handler相关验证测试代码
                 TestService.MyBinder binder = (TestService.MyBinder) service;
