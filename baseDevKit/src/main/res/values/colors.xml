@@ -4,10 +4,5 @@
     <color name="color_common_white">#FFFFFF</color>
     <color name="color_common_black">#434343</color>
     <color name="color_common_text">#CC202332</color>
-    <color name="color_common_text_grey">#80202332</color>
-    <color name="color_common_text_light_grey">#4D202332</color>
-    <color name="common_line_color">#E1E1E1</color>
-    <color name="common_divider_color">#F9F9F9</color>
     <color name="color_blue">#506EE0</color>
-    <color name="color_bluish_violet_purple">#7D7DFF</color>
 </resources>

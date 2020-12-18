@@ -18,7 +18,6 @@
             android:src="@drawable/ic_data_empty" />
 
         <TextView
-            android:id="@+id/tv_no_net"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/data_empty"

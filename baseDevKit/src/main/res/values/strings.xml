@@ -1,14 +1,9 @@
 <resources>
     <string name="error_net_request_failed">net request failed</string>
-    <string name="no_response_data">no response data</string>
     <string name="data_empty">no data</string>
-    <string name="data_error">data error</string>
 
 
     <!-- for session -->
-    <string name="reply">reply</string>
-    <string name="colon_separator">:&#160;</string>
     <string name="action_fold">Collapse</string>
     <string name="action_unfold">Full Text</string>
-    <string name="img_compress_failed">Image compress failed</string>
 </resources>

@@ -24,34 +24,10 @@
     </style>
 
     <!--字体style-->
-    <style name="text_style_smaller">
-        <item name="android:textSize">@dimen/text_size_smaller</item>
-        <item name="android:textColor">@color/color_common_text</item>
-    </style>
-
-    <style name="text_style_smaller_white">
-        <item name="android:textSize">@dimen/text_size_smaller</item>
-        <item name="android:textColor">@color/color_common_white</item>
-    </style>
-
-    <style name="text_style_small">
-        <item name="android:textSize">@dimen/text_size_small</item>
-        <item name="android:textColor">@color/color_common_text</item>
-    </style>
-
-    <style name="text_style_small_white">
-        <item name="android:textSize">@dimen/text_size_small</item>
-        <item name="android:textColor">@color/color_common_white</item>
-    </style>
 
     <style name="text_style_normal">
         <item name="android:textSize">@dimen/text_size_normal</item>
         <item name="android:textColor">@color/color_common_text</item>
-    </style>
-
-    <style name="text_style_normal_white">
-        <item name="android:textSize">@dimen/text_size_normal</item>
-        <item name="android:textColor">@color/color_common_white</item>
     </style>
 
     <style name="text_style_large">

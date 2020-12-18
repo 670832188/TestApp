@@ -12,7 +12,6 @@
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
         <android.support.design.widget.CollapsingToolbarLayout
-            android:id="@+id/collapsing_toolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:contentScrim="@color/color_transparency"
@@ -31,7 +30,6 @@
                 app:layout_collapseParallaxMultiplier="0.5" />
 
             <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="64dp"
                 app:contentInsetLeft="0dp"

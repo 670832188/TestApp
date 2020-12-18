@@ -5,19 +5,8 @@
     <dimen name="margin_normal">10dp</dimen>
     <dimen name="margin_large">15dp</dimen>
     <dimen name="page_margin">20dp</dimen>
-    <dimen name="common_item_height">52dp</dimen>
 
-    <dimen name="commit_btn_height">52dp</dimen>
-
-    <dimen name="text_size_smaller">13sp</dimen>
-    <dimen name="text_size_small">15sp</dimen>
     <dimen name="text_size_normal">16sp</dimen>
     <dimen name="text_size_large">18sp</dimen>
-    <dimen name="text_size_supper">21sp</dimen>
-    <dimen name="text_size_commit">21sp</dimen>
 
-    <dimen name="corner_common">5dp</dimen>
-    <dimen name="shopping_view_height">72dp</dimen>
-    <dimen name="shopping_view_height1">158dp</dimen>
-    <dimen name="avatar_border_width">2dp</dimen>
 </resources>

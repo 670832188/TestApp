@@ -5,7 +5,6 @@
     android:background="@color/color_transparency">
 
     <View
-        android:id="@+id/title_masking"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:alpha="0"

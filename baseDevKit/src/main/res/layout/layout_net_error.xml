@@ -18,7 +18,6 @@
             android:src="@drawable/ic_net_error" />
 
         <TextView
-            android:id="@+id/tv_no_net"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/error_net_request_failed"
