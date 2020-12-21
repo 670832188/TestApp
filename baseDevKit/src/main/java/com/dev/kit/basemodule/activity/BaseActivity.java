@@ -19,19 +19,9 @@ import androidx.annotation.StringRes;
 
 public class BaseActivity extends RxActivity {
 
-    private OnBackPressedListener onBackPressedListener;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-    }
-
-    public void setOnBackPressedListener(OnBackPressedListener listener) {
-        onBackPressedListener = onBackPressedListener;
-    }
-
-    public OnBackPressedListener getOnBackPressedListener() {
-        return onBackPressedListener;
     }
 
     @Override
@@ -51,8 +41,7 @@ public class BaseActivity extends RxActivity {
 
     public void hideKeyBoard() {
         if (getCurrentFocus() != null && getCurrentFocus().getWindowToken() != null) {
-            ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
-                    .hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+            ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
         }
     }
 
@@ -82,19 +71,6 @@ public class BaseActivity extends RxActivity {
 
     public void setVisibility(@IdRes int viewId, int visibility) {
         findViewById(viewId).setVisibility(visibility);
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (onBackPressedListener != null) {
-            onBackPressedListener.onBackPressed();
-        } else {
-            super.onBackPressed();
-        }
-    }
-
-    public interface OnBackPressedListener {
-        void onBackPressed();
     }
 
     @Override

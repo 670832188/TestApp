@@ -37,7 +37,7 @@ public class NewsAdapter extends BaseRecyclerAdapter<NewsItemInfo> {
         TextView tvTime = holder.getView(R.id.tv_time);
         TextView tvViewCount = holder.getView(R.id.tv_view_count);
         if (itemInfo.getImageUrls() != null && itemInfo.getImageUrls().size() > 0) {
-            ImageUtil.showImg(context, itemInfo.getImageUrls().get(0), R.mipmap.ic_default_news, R.mipmap.ic_default_news, ivTitle, 1f);
+            ImageUtil.loadImage(context, itemInfo.getImageUrls().get(0), null, R.mipmap.ic_default_news, ivTitle);
         } else {
             ivTitle.setImageResource(R.mipmap.ic_default_news);
         }

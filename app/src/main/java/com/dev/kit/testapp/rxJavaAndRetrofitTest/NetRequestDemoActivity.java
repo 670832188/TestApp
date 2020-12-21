@@ -1,15 +1,16 @@
 package com.dev.kit.testapp.rxJavaAndRetrofitTest;
 
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.target.ImageViewTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.dev.kit.basemodule.activity.BaseStateViewActivity;
 import com.dev.kit.basemodule.netRequest.configs.ApiConstants;
@@ -26,6 +27,8 @@ import com.google.android.material.appbar.AppBarLayout;
 
 import java.util.ArrayList;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import io.reactivex.rxjava3.core.Observable;
@@ -52,7 +55,11 @@ public class NetRequestDemoActivity extends BaseStateViewActivity {
     public View createContentView(LayoutInflater inflater, ViewGroup contentRoot) {
         return inflater.inflate(R.layout.activity_net_request, contentRoot, false);
     }
-
+    ////                ivBanner.setImageBitmap(EasyBlur.getInstance()
+////                        .bitmap(resource)
+////                        .radius(1)
+////                        .scale(3)
+////                        .blur());
     private void init() {
         setVisibility(R.id.title_view, View.GONE);
         final GradualTitleView titleView = findViewById(R.id.gradual_title_view);
@@ -60,16 +67,17 @@ public class NetRequestDemoActivity extends BaseStateViewActivity {
         final ImageView ivBanner = findViewById(R.id.iv_banner);
         String bannerUrl = "http://image.baidu.com/search/down?tn=download&ipn=dwnl&word=download&ie=utf8&fr=result&url=http%3A%2F%2Fp4.gexing.com%2FG1%2FM00%2FFF%2F0C%2FrBACE1YlwsbCH1EMAAJphzN4Pyw642_600x.jpg&thumburl=http%3A%2F%2Fimg4.imgtn.bdimg.com%2Fit%2Fu%3D3335352464%2C37077284%26fm%3D27%26gp%3D0.jpg";
 //        ImageUtil.showImg(this, bannerUrl, R.mipmap.ic_default_banner, R.mipmap.ic_default_banner, ivBanner, 1.f);
-        ImageUtil.showImg(this, bannerUrl, R.mipmap.ic_default_banner, R.mipmap.ic_default_banner, new SimpleTarget<Bitmap>() {
-            @Override
-            public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                ivBanner.setImageBitmap(EasyBlur.getInstance()
-                        .bitmap(resource)
-                        .radius(1)
-                        .scale(3)
-                        .blur());
-            }
-        }, 1.f);
+//        ImageUtil.loadImage(this, bannerUrl, null, R.mipmap.ic_default_banner, R.mipmap.ic_default_banner, new CustomTarget<Bitmap>() {
+//            @Override
+//            public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+//
+//            }
+//
+//            @Override
+//            public void onLoadCleared(@Nullable Drawable placeholder) {
+//
+//            }
+//        }, 0, 0, 0);
         AppBarLayout appBarLayout = findViewById(R.id.app_bar_layout);
         appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
             @Override
@@ -83,7 +91,8 @@ public class NetRequestDemoActivity extends BaseStateViewActivity {
         RecyclerView rvNews = findViewById(R.id.rv_news);
         rvNews.setLayoutManager(new LinearLayoutManager(this));
         rvNews.setAdapter(newsAdapter);
-        getNews();
+        setContentState(STATE_DATA_CONTENT);
+//        getNews();
     }
 
     private void setStatusBarLightMode() {

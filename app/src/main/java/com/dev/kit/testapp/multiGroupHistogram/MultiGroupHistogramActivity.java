@@ -12,7 +12,6 @@ import com.dev.kit.basemodule.multiChildHistogram.MultiGroupHistogramChildData;
 import com.dev.kit.basemodule.multiChildHistogram.MultiGroupHistogramGroupData;
 import com.dev.kit.basemodule.multiChildHistogram.MultiGroupHistogramView;
 import com.dev.kit.basemodule.util.DisplayUtil;
-import com.dev.kit.basemodule.util.LogUtil;
 import com.dev.kit.testapp.R;
 
 import java.util.ArrayList;

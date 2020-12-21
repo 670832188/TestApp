@@ -1,20 +1,18 @@
 package com.dev.kit.basemodule.util;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
-import android.os.Environment;
-import android.text.TextUtils;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestBuilder;
+import com.bumptech.glide.load.MultiTransformation;
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+import com.bumptech.glide.load.resource.bitmap.DownsampleStrategy;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
-import com.bumptech.glide.request.target.SimpleTarget;
-
-import java.io.File;
-import java.util.List;
-
-import androidx.annotation.DrawableRes;
+import com.bumptech.glide.request.target.Target;
 
 /**
  * image工具类
@@ -22,70 +20,164 @@ import androidx.annotation.DrawableRes;
  */
 
 public class ImageUtil {
-    public static synchronized void showImg(Context context, String imgUri, @DrawableRes int defaultSrcId, @DrawableRes int errorSrcId, ImageView target, float sizeMultiplier) {
-        if (TextUtils.isEmpty(imgUri)) {
+    public enum SCALE_TYPE {
+        CENTER_INSIDE,
+        CENTER_CROP,
+        FIT_CENTER,
+        CIRCLE_CROP,
+        NONE
+    }
+
+    public static void loadImage(Context context, String url, ImageView target) {
+        loadImage(context, url, SCALE_TYPE.NONE, 0, target, 0);
+    }
+
+    public static void loadImage(Context context, String url, SCALE_TYPE scaleType, int defaultRes, ImageView target) {
+        loadImage(context, url, scaleType, defaultRes, defaultRes, target, 0);
+    }
+
+    public static void loadImage(Context context, String url, SCALE_TYPE scaleType, int defaultRes, ImageView target, int cornerRadius) {
+        loadImage(context, url, scaleType, defaultRes, defaultRes, target, cornerRadius);
+    }
+
+    public static void loadImage(Context context, String url, SCALE_TYPE scaleType, int defaultRes, int errorRes, ImageView target, int cornerRadius) {
+        loadImage(context, url, scaleType, defaultRes, errorRes, target, cornerRadius, 0, 0);
+    }
+
+    public static void loadImage(Context context, String url, SCALE_TYPE scaleType, int defaultRes, int errorRes, ImageView target, int cornerRadius, int width, int height) {
+        if (context == null) {
             return;
         }
-        Glide.with(context)
-                .load(imgUri)
-                .apply(new RequestOptions()
-                        .placeholder(defaultSrcId)
-                        .error(errorSrcId))
-                .thumbnail((sizeMultiplier > 0 && sizeMultiplier < 1) ? sizeMultiplier : 1.0f)
-                .into(target);
-    }
-
-    public static synchronized void showImg(Context context, String imgUri, SimpleTarget<Drawable> target, @DrawableRes int defaultSrcId, @DrawableRes int errorSrcId, float sizeMultiplier) {
-        if (TextUtils.isEmpty(imgUri)) {
-            return;
-        }
-        Glide.with(context).load(imgUri)
-                .apply(new RequestOptions()
-                        .placeholder(defaultSrcId)
-                        .error(errorSrcId))
-                .thumbnail((sizeMultiplier > 0 && sizeMultiplier < 1) ? 1.0f : sizeMultiplier)
-                .into(target);
-    }
-
-    public static synchronized void showImg(Context context, String imgUri, @DrawableRes int defaultSrcId, @DrawableRes int errorSrcId, SimpleTarget<Bitmap> target, float sizeMultiplier) {
-        if (TextUtils.isEmpty(imgUri)) {
-            return;
-        }
-        Glide.with(context).asBitmap().load(imgUri)
-                .apply(new RequestOptions()
-                        .placeholder(defaultSrcId)
-                        .error(errorSrcId))
-                .thumbnail((sizeMultiplier > 0 && sizeMultiplier < 1) ? 1.0f : sizeMultiplier)
-                .into(target);
-    }
-
-    public static synchronized Bitmap cropSquareBitmap(Bitmap bitmap) {//从中间截取一个正方形
-        return cropSquareBitmap(bitmap, Integer.MAX_VALUE);
-    }
-
-    public static synchronized Bitmap cropSquareBitmap(Bitmap bitmap, int maxWH) {//从中间截取一个正方形
-        int w = bitmap.getWidth(); // 得到图片的宽，高
-        int h = bitmap.getHeight();
-        int cropWidth = Math.min(maxWH, Math.min(w, h));
-        return Bitmap.createBitmap(bitmap, (bitmap.getWidth() - cropWidth) / 2, (bitmap.getHeight() - cropWidth) / 2, cropWidth, cropWidth);
-    }
-
-    private static File getCacheDir() {
-        String cacheDirName = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "testCache";
-        File cacheDirFile = new File(cacheDirName);
-        if (cacheDirFile.exists()) {
-            return cacheDirFile;
-        } else {
-            if (cacheDirFile.mkdir()) {
-                return cacheDirFile;
+        if (context instanceof Activity) {
+            Activity activity = (Activity) context;
+            if (activity.isFinishing() || activity.isDestroyed()) {
+                return;
             }
         }
-        return null;
+        RequestOptions options = new RequestOptions();
+        if (scaleType != null) {
+            switch (scaleType) {
+                case CENTER_INSIDE: {
+                    options = options.centerInside();
+                    break;
+                }
+                case CENTER_CROP: {
+                    options = options.centerCrop();
+                    if (cornerRadius > 0) { // Glide4.+至4.9版本，圆角与CenterCrop冲突，通过MultiTransformation解决
+                        RoundedCorners roundedCorners = new RoundedCorners(DisplayUtil.dp2px(cornerRadius));
+                        MultiTransformation<Bitmap> multiTransformation = new MultiTransformation<>(new CenterCrop(), roundedCorners);
+                        options = options.transform(multiTransformation);
+                    } else {
+                        options = options.centerCrop();
+                    }
+                    break;
+                }
+                case FIT_CENTER: {
+                    options = options.fitCenter();
+                    break;
+                }
+                case CIRCLE_CROP: {
+                    options = options.circleCrop();
+                    break;
+                }
+                default: {
+                    options = options.downsample(DownsampleStrategy.NONE);
+                    break;
+                }
+            }
+        }
+        if (defaultRes != 0) {
+            options = options.placeholder(defaultRes);
+            if (errorRes <= 0) {
+                options = options.error(defaultRes);
+            }
+        }
+        if (errorRes != 0) {
+            options = options.error(errorRes);
+        }
+        if (cornerRadius > 0 && scaleType != SCALE_TYPE.CENTER_CROP) {
+            options = options.transform(new RoundedCorners(DisplayUtil.dp2px(cornerRadius)));
+        }
+        if (width > 0 && height > 0) {
+            options = options.override(width, height);
+        }
+        RequestBuilder builder = Glide.with(context)
+                .load(url)
+                .apply(options);
+        builder.into(target);
     }
 
-    public interface CompressImgListener {
-        void onSuccess(List<File> compressedImgFileList);
+    public static <T> void loadImage(Context context, String url, SCALE_TYPE scaleType, int defaultRes, int errorRes, Target<T> target, int cornerRadius, int width, int height) {
+        if (context == null) {
+            return;
+        }
+        if (context instanceof Activity) {
+            Activity activity = (Activity) context;
+            if (activity.isFinishing() || activity.isDestroyed()) {
+                return;
+            }
+        }
+        RequestOptions options = new RequestOptions();
+        if (scaleType != null) {
+            switch (scaleType) {
+                case CENTER_INSIDE: {
+                    options = options.centerInside();
+                    break;
+                }
+                case CENTER_CROP: {
+                    options = options.centerCrop();
+                    if (cornerRadius > 0) { // Glide4.+至4.9版本，圆角与CenterCrop冲突，通过MultiTransformation解决
+                        RoundedCorners roundedCorners = new RoundedCorners(DisplayUtil.dp2px(cornerRadius));
+                        MultiTransformation<Bitmap> multiTransformation = new MultiTransformation<>(new CenterCrop(), roundedCorners);
+                        options = options.transform(multiTransformation);
+                    } else {
+                        options = options.centerCrop();
+                    }
+                    break;
+                }
+                case FIT_CENTER: {
+                    options = options.fitCenter();
+                    break;
+                }
+                case CIRCLE_CROP: {
+                    options = options.circleCrop();
+                    break;
+                }
+                default: {
+                    options = options.downsample(DownsampleStrategy.NONE);
+                    break;
+                }
+            }
+        }
+        if (defaultRes != 0) {
+            options = options.placeholder(defaultRes);
+            if (errorRes <= 0) {
+                options = options.error(defaultRes);
+            }
+        }
+        if (errorRes != 0) {
+            options = options.error(errorRes);
+        }
+        if (cornerRadius > 0 && scaleType != SCALE_TYPE.CENTER_CROP) {
+            options = options.transform(new RoundedCorners(DisplayUtil.dp2px(cornerRadius)));
+        }
+        if (width > 0 && height > 0) {
+            options = options.override(width, height);
+        }
+        RequestBuilder builder = Glide.with(context)
+                .load(url)
+                .apply(options);
+        builder.into(target);
+    }
 
-        void onFailed();
+    public static Bitmap cropSquareBitmap(Bitmap bitmap) {
+        return cropSquareBitmap(bitmap, Math.min(bitmap.getWidth(), bitmap.getHeight()));
+    }
+
+    public static Bitmap cropSquareBitmap(Bitmap bitmap, int maxWH) {
+        int w = bitmap.getWidth();
+        int h = bitmap.getHeight();
+        int newWH = Math.min(maxWH, Math.min(w, h));
+        return Bitmap.createBitmap(bitmap, (w - newWH) / 2, (h - newWH) / 2, newWH, newWH);
     }
 }

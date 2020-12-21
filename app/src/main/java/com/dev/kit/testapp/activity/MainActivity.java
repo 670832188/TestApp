@@ -21,8 +21,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.PopupWindow;
-import android.widget.TextView;
 
 import com.dev.kit.basemodule.activity.BaseStateViewActivity;
 import com.dev.kit.basemodule.util.LogUtil;
@@ -34,6 +32,7 @@ import com.dev.kit.testapp.dbAndProvider.providerTest.TestProvider;
 import com.dev.kit.testapp.indicator.CustomIndicatorActivity;
 import com.dev.kit.testapp.multiGroupHistogram.MultiGroupHistogramActivity;
 import com.dev.kit.testapp.pagerTest.PagerTestActivity;
+import com.dev.kit.testapp.rxJavaAndRetrofitTest.NetRequestDemoActivity;
 import com.dev.kit.testapp.serviceTest.TestService;
 
 import java.io.BufferedReader;
@@ -107,16 +106,11 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.iv_left: {
-//                finish();
-                PopupWindow popupWindow = new PopupWindow(this);
-                TextView textView = new TextView(this);
-                textView.setText("hahahahaha");
-                popupWindow.setContentView(textView);
-                popupWindow.showAsDropDown(findViewById(R.id.iv_left));
+                finish();
                 break;
             }
             case R.id.tv_net_test: {
-                startActivity(new Intent(MainActivity.this, DecorationTestActivity.class));
+                startActivity(new Intent(MainActivity.this, NetRequestDemoActivity.class));
                 break;
             }
             case R.id.tv_upload_file: {

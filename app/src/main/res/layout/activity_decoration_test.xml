@@ -31,7 +31,7 @@
             android:text="grid" />
     </LinearLayout>
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_test"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
