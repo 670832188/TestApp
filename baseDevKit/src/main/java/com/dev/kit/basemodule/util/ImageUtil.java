@@ -11,8 +11,13 @@ import com.bumptech.glide.load.MultiTransformation;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.DownsampleStrategy;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.load.resource.gif.GifDrawable;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
+
+import java.io.File;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 
 /**
  * image工具类
@@ -62,8 +67,7 @@ public class ImageUtil {
                     break;
                 }
                 case CENTER_CROP: {
-                    options = options.centerCrop();
-                    if (cornerRadius > 0) { // Glide4.+至4.9版本，圆角与CenterCrop冲突，通过MultiTransformation解决
+                    if (cornerRadius > 0) { // Glide4.+版本，圆角与CenterCrop冲突，通过MultiTransformation解决
                         RoundedCorners roundedCorners = new RoundedCorners(DisplayUtil.dp2px(cornerRadius));
                         MultiTransformation<Bitmap> multiTransformation = new MultiTransformation<>(new CenterCrop(), roundedCorners);
                         options = options.transform(multiTransformation);
@@ -107,7 +111,7 @@ public class ImageUtil {
         builder.into(target);
     }
 
-    public static <T> void loadImage(Context context, String url, SCALE_TYPE scaleType, int defaultRes, int errorRes, Target<T> target, int cornerRadius, int width, int height) {
+    public static void loadImage(Context context, String url, Target target) {
         if (context == null) {
             return;
         }
@@ -117,56 +121,34 @@ public class ImageUtil {
                 return;
             }
         }
-        RequestOptions options = new RequestOptions();
-        if (scaleType != null) {
-            switch (scaleType) {
-                case CENTER_INSIDE: {
-                    options = options.centerInside();
+        RequestBuilder builder = null;
+        Type type = target.getClass().getGenericSuperclass();
+        System.out.println(type);
+        ParameterizedType p = (ParameterizedType) type;
+        if (p != null) {
+            for (Type t : p.getActualTypeArguments()) {
+                Class typeClass = (Class) t;
+                if (typeClass == Bitmap.class) {
+                    builder = Glide.with(context)
+                            .asBitmap()
+                            .load(url);
                     break;
-                }
-                case CENTER_CROP: {
-                    options = options.centerCrop();
-                    if (cornerRadius > 0) { // Glide4.+至4.9版本，圆角与CenterCrop冲突，通过MultiTransformation解决
-                        RoundedCorners roundedCorners = new RoundedCorners(DisplayUtil.dp2px(cornerRadius));
-                        MultiTransformation<Bitmap> multiTransformation = new MultiTransformation<>(new CenterCrop(), roundedCorners);
-                        options = options.transform(multiTransformation);
-                    } else {
-                        options = options.centerCrop();
-                    }
+                } else if (typeClass == GifDrawable.class) {
+                    builder = Glide.with(context)
+                            .asGif()
+                            .load(url);
                     break;
-                }
-                case FIT_CENTER: {
-                    options = options.fitCenter();
-                    break;
-                }
-                case CIRCLE_CROP: {
-                    options = options.circleCrop();
-                    break;
-                }
-                default: {
-                    options = options.downsample(DownsampleStrategy.NONE);
+                } else if (typeClass == File.class) {
+                    builder = Glide.with(context)
+                            .asFile()
+                            .load(url);
                     break;
                 }
             }
         }
-        if (defaultRes != 0) {
-            options = options.placeholder(defaultRes);
-            if (errorRes <= 0) {
-                options = options.error(defaultRes);
-            }
+        if (builder == null) {
+            builder = Glide.with(context).load(url);
         }
-        if (errorRes != 0) {
-            options = options.error(errorRes);
-        }
-        if (cornerRadius > 0 && scaleType != SCALE_TYPE.CENTER_CROP) {
-            options = options.transform(new RoundedCorners(DisplayUtil.dp2px(cornerRadius)));
-        }
-        if (width > 0 && height > 0) {
-            options = options.override(width, height);
-        }
-        RequestBuilder builder = Glide.with(context)
-                .load(url)
-                .apply(options);
         builder.into(target);
     }
 
