@@ -1,29 +1,26 @@
 package com.dev.kit.testapp.activity;
 
-import android.app.ActivityManager;
-import android.app.AppOpsManager;
-import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.PersistableBundle;
-import android.os.Process;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.dev.kit.basemodule.MainModel;
 import com.dev.kit.basemodule.activity.BaseStateViewActivity;
 import com.dev.kit.basemodule.util.LogUtil;
+import com.dev.kit.testapp.MainApplication;
 import com.dev.kit.testapp.R;
 import com.dev.kit.testapp.animation.PropertyAnimationEntryActivity;
 import com.dev.kit.testapp.dbAndProvider.StudentInfo;
@@ -35,44 +32,33 @@ import com.dev.kit.testapp.pagerTest.PagerTestActivity;
 import com.dev.kit.testapp.rxJavaAndRetrofitTest.NetRequestDemoActivity;
 import com.dev.kit.testapp.serviceTest.TestService;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleObserver;
-import androidx.lifecycle.OnLifecycleEvent;
+import androidx.lifecycle.LifecycleEventObserver;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.ViewModelProvider;
 
 public class MainActivity extends BaseStateViewActivity implements View.OnClickListener, ServiceConnection {
+    MainModel mainModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        if (savedInstanceState != null) {
-//            Log.e("mytag", "savedInstanceState: " + new Gson().toJson(savedInstanceState));
-//        }
-//        LogUtil.e("mytag", "isMIUI: " + isMIUI());
-//        LogUtil.e("mytag", "canBackgroundStart " + canBackgroundStart(this));
         init();
-
-//        try {
-//            TypedValue value = new TypedValue();
-//            getResources().openRawResource(R.mipmap.iv_ts0, value);
-//            Log.e("mytag", "TypedValue000: " + new Gson().toJson(value));
-//            value = new TypedValue();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-        registerReceiver();
-        getLifecycle().addObserver(new LifecycleObserver() {
-            @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
-            void ts() {
-                Log.e("mytag", "9999999999999");
+//        getLifecycle().addObserver(new LifecycleObserver() {
+//            @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+//            void ts() {
+//                Log.e("mytag", "9999999999999");
+//            }
+//        });
+        getLifecycle().addObserver(new LifecycleEventObserver() {
+            @Override
+            public void onStateChanged(@NonNull LifecycleOwner source, @NonNull Lifecycle.Event event) {
+                Log.e("mytag", "event: " + event.name());
             }
         });
     }
@@ -99,14 +85,22 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
         setOnClickListener(R.id.tv_db_test, this);
         setOnClickListener(R.id.tv_provider_test, this);
         setContentState(STATE_DATA_CONTENT);
+        ViewModelProvider provider = new ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(MainApplication.getMainApplication()));
+        mainModel = provider.get(MainModel.class);// ViewModelProvider.AndroidViewModelFactory.getInstance(MainApplication.getMainApplication()).create(MainModel.class);
+        setText(R.id.tv_title, mainModel.data);
     }
 
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+    }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.iv_left: {
-                finish();
+//                finish();
+                mainModel.changeData();
                 break;
             }
             case R.id.tv_net_test: {
@@ -146,12 +140,6 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
                 break;
             }
         }
-    }
-
-    @Override
-    protected void onDestroy() {
-
-        super.onDestroy();
     }
 
     @Override
@@ -217,7 +205,6 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
     private void providerTest() {
         Cursor cursor = getContentResolver().query(TestProvider.getStudentInfoUri(), null, "math >= ?", new String[]{"70"}, null);
         if (cursor == null) {
-            LogUtil.e("mytag", "1111111111");
             return;
         }
         while (cursor.moveToNext()) {
@@ -233,7 +220,6 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
         cursor.close();
     }
 
-    Object object;
 
     @Override
     public void onResume() {
@@ -242,20 +228,7 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState, @NonNull PersistableBundle outPersistentState) {
-        Log.e("mytag", "00000000000000");
         super.onSaveInstanceState(outState, outPersistentState);
-    }
-
-    private void registerReceiver() {
-        IntentFilter filter = new IntentFilter(getPackageName() + ".qwe");
-        BroadcastReceiver receiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-
-            }
-        };
-
-        registerReceiver(receiver, filter);
     }
 
     @Override
@@ -298,67 +271,4 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
         LogUtil.e("mytag", "onServiceDisconnected");
     }
 
-    private void getMemoryInfo() {
-        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        ActivityManager.MemoryInfo info = new ActivityManager.MemoryInfo();
-        manager.getMemoryInfo(info);
-        Log.e("mytag", "系统总内存:" + (info.totalMem / (1024 * 1024)) + "M");
-        Log.e("mytag", "系统剩余内存:" + (info.availMem / (1024 * 1024)) + "M");
-        Log.e("mytag", "系统是否处于低内存运行：" + info.lowMemory);
-        Log.e("mytag", "系统剩余内存低于" + (info.threshold / (1024 * 1024)) + "M时为低内存运行");
-        Log.e("mytag", "应用内存分配：" + manager.getMemoryClass());
-        Log.e("mytag", "应用内存分配上限：" + manager.getLargeMemoryClass());
-        float maxMemory = (float) (Runtime.getRuntime().maxMemory() * 1.0 / (1024 * 1024));
-        //当前分配的总内存
-        float totalMemory = (float) (Runtime.getRuntime().totalMemory() * 1.0 / (1024 * 1024));
-        //剩余内存
-        float freeMemory = (float) (Runtime.getRuntime().freeMemory() * 1.0 / (1024 * 1024));
-        Log.e("mytag", "应用内存分配上限：" + maxMemory);
-        Log.e("mytag", "当前应用总内存：" + totalMemory);
-        Log.e("mytag", "当前应用空闲内存：" + freeMemory);
-    }
-
-
-    /**
-     * 检测小米手机是否具有后台弹出界面权限
-     */
-    public static boolean canBackgroundStart(Context context) {
-        AppOpsManager ops = (AppOpsManager) context.getSystemService(Context.APP_OPS_SERVICE);
-        if (ops == null) {
-            return false;
-        }
-        try {
-            int op = 10021;
-            Method method = ops.getClass().getMethod("checkOpNoThrow", int.class, int.class, String.class);
-            Integer result = (Integer) method.invoke(ops, op, Process.myUid(), context.getPackageName());
-            return result == AppOpsManager.MODE_ALLOWED;
-        } catch (Exception e) {
-            e.printStackTrace();
-            Log.e("mytag", e.getMessage(), e);
-        }
-        return false;
-    }
-
-    public static boolean isMIUI() {
-        String line = null;
-        BufferedReader input = null;
-        try {
-            java.lang.Process p = Runtime.getRuntime().exec("getprop " + "ro.miui.ui.version.name");
-            input = new BufferedReader(new InputStreamReader(p.getInputStream()), 1024);
-            line = input.readLine();
-            input.close();
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        } finally {
-            if (input != null) {
-                try {
-                    input.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        Log.e("mytag", "version: " + line);
-        return !TextUtils.isEmpty(line);
-    }
 }

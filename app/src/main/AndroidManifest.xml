@@ -23,7 +23,8 @@
         android:supportsRtl="true"
         android:theme="@style/BaseTheme.BaseAppTheme"
         tools:replace="android:theme">
-        <activity android:name=".activity.MainActivity">
+        <activity android:name=".activity.MainActivity"
+            android:configChanges="orientation">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW" />
@@ -50,11 +51,6 @@
 
         <activity android:name=".animation.PropertyAnimationBasics_1" />
         <activity android:name=".indicator.CustomIndicatorActivity" />
-        <activity android:name=".recordingAnimation.RecordingAnimationActivity" />
-        <activity android:name=".mediaSelectorTest.MediaSelectorTestActivity" />
-
-        <activity
-            android:name=".videoRecord.RecordVideoActivity"
             android:screenOrientation="portrait" />
 
         <provider

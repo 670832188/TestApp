@@ -113,4 +113,8 @@ public class MainApplication extends Application implements Application.Activity
             }
         }
     }
+
+    public static MainApplication getMainApplication() {
+        return mainApplication;
+    }
 }
