@@ -45,7 +45,7 @@ public class ExpandTextView extends LinearLayout {
         TypedArray typedArray = getContext().getTheme().obtainStyledAttributes(attrs, R.styleable.ExpandTextView, 0, 0);
         foldStateTriggerText = typedArray.getString(R.styleable.ExpandTextView_foldStateTriggerText);
         unfoldStateTriggerText = typedArray.getString(R.styleable.ExpandTextView_unfoldStateTriggerText);
-        triggerTextColor = typedArray.getColor(R.styleable.ExpandTextView_foldableTriggerTextColor, Color.parseColor("#4D202332"));
+        triggerTextColor = typedArray.getColor(R.styleable.ExpandTextView_triggerTextColor, Color.parseColor("#4D202332"));
         defaultShowLines = typedArray.getInt(R.styleable.ExpandTextView_defaultShownLines, DEFAULT_MAX_LINES);
         if (TextUtils.isEmpty(foldStateTriggerText)) {
             foldStateTriggerText = getResources().getString(R.string.action_unfold);
@@ -62,17 +62,14 @@ public class ExpandTextView extends LinearLayout {
 
         tvTrigger = findViewById(R.id.tv_trigger);
         tvTrigger.setTextColor(triggerTextColor);
-        tvTrigger.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String textStr = tvTrigger.getText().toString().trim();
-                if (foldStateTriggerText.equals(textStr)) {
-                    tvContentText.setMaxLines(Integer.MAX_VALUE);
-                    tvTrigger.setText(unfoldStateTriggerText);
-                } else {
-                    tvContentText.setMaxLines(defaultShowLines);
-                    tvTrigger.setText(foldStateTriggerText);
-                }
+        tvTrigger.setOnClickListener(v -> {
+            String textStr = tvTrigger.getText().toString().trim();
+            if (foldStateTriggerText.equals(textStr)) {
+                tvContentText.setMaxLines(Integer.MAX_VALUE);
+                tvTrigger.setText(unfoldStateTriggerText);
+            } else {
+                tvContentText.setMaxLines(defaultShowLines);
+                tvTrigger.setText(foldStateTriggerText);
             }
         });
     }
@@ -80,27 +77,20 @@ public class ExpandTextView extends LinearLayout {
     public void setText(String contentText) {
         tvContentText.setText(contentText);
 
-        tvContentText.post(new Runnable() {
-            @Override
-            public void run() {
-                int linCount = tvContentText.getLineCount();
-                if (linCount > defaultShowLines) {
-                    tvContentText.setMaxLines(defaultShowLines);
-                    tvTrigger.setVisibility(View.VISIBLE);
-                    tvTrigger.setText(foldStateTriggerText);
-                } else {
-                    tvTrigger.setVisibility(View.GONE);
-                }
+        tvContentText.post(() -> {
+            int linCount = tvContentText.getLineCount();
+            if (linCount > defaultShowLines) {
+                tvContentText.setMaxLines(defaultShowLines);
+                tvTrigger.setVisibility(View.VISIBLE);
+                tvTrigger.setText(foldStateTriggerText);
+            } else {
+                tvTrigger.setVisibility(View.GONE);
             }
         });
     }
 
     public void setTextSize(int size) {
         tvContentText.setTextSize(size);
-    }
-
-    public TextView getContentTextView() {
-        return tvContentText;
     }
 
     public float getTextSize() {

@@ -17,7 +17,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.dev.kit.basemodule.MainModel;
 import com.dev.kit.basemodule.activity.BaseStateViewActivity;
 import com.dev.kit.basemodule.util.LogUtil;
 import com.dev.kit.testapp.MainApplication;
@@ -37,13 +36,9 @@ import java.util.List;
 import java.util.Random;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleEventObserver;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProvider;
 
 public class MainActivity extends BaseStateViewActivity implements View.OnClickListener, ServiceConnection {
-    MainModel mainModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,12 +50,11 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
 //                Log.e("mytag", "9999999999999");
 //            }
 //        });
-        getLifecycle().addObserver(new LifecycleEventObserver() {
-            @Override
-            public void onStateChanged(@NonNull LifecycleOwner source, @NonNull Lifecycle.Event event) {
-                Log.e("mytag", "event: " + event.name());
-            }
-        });
+//        getLifecycle().addObserver(new LifecycleEventObserver() {
+//            @Override
+//            public void onStateChanged(@NonNull LifecycleOwner source, @NonNull Lifecycle.Event event) {
+//            }
+//        });
     }
 
     @Override
@@ -86,8 +80,6 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
         setOnClickListener(R.id.tv_provider_test, this);
         setContentState(STATE_DATA_CONTENT);
         ViewModelProvider provider = new ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(MainApplication.getMainApplication()));
-        mainModel = provider.get(MainModel.class);// ViewModelProvider.AndroidViewModelFactory.getInstance(MainApplication.getMainApplication()).create(MainModel.class);
-        setText(R.id.tv_title, mainModel.data);
     }
 
     @Override
@@ -97,10 +89,10 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
 
     @Override
     public void onClick(View v) {
+
         switch (v.getId()) {
             case R.id.iv_left: {
-//                finish();
-                mainModel.changeData();
+                finish();
                 break;
             }
             case R.id.tv_net_test: {

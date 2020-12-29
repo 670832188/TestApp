@@ -1,9 +1,10 @@
 package com.dev.kit.testapp.rxJavaAndRetrofitTest;
 
-import android.graphics.Bitmap;
+import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,11 +13,9 @@ import android.widget.ImageView;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.dev.kit.basemodule.activity.BaseStateViewActivity;
-import com.dev.kit.basemodule.netRequest.configs.ApiConstants;
-import com.dev.kit.basemodule.netRequest.model.RequestSender;
-import com.dev.kit.basemodule.netRequest.subscribers.NetRequestCallback;
-import com.dev.kit.basemodule.netRequest.subscribers.NetRequestSubscriber;
-import com.dev.kit.basemodule.netRequest.util.RequestServiceUtil;
+import com.dev.kit.basemodule.activity.WebActivity;
+import com.dev.kit.basemodule.netRequest.NetRequestCallback;
+import com.dev.kit.basemodule.surpport.BaseRecyclerAdapter;
 import com.dev.kit.basemodule.util.EasyBlur;
 import com.dev.kit.basemodule.util.ImageUtil;
 import com.dev.kit.basemodule.util.MIUIHelper;
@@ -31,7 +30,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import io.reactivex.rxjava3.core.Observable;
 
 
 /**
@@ -43,6 +41,7 @@ public class NetRequestDemoActivity extends BaseStateViewActivity {
     private NewsAdapter newsAdapter;
     private boolean isStatusBarLightMode;
     private float appBarLayoutOffsetRatio;
+    private NewsModel newsModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,21 +61,6 @@ public class NetRequestDemoActivity extends BaseStateViewActivity {
         titleView.setText("NBA资讯");
         final ImageView ivBanner = findViewById(R.id.iv_banner);
         String bannerUrl = "http://image.baidu.com/search/down?tn=download&ipn=dwnl&word=download&ie=utf8&fr=result&url=http%3A%2F%2Fp4.gexing.com%2FG1%2FM00%2FFF%2F0C%2FrBACE1YlwsbCH1EMAAJphzN4Pyw642_600x.jpg&thumburl=http%3A%2F%2Fimg4.imgtn.bdimg.com%2Fit%2Fu%3D3335352464%2C37077284%26fm%3D27%26gp%3D0.jpg";
-//        ImageUtil.loadImage(this, bannerUrl, new CustomTarget<Bitmap>() {
-//            @Override
-//            public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-//                ivBanner.setImageBitmap(EasyBlur.getInstance()
-//                        .bitmap(resource)
-//                        .radius(1)
-//                        .scale(3)
-//                        .blur());
-//            }
-//
-//            @Override
-//            public void onLoadCleared(@Nullable Drawable placeholder) {
-//
-//            }
-//        });
 
         ImageUtil.loadImage(this, bannerUrl, new CustomTarget<File>() {
             @Override
@@ -84,7 +68,7 @@ public class NetRequestDemoActivity extends BaseStateViewActivity {
                 ivBanner.setImageBitmap(EasyBlur.getInstance()
                         .bitmap(BitmapFactory.decodeFile(resource.getAbsolutePath()))
                         .radius(1)
-                        .scale(3)
+                        .scale(1)
                         .blur());
             }
 
@@ -102,12 +86,18 @@ public class NetRequestDemoActivity extends BaseStateViewActivity {
                 titleView.changeRatio((float) Math.pow(appBarLayoutOffsetRatio, 3));
             }
         });
-        newsAdapter = new NewsAdapter(this, new ArrayList<NewsItemInfo>());
+        newsAdapter = new NewsAdapter(this, new ArrayList<>());
+        newsAdapter.setOnItemClickListener((v, position) -> {
+            String url = newsAdapter.getItem(position).getUrl();
+            Intent intent = new Intent(this, WebActivity.class);
+            intent.putExtra(WebActivity.LOAD_URL, url);
+            startActivity(intent);
+        });
         RecyclerView rvNews = findViewById(R.id.rv_news);
         rvNews.setLayoutManager(new LinearLayoutManager(this));
         rvNews.setAdapter(newsAdapter);
         setContentState(STATE_DATA_CONTENT);
-//        getNews();
+        getNews();
     }
 
     private void setStatusBarLightMode() {
@@ -121,44 +111,20 @@ public class NetRequestDemoActivity extends BaseStateViewActivity {
     }
 
     private void getNews() {
-        NetRequestSubscriber<NewsResult> subscriber = new NetRequestSubscriber<>(new NetRequestCallback<NewsResult>() {
-            @Override
-            public void onStart() {
-                setContentState(STATE_NET_PROGRESS);
-            }
-
-            @Override
-            public void onSuccess(@NonNull NewsResult newsResult) {
-                if (newsResult.getData() != null && newsResult.getData().size() > 0) {
-                    setContentState(STATE_DATA_CONTENT);
-                    newsAdapter.updateDataList(newsResult.getData());
-                } else {
-                    setContentState(STATE_DATA_EMPTY);
+        if (newsModel == null) {
+            newsModel = new NewsModel(new NetRequestCallback<NewsResult>() {
+                @Override
+                public void onSuccess(@NonNull NewsResult newsResult) {
+                    newsAdapter.updateDataList(newsResult.getResult().getData());
                 }
-            }
 
-            @Override
-            public void onResultNull() {
-                setContentState(STATE_NET_ERROR);
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
-                setContentState(STATE_NET_ERROR);
-            }
-
-            @Override
-            public void onCancel() {
-                super.onCancel();
-            }
-
-            @Override
-            public void onFinish() {
-                super.onFinish();
-            }
-        }, this);
-        Observable<NewsResult> observable = RequestServiceUtil.createService(ApiService.class, ApiConstants.JUHE_BASE_URL).getQQSportNews("69", Constant.JUHE_API_KEY);
-        RequestSender.sendRequest(this, subscriber, observable);
+                @Override
+                public void onError(Throwable throwable) {
+                    throwable.printStackTrace();
+                }
+            });
+        }
+        newsModel.requestData(this);
     }
 
 }

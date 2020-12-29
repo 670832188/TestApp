@@ -1,26 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="@dimen/slide_line_height"
     android:background="@color/color_white"
     android:gravity="center_vertical"
     android:orientation="vertical"
-    android:paddingEnd="@dimen/margin_large"
-    android:paddingStart="@dimen/margin_large">
+    android:paddingStart="@dimen/margin_large"
+    android:paddingEnd="@dimen/margin_large">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingBottom="@dimen/margin_normal"
-        android:paddingTop="@dimen/margin_normal">
+        android:paddingTop="@dimen/margin_normal"
+        android:paddingBottom="@dimen/margin_normal">
 
         <ImageView
             android:id="@+id/iv_title"
             android:layout_width="100dp"
             android:layout_height="75dp"
-            android:scaleType="center" />
+            android:scaleType="center"
+            android:src="@mipmap/ic_default_news" />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -36,7 +38,8 @@
                 android:ellipsize="end"
                 android:maxLines="2"
                 android:textColor="@color/color_common_text"
-                android:textSize="@dimen/text_size_14" />
+                android:textSize="@dimen/text_size_14"
+                tools:text="惊恐......" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -44,21 +47,21 @@
                 android:layout_alignParentBottom="true">
 
                 <TextView
-                    android:id="@+id/tv_time"
+                    android:id="@+id/tv_author"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
-                    android:textColor="@color/color_light_grey"
-                    android:textSize="@dimen/text_size_12" />
+                    android:textSize="@dimen/text_size_12"
+                    tools:text="央视新闻" />
 
                 <TextView
-                    android:id="@+id/tv_view_count"
+                    android:id="@+id/tv_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:gravity="end"
-                    android:textColor="@color/color_light_grey"
-                    android:textSize="@dimen/text_size_12" />
+                    android:textSize="@dimen/text_size_12"
+                    tools:text="2020-12-18 13:02" />
             </RelativeLayout>
         </RelativeLayout>
     </LinearLayout>

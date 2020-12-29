@@ -8,7 +8,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.dev.kit.basemodule.R;
-import com.dev.kit.basemodule.netRequest.util.OnNetProgressCancelListener;
+import com.dev.kit.basemodule.netRequest.OnNetProgressCancelListener;
 
 
 /**
@@ -50,14 +50,6 @@ public class NetProgressDialog extends Dialog {
             tvTip.setText(tipMsg);
             tvTip.setVisibility(View.GONE);
         }
-//        Window window = getWindow();
-//        WindowManager.LayoutParams params = window.getAttributes();
-//        params.gravity = Gravity.CENTER;
-//        params.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
-//        params.dimAmount = 0.7f;
-//        params.format = PixelFormat.TRANSLUCENT;
-
-        // 触摸对话框以外的地方取消对话框
         setCanceledOnTouchOutside(false);
     }
 }

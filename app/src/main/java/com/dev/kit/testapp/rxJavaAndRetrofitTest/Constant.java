@@ -5,5 +5,5 @@ package com.dev.kit.testapp.rxJavaAndRetrofitTest;
  */
 
 public class Constant {
-    public static final String JUHE_API_KEY = "OMKktowLTDK80DtI6R6QOveb9RLikSOUgqIfYEV6QFWnjGdvD6ErU8k5iSA0qbBb";
+    public static final String JUHE_NEWS_API_KEY = "7357da58f4b32229c559851385cb48d9";
 }

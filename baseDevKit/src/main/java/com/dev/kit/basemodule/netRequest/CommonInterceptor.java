@@ -1,4 +1,4 @@
-package com.dev.kit.basemodule.netRequest.util;
+package com.dev.kit.basemodule.netRequest;
 
 import android.text.TextUtils;
 

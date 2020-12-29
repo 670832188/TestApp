@@ -1,4 +1,4 @@
-package com.dev.kit.basemodule.netRequest.util;
+package com.dev.kit.basemodule.netRequest;
 
 /**
  * 网络请求加载对话框取消回调

@@ -3,8 +3,6 @@ package com.dev.kit.basemodule.util;
 import android.text.TextUtils;
 import android.util.Base64;
 
-import com.dev.kit.basemodule.netRequest.configs.Config;
-
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -29,6 +27,7 @@ import javax.crypto.Cipher;
 public final class RsaUtils {
     private static String RSA = "RSA";
     private static final String ENCRYPT_MODE = "RSA/None/PKCS1Padding";
+    private static final String SIGN_ALGORITHMS = "SHA1WithRSA";
 
     /**
      * 随机获得密钥对
@@ -126,7 +125,7 @@ public final class RsaUtils {
      */
     public static String sign(String signContent, RSAPrivateKey privateKey, String charset) throws Exception {
         //用私钥对信息生成数字签名
-        Signature signature = Signature.getInstance(Config.SIGN_ALGORITHMS);
+        Signature signature = Signature.getInstance(SIGN_ALGORITHMS);
         signature.initSign(privateKey);
         if (!TextUtils.isEmpty(charset)) {
             signature.update(signContent.getBytes(charset));
@@ -157,7 +156,7 @@ public final class RsaUtils {
      * @param signedStr   Base64加密后的数字签名
      */
     public static boolean verify(String signContent, RSAPublicKey publicKey, String signedStr, String charset) throws Exception {
-        Signature signature = Signature.getInstance(Config.SIGN_ALGORITHMS);
+        Signature signature = Signature.getInstance(SIGN_ALGORITHMS);
         signature.initVerify(publicKey);
         if (!TextUtils.isEmpty(charset)) {
             signature.update(signContent.getBytes(charset));
@@ -176,6 +175,6 @@ public final class RsaUtils {
      */
     public static boolean verify(String signContent, String publicKeyStr, String signedStr, String charset) throws Exception {
         RSAPublicKey publicKey = loadPublicKey(publicKeyStr);
-        return verify(signContent, publicKey,signedStr,charset);
+        return verify(signContent, publicKey, signedStr, charset);
     }
 }

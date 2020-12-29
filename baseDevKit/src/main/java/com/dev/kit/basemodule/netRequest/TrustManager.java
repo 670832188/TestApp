@@ -1,4 +1,4 @@
-package com.dev.kit.basemodule.netRequest.security;
+package com.dev.kit.basemodule.netRequest;
 
 import android.app.Application;
 import android.content.Context;

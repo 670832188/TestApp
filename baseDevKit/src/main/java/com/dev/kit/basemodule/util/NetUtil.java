@@ -1,4 +1,4 @@
-package com.dev.kit.basemodule.netRequest.util;
+package com.dev.kit.basemodule.util;
 
 import android.content.Context;
 import android.net.ConnectivityManager;

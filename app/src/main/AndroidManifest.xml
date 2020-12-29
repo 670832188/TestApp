@@ -51,7 +51,6 @@
 
         <activity android:name=".animation.PropertyAnimationBasics_1" />
         <activity android:name=".indicator.CustomIndicatorActivity" />
-            android:screenOrientation="portrait" />
 
         <provider
             android:name=".dbAndProvider.providerTest.TestProvider"
@@ -72,6 +71,7 @@
 
         <activity android:name=".activity.BitmapTestActivity" />
         <activity android:name=".activity.DecorationTestActivity"/>
+        <activity android:name="com.dev.kit.basemodule.activity.WebActivity"/>
     </application>
 
 </manifest>
