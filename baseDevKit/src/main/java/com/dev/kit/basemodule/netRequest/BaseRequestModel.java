@@ -16,8 +16,8 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
  * @author cuiyan
  * Created on 2020/12/24.
  */
-public abstract class BaseRequestModel<T> extends ViewModel {
-    private MutableLiveData<BaseResult<T>> result = new MutableLiveData<>();
+public abstract class BaseRequestModel<T, E> extends ViewModel {
+    private final MutableLiveData<BaseResult<T>> result = new MutableLiveData<>();
     private Disposable disposable;
 
     public final MutableLiveData<BaseResult<T>> getResult() {
@@ -28,11 +28,10 @@ public abstract class BaseRequestModel<T> extends ViewModel {
         requestData(null);
     }
 
-    @SuppressWarnings("unchecked")
-    public final void requestData(@Nullable LifecycleProvider provider) {
+    public final void requestData(@Nullable LifecycleProvider<E> provider) {
         Observable<BaseResult<T>> observable = getObservable();
         if (provider != null) {
-            observable = observable.compose(provider.<BaseResult<T>>bindToLifecycle());
+            observable = observable.compose(provider.bindToLifecycle());
         }
         observable.subscribeOn(Schedulers.io())
                 .unsubscribeOn(Schedulers.io())
@@ -41,7 +40,7 @@ public abstract class BaseRequestModel<T> extends ViewModel {
                     @Override
                     public void onSubscribe(@NonNull Disposable d) {
                         disposable = d;
-                        result.postValue(BaseResult.<T>generateStartResult());
+                        result.postValue(BaseResult.generateStartResult());
                     }
 
                     @Override
@@ -51,7 +50,7 @@ public abstract class BaseRequestModel<T> extends ViewModel {
 
                     @Override
                     public void onError(@NonNull Throwable e) {
-                        result.postValue(BaseResult.<T>generateErrorResult(e));
+                        result.postValue(BaseResult.generateErrorResult(e));
                     }
 
                     @Override
@@ -67,7 +66,7 @@ public abstract class BaseRequestModel<T> extends ViewModel {
             return;
         }
         disposable.dispose();
-        result.postValue(BaseResult.<T>generateCancelResult());
+        result.postValue(BaseResult.generateCancelResult());
     }
 
     protected abstract Observable<BaseResult<T>> getObservable();

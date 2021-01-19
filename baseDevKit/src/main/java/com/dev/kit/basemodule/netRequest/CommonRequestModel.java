@@ -14,10 +14,9 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
  * @author cuiyan
  * Created on 2020/12/25.
  */
-public abstract class CommonRequestModel<T> {
-
+public abstract class CommonRequestModel<T, E> {
     private Disposable disposable;
-    private NetRequestCallback<T> requestCallback;
+    private final NetRequestCallback<T> requestCallback;
 
     public CommonRequestModel(@NonNull NetRequestCallback<T> callback) {
         this.requestCallback = callback;
@@ -27,11 +26,10 @@ public abstract class CommonRequestModel<T> {
         requestData(null);
     }
 
-    @SuppressWarnings("unchecked")
-    public final void requestData(@Nullable LifecycleProvider provider) {
+    public final void requestData(@Nullable LifecycleProvider<E> provider) {
         Observable<T> observable = getObservable();
         if (provider != null) {
-            observable = observable.compose(provider.<BaseResult<T>>bindToLifecycle());
+            observable = observable.compose(provider.bindToLifecycle());
         }
         observable.subscribeOn(Schedulers.io())
                 .unsubscribeOn(Schedulers.io())
