@@ -72,6 +72,8 @@
         <activity android:name=".activity.BitmapTestActivity" />
         <activity android:name=".activity.DecorationTestActivity"/>
         <activity android:name="com.dev.kit.basemodule.activity.WebActivity"/>
+        <activity android:name=".trunpage.MainActivity"/>
+        <activity android:name=".trunpage.TuruPageActivity"/>
     </application>
 
 </manifest>

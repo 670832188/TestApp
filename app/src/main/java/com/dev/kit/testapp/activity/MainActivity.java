@@ -129,6 +129,7 @@ public class MainActivity extends BaseStateViewActivity implements View.OnClickL
             }
             case R.id.tv_provider_test: {
                 providerTest();
+                startActivity(new Intent(this, com.dev.kit.testapp.trunpage.MainActivity.class));
                 break;
             }
         }
