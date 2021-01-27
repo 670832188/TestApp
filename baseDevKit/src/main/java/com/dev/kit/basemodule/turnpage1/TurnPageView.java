@@ -2,17 +2,15 @@ package com.dev.kit.basemodule.turnpage1;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -32,7 +30,9 @@ public class TurnPageView extends SurfaceView implements SurfaceHolder.Callback 
     private final AtomicInteger currentIndex = new AtomicInteger();
     private volatile boolean isSurfaceAvailable;
     private List<ImgData> dataList;
-    private int timeInterval = 5 * 1000;
+    private int timeInterval = 6 * 1000;
+    private List<ITurnPage> turnPageList;
+    private Bitmap lastBitmap;
 
     public TurnPageView(Context context) {
         this(context, null);
@@ -49,6 +49,9 @@ public class TurnPageView extends SurfaceView implements SurfaceHolder.Callback 
 
     private void init() {
         getHolder().addCallback(this);
+        turnPageList = new ArrayList<>();
+        turnPageList.add(new TurnPageShutter());
+        turnPageList.add(new TurnPage3DRotation());
     }
 
     @Override
@@ -96,27 +99,55 @@ public class TurnPageView extends SurfaceView implements SurfaceHolder.Callback 
         if (timer != null) {
             timer.cancel();
         }
+        lastBitmap = null;
         timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                int index = currentIndex.getAndIncrement() % dataList.size();
-                ImgData data = dataList.get(index);
-                Canvas canvas = getHolder().lockCanvas();
+                int index = currentIndex.getAndIncrement();
+                ImgData data = dataList.get(index % dataList.size());
+                ITurnPage turnPage = turnPageList.get(index % turnPageList.size());
+                long turnPagePeriod = turnPage.getPeriod();
                 try {
-                    Bitmap bitmap = Glide.with(getContext()).asBitmap().load(data.getUri()).apply(new RequestOptions().centerCrop()).submit(width, height).get(timeInterval - 1000, TimeUnit.MILLISECONDS);
-                    canvas.drawBitmap(bitmap, 0, 0, null);
+                    Bitmap bitmap = Glide.with(getContext()).asBitmap().load(data.getUri()).apply(new RequestOptions().centerCrop()).submit(width, height).get(timeInterval - turnPagePeriod, TimeUnit.MILLISECONDS);
+                    long startTime = System.currentTimeMillis();
+                    long diff = 0;
+
+                    while (true) {
+                        float progress = diff * 1f / turnPagePeriod;
+                        if (progress > 1) {
+                            progress = 1;
+                        }
+                        Canvas canvas = getHolder().lockCanvas();
+                        try {
+                            turnPage.onTurnPageDraw(canvas, bitmap, lastBitmap, width, height, progress);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        } finally {
+                            getHolder().unlockCanvasAndPost(canvas);
+                        }
+                        if (progress == 1) {
+                            break;
+                        }
+                        diff = System.currentTimeMillis() - startTime;
+                    }
+                    lastBitmap = bitmap;
                 } catch (Exception e) {
+                    e.printStackTrace();
                     if (data.getHolderRes() != 0) {
+                        Canvas canvas = getHolder().lockCanvas();
                         try {
                             Bitmap bitmap = Glide.with(getContext()).asBitmap().load(data.getHolderRes()).apply(new RequestOptions().centerCrop()).submit(width, height).get();
                             canvas.drawBitmap(bitmap, 0, 0, null);
-                        } catch (Exception ee) {
-                            ee.printStackTrace();
+                        } catch (Exception exception) {
+                            exception.printStackTrace();
+                        } finally {
+                            getHolder().unlockCanvasAndPost(canvas);
                         }
                     }
-                } finally {
-                    getHolder().unlockCanvasAndPost(canvas);
+                }
+                if (index == Integer.MAX_VALUE) {
+                    currentIndex.set(index % dataList.size());
                 }
             }
         }, 0, timeInterval);

@@ -10,21 +10,24 @@
         android:id="@+id/btn1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="百叶窗效果" />
+        android:text="百叶窗效果"
+        android:visibility="gone" />
 
     <Button
         android:id="@+id/btn2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:text="小黑块效果" />
+        android:text="小黑块效果"
+        android:visibility="gone" />
 
     <Button
         android:id="@+id/btn3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:text="平移效果" />
+        android:text="平移效果"
+        android:visibility="gone" />
 
     <com.dev.kit.basemodule.turnpage1.TurnPageView
         android:id="@+id/turnPageView"
