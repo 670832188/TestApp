@@ -12,10 +12,12 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.DownsampleStrategy;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.load.resource.gif.GifDrawable;
+import com.bumptech.glide.request.RequestFutureTarget;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
@@ -105,10 +107,9 @@ public class ImageUtil {
         if (width > 0 && height > 0) {
             options = options.override(width, height);
         }
-        RequestBuilder builder = Glide.with(context)
+        Glide.with(context)
                 .load(url)
-                .apply(options);
-        builder.into(target);
+                .apply(options).into(target);
     }
 
     public static void loadImage(Context context, String url, Target target) {
@@ -161,5 +162,27 @@ public class ImageUtil {
         int h = bitmap.getHeight();
         int newWH = Math.min(maxWH, Math.min(w, h));
         return Bitmap.createBitmap(bitmap, (w - newWH) / 2, (h - newWH) / 2, newWH, newWH);
+    }
+
+    public static File getCache(Context context, String url) {
+        File cacheFile = null;
+        RequestFutureTarget<File> futureTarget = (RequestFutureTarget<File>) Glide.with(context).downloadOnly().load(url).apply(new RequestOptions().onlyRetrieveFromCache(true)).submit();
+        Class<?> class1 = futureTarget.getClass();
+        Field field;
+        try {
+            synchronized (futureTarget) {
+                futureTarget.wait();
+            }
+            field = class1.getDeclaredField("resource");
+            field.setAccessible(true);//开放权限
+            cacheFile = (File) field.get(futureTarget);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return cacheFile;
+    }
+
+    public static boolean isCache(Context context, String url) {
+        return getCache(context, url) != null;
     }
 }

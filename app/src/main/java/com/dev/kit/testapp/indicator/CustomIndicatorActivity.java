@@ -55,7 +55,7 @@ public class CustomIndicatorActivity extends BaseStateViewActivity implements Ra
             @Override
             public void renderItemView(@NonNull View itemView, final int position) {
                 ((TextView) itemView).setText("第" + (position + 1) + "页面");
-                int color = getResources().getColor(getBindItemData(position));
+                int color = getResources().getColor(getDataItem(position));
                 GradientDrawable drawable = (GradientDrawable) itemView.getBackground();
                 if (drawable == null) {
                     drawable = new GradientDrawable();

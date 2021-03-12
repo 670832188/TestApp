@@ -1,6 +1,7 @@
 package com.dev.kit.basemodule.surpport;
 
 import android.content.Context;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -16,11 +17,16 @@ import java.util.List;
  * Created by cuiyan on 16-10-20.
  */
 public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<RecyclerViewHolder> {
-    private List<T> dataList;
+    private final List<T> dataList;
     protected Context context;
     private int itemViewLayoutId;
     private OnItemClickListener onItemClickListener;
     private OnItemLongClickListener onItemLongClickListener;
+
+    public BaseRecyclerAdapter(Context context, List<T> dataList) {
+        this.context = context;
+        this.dataList = dataList;
+    }
 
     public BaseRecyclerAdapter(Context context, List<T> dataList, int itemViewLayoutId) {
         this.context = context;
@@ -30,26 +36,23 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<Recycl
 
     @NonNull
     public RecyclerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return RecyclerViewHolder.getViewHolder(context, parent, itemViewLayoutId);
+        int layoutId = itemViewLayoutId == 0 ? getItemViewLayoutId(viewType) : itemViewLayoutId;
+        return RecyclerViewHolder.getViewHolder(context, parent, layoutId);
+    }
+
+    public int getItemViewLayoutId(int viewType) {
+        return 0;
     }
 
     public void onBindViewHolder(@NonNull final RecyclerViewHolder holder, final int position) {
         fillData(holder, position);
         if (onItemClickListener != null) {
-            holder.getItemView().setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onItemClickListener.onItemClick(v, holder.getAdapterPosition());
-                }
-            });
+            holder.getItemView().setOnClickListener(v -> onItemClickListener.onItemClick(v, holder.getAdapterPosition()));
         }
         if (onItemLongClickListener != null) {
-            holder.getItemView().setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    onItemLongClickListener.OnItemLongClick(v, holder.getAdapterPosition());
-                    return true;
-                }
+            holder.getItemView().setOnLongClickListener(v -> {
+                onItemLongClickListener.OnItemLongClick(v, holder.getAdapterPosition());
+                return true;
             });
         }
     }

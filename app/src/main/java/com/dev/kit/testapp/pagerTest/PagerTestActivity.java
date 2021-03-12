@@ -2,6 +2,7 @@ package com.dev.kit.testapp.pagerTest;
 
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.viewpager.widget.ViewPager;
 
@@ -50,11 +51,11 @@ public class PagerTestActivity extends BaseStateViewActivity {
         setText(R.id.tv_title, "层叠ViewPager");
         ViewPager vpHorizontalStack = findViewById(R.id.vp_horizontal_stack);
         vpHorizontalStack.setOffscreenPageLimit(3);
-        CommonPagerAdapter<Integer> horizontalStackAdapter = new CommonPagerAdapter<Integer>(colorsRes) {
+        CommonPagerAdapter<Integer> horizontalStackAdapter = new CommonPagerAdapter<Integer>(true, false, colorsRes) {
             @Override
             public void renderItemView(@NonNull View itemView, final int position) {
                 ((TextView) itemView).setText("第" + (position + 1) + "页面");
-                int color = getResources().getColor(getBindItemData(position));
+                int color = getResources().getColor(getDataItem(position));
                 GradientDrawable drawable = (GradientDrawable) itemView.getBackground();
                 if (drawable == null) {
                     drawable = new GradientDrawable();
@@ -89,7 +90,7 @@ public class PagerTestActivity extends BaseStateViewActivity {
             @Override
             public void renderItemView(@NonNull View itemView, final int position) {
                 ((TextView) itemView).setText("第" + (position + 1) + "页面");
-                int color = getResources().getColor(getBindItemData(position));
+                int color = getResources().getColor(getDataItem(position));
                 GradientDrawable drawable = (GradientDrawable) itemView.getBackground();
                 if (drawable == null) {
                     drawable = new GradientDrawable();

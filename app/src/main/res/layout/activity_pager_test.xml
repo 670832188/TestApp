@@ -5,7 +5,7 @@
     android:orientation="vertical"
     android:background="@color/color_common_white">
 
-    <androidx.viewpager.widget.ViewPager
+    <com.dev.kit.basemodule.surpport.CommonViewPager
         android:id="@+id/vp_horizontal_stack"
         android:layout_width="match_parent"
         android:layout_height="280dp" />

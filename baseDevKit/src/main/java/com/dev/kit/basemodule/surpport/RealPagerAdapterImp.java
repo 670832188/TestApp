@@ -8,4 +8,6 @@ import androidx.viewpager.widget.PagerAdapter;
  */
 public abstract class RealPagerAdapterImp extends PagerAdapter {
     public abstract int getRealCount();
+
+    public abstract int getRealPosition(int pos);
 }

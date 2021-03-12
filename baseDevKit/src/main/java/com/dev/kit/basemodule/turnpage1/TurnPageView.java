@@ -4,11 +4,13 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.dev.kit.basemodule.util.ImageUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,6 +54,7 @@ public class TurnPageView extends SurfaceView implements SurfaceHolder.Callback 
         turnPageList = new ArrayList<>();
         turnPageList.add(new TurnPageShutter());
         turnPageList.add(new TurnPage3DRotation());
+        turnPageList.add(new TurnPageTranslate());
     }
 
     @Override
@@ -106,6 +109,7 @@ public class TurnPageView extends SurfaceView implements SurfaceHolder.Callback 
             public void run() {
                 int index = currentIndex.getAndIncrement();
                 ImgData data = dataList.get(index % dataList.size());
+                Log.e("mytag", "isCached: " + ImageUtil.isCache(getContext(), data.getUri()));
                 ITurnPage turnPage = turnPageList.get(index % turnPageList.size());
                 long turnPagePeriod = turnPage.getPeriod();
                 try {
@@ -152,4 +156,5 @@ public class TurnPageView extends SurfaceView implements SurfaceHolder.Callback 
             }
         }, 0, timeInterval);
     }
+
 }

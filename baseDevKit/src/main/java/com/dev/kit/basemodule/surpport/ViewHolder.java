@@ -20,11 +20,11 @@ public class ViewHolder {
     /**
      * View容器，用于存放Holder中的View
      */
-    private SparseArray<View> views;
+    private final SparseArray<View> views;
     /**
      * Item布局View
      */
-    private View convertView;
+    private final View convertView;
 
     public ViewHolder(Context context, ViewGroup parent, int layoutId) {
         views = new SparseArray<>();
@@ -37,9 +37,7 @@ public class ViewHolder {
      *
      * @param layoutId 布局layout Id
      */
-    public static ViewHolder getViewHolder(Context context, View convertView,
-                                           ViewGroup parent, int layoutId) {
-
+    public static ViewHolder getViewHolder(Context context, View convertView, ViewGroup parent, int layoutId) {
         if (convertView == null) {
             return new ViewHolder(context, parent, layoutId);
         }

@@ -1,11 +1,12 @@
 package com.dev.kit.basemodule.surpport;
 
-import androidx.annotation.NonNull;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.List;
+
+import androidx.annotation.NonNull;
 
 /**
  * CommonPagerAdapter
@@ -15,13 +16,21 @@ import java.util.List;
 
 public abstract class CommonPagerAdapter<T> extends RealPagerAdapterImp {
 
-    private SparseArray<View> viewCache = new SparseArray<>();
-    private List<T> dataList;
+    private final SparseArray<View> viewCache = new SparseArray<>();
+    private final boolean infiniteLoop;
+    private final boolean useCache;
+    private final List<T> dataList;
     private OnItemClickListener onItemClickListener;
     private OnItemLongClickListener onItemLongClickListener;
 
     public CommonPagerAdapter(List<T> dataList) {
+        this(false, true, dataList);
+    }
+
+    public CommonPagerAdapter(boolean infiniteLoop, boolean useCache, List<T> dataList) {
+        this.infiniteLoop = infiniteLoop;
         this.dataList = dataList;
+        this.useCache = useCache;
     }
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
@@ -34,7 +43,7 @@ public abstract class CommonPagerAdapter<T> extends RealPagerAdapterImp {
 
     @Override
     public int getCount() {
-        return dataList == null ? 0 : dataList.size();
+        return dataList == null || dataList.isEmpty() ? 0 : infiniteLoop ? Integer.MAX_VALUE : dataList.size();
     }
 
     @Override
@@ -49,23 +58,13 @@ public abstract class CommonPagerAdapter<T> extends RealPagerAdapterImp {
 
     @NonNull
     @Override
-    public View instantiateItem(@NonNull ViewGroup container, final int position) {
+    public View instantiateItem(@NonNull ViewGroup container, int position) {
         View itemView = getItemView(container, position);
         if (onItemClickListener != null) {
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onItemClickListener.onItemClick(v, position);
-                }
-            });
+            itemView.setOnClickListener(v -> onItemClickListener.onItemClick(v, getRealPosition(position)));
         }
         if (onItemLongClickListener != null) {
-            itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    return onItemLongClickListener.onItemLongClick(v, position);
-                }
-            });
+            itemView.setOnLongClickListener(v -> onItemLongClickListener.onItemLongClick(v, getRealPosition(position)));
         }
         return itemView;
     }
@@ -75,12 +74,17 @@ public abstract class CommonPagerAdapter<T> extends RealPagerAdapterImp {
      * 若缓存中存在itemView则取之，不存在新生成
      */
     private View getItemView(@NonNull ViewGroup container, int position) {
-        View itemView = viewCache.get(position);
-        if (itemView == null) {
-            itemView = getPageItemView(container, position);
-            viewCache.put(position, itemView);
+        View itemView;
+        if (useCache) {
+            itemView = viewCache.get(position);
+            if (itemView == null) {
+                itemView = getPageItemView(container, getRealPosition(position));
+                viewCache.put(position, itemView);
+            }
+        } else {
+            itemView = getPageItemView(container, getRealPosition(position));
         }
-        renderItemView(itemView, position);
+        renderItemView(itemView, getRealPosition(position));
         container.addView(itemView);
         return itemView;
     }
@@ -88,7 +92,7 @@ public abstract class CommonPagerAdapter<T> extends RealPagerAdapterImp {
     /**
      * 渲染itemView
      */
-    public abstract void renderItemView(@NonNull View itemView, int position);
+    public abstract void renderItemView(@NonNull View itemView, final int realPosition);
 
     /**
      * 获取itemView
@@ -96,7 +100,7 @@ public abstract class CommonPagerAdapter<T> extends RealPagerAdapterImp {
      * @see #getItemView(ViewGroup, int)
      */
     @NonNull
-    public abstract View getPageItemView(@NonNull ViewGroup container, final int position);
+    public abstract View getPageItemView(@NonNull ViewGroup container, final int realPosition);
 
     @Override
     public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
@@ -104,18 +108,22 @@ public abstract class CommonPagerAdapter<T> extends RealPagerAdapterImp {
         container.removeView(view);
     }
 
-    public T getBindItemData(int position) {
-        if (dataList != null && dataList.size() > position && position >= 0) {
-            return dataList.get(position);
+    public int getRealPosition(int position) {
+        return position % getRealCount();
+    }
+
+    public T getDataItem(int realPosition) {
+        if (dataList != null && dataList.size() > realPosition && realPosition >= 0) {
+            return dataList.get(realPosition);
         }
         return null;
     }
 
     public interface OnItemClickListener {
-        void onItemClick(View view, int position);
+        void onItemClick(View view, int realPosition);
     }
 
     public interface OnItemLongClickListener {
-        boolean onItemLongClick(View view, int position);
+        boolean onItemLongClick(View view, int realPosition);
     }
 }

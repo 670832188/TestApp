@@ -10,6 +10,10 @@ import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
 
+import dalvik.system.DexClassLoader;
+import dalvik.system.DexFile;
+import dalvik.system.PathClassLoader;
+
 /**
  * Version:    V1.0.0 <br>
  * Author:     崔岩 <br>
@@ -21,6 +25,8 @@ public class DisplayUtil {
      * 屏幕宽度，横向像素点个数
      */
     private int mScreenWidth;
+    DexClassLoader loader;
+    PathClassLoader loader1;
     /**
      * 屏幕高度，纵向像素点个数
      */

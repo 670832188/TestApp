@@ -20,11 +20,11 @@ public class RecyclerViewHolder extends RecyclerView.ViewHolder {
     /**
      * View容器，用于存放Holder中的View
      */
-    private SparseArray<View> views;
+    private final SparseArray<View> views;
     /**
      * Item布局View
      */
-    private View itemView;
+    private final View itemView;
 
     public RecyclerViewHolder(View itemView) {
         super(itemView);
@@ -49,7 +49,6 @@ public class RecyclerViewHolder extends RecyclerView.ViewHolder {
      */
     @SuppressWarnings("unchecked")
     public <T extends View> T getView(int viewId) {
-
         View item = views.get(viewId);
         if (item == null) {
             item = itemView.findViewById(viewId);
